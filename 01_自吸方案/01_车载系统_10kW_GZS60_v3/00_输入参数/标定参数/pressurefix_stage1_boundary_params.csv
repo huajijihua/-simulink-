@@ -1,0 +1,6 @@
+parameter,value,unit,source_level,source_note,optimized_in_stage1,lower_bound,upper_bound,calibration_status,notes
+K_ca_in_kg_s_kPa,0.0003,kg/s/kPa,C,stack inlet pressure-flow coefficient,1,5e-05,0.05,pressurefix_candidate,Pressurefix model workspace saved with accepted pressure-chain candidate.
+K_ca_out_kg_s_kPa,0.00012,kg/s/kPa,C,stack cathode outlet pressure-flow coefficient,1,1e-05,0.05,unchanged,Pressurefix model workspace saved with accepted pressure-chain candidate.
+hum_dry_dp_ref_kPa,9.51831,kPa,B,GZS60 dry-side pressure-drop equivalent,1,0.5,25,pressurefix_candidate,Pressurefix model workspace saved with accepted pressure-chain candidate.
+hum_wet_dp_ref_kPa,11.4663,kPa,B,GZS60 wet-side pressure-drop equivalent,1,0.5,35,unchanged,Pressurefix model workspace saved with accepted pressure-chain candidate.
+hum_dp_exp,0.578752,1,C,humidifier pressure-drop flow exponent,1,0.35,1.25,pressurefix_candidate,Pressurefix model workspace saved with accepted pressure-chain candidate.

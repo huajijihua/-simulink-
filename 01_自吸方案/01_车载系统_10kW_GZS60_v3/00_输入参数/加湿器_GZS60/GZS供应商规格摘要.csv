@@ -1,0 +1,5 @@
+model,assigned_vehicle_case,power_range_kW,rated_air_flow_slpm,volume_L,dry_mass_kg,max_pressure_bara,membrane_max_dp_kPa,dry_out_dewpoint_spec,dry_dp_spec_kPa,wet_dp_spec_kPa,internal_leakage_spec,test_dry_inlet,test_wet_inlet,source_file
+GZS60,10kW vehicle provisional humidifier,40-70,2500-5000,10.2,4.7,3.5,110,>59.81C @ 5000 slpm,<13 @ 5000 slpm,<20 @ 5000 slpm,<=35 L/min @ 80 kPag wet,<10%RH @ 80C,>95%RH @ 80C,YTD-GZS60增湿器说明书中英文对照.pdf
+GZS120,reference measured/manual unit,100-120,5000-7000,15.2,6.2,3.5,110,>65.25C @ 7000 slpm,<12 @ 7000 slpm,<30 @ 7000 slpm,<=50 L/min @ 80 kPag wet,<10%RH @ 80C,>95%RH @ 80C,YTD-GZS120增湿器说明书中英文对照.pdf
+GZS180,reference measured/manual unit,150-200,8000-14000,23,11.1,3.5,110,>62.28C @ 12000 slpm,<13 @ 12000 slpm,<20 @ 12000 slpm,<=80 L/min @ 80 kPag wet,<10%RH @ 80C,>95%RH @ 80C,YTD-GZS180增湿器说明书中英文对照.pdf
+GZS300,240kW vehicle humidifier,200-300,14000-19000,29,,3.5,110,>60.4C @ 15000 slpm,<17 @ 15000 slpm,<20 @ 15000 slpm,<120 L/min @ 80 kPag wet,<10%RH @ 70C,>95%RH @ 80C,YTD-GZS300增湿器说明书中英文对照.pdf

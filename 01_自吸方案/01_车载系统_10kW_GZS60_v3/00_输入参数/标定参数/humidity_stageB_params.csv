@@ -1,0 +1,4 @@
+parameter,value,initial_value,accepted,note
+hum_NTU_ref,0.215343,0.47854,1,humidifier transfer intensity reference
+hum_flow_exp,0.37998,0.37998,1,humidifier transfer flow exponent
+hum_mem_D_eff_m2_s,1.25e-09,1e-09,1,humidifier membrane effective diffusion

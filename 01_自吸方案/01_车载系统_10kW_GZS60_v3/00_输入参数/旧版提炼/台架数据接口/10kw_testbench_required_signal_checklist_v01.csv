@@ -1,0 +1,35 @@
+signal_name,unit,required_for_model_calibration,calibration_group,description
+time_s,s,1,All,Time stamp for transient and steady-state filtering
+test_id,-,1,All,Unique test/case identifier
+steady_state_flag,0/1,0,All,Recommended filtered steady-state marker
+stack_current_A,A,1,Stack,Current command or measured stack current
+cell_voltage_V,V/cell,1,Stack,Mean cell voltage
+stack_voltage_V,V,1,Stack,Stack voltage
+stack_temperature_C,degC,1,Stack,Representative stack temperature
+coolant_inlet_T_C,degC,1,Thermal,Coolant inlet temperature
+coolant_outlet_T_C,degC,1,Thermal,Coolant outlet temperature
+coolant_flow_L_min,L/min,1,Thermal,Coolant flow
+air_compressor_speed_rpm,rpm,1,Compressor,Compressor speed for target MAP
+air_compressor_flow_kg_s,kg/s,1,Compressor,Total compressor mass flow
+air_compressor_inlet_p_kPa_abs,kPa abs,1,Compressor,Compressor inlet absolute pressure
+air_compressor_outlet_p_kPa_abs,kPa abs,1,Compressor,Compressor outlet absolute pressure
+air_compressor_inlet_T_C,degC,1,Compressor,Compressor inlet temperature
+air_compressor_outlet_T_C,degC,1,Compressor,Compressor outlet temperature
+air_compressor_power_W,W,1,Compressor,Electrical or shaft power; current/voltage acceptable if power is derived
+stack_cathode_inlet_p_kPa_abs,kPa abs,1,Cathode boundary,Stack cathode inlet pressure
+stack_cathode_inlet_T_C,degC,1,Cathode boundary,Stack cathode inlet temperature
+stack_cathode_inlet_RH_frac,0-1,1,Cathode boundary,Stack cathode inlet RH
+stack_cathode_inlet_flow_kg_s,kg/s,1,Cathode boundary,Stack cathode inlet flow
+stack_cathode_inlet_xO2,mol/mol,1,Cathode boundary,Stack inlet oxygen fraction; required for cEGR validation
+stack_cathode_outlet_p_kPa_abs,kPa abs,1,Cathode outlet,Stack cathode outlet pressure
+stack_cathode_outlet_T_C,degC,1,Cathode outlet,Stack cathode outlet temperature
+stack_cathode_outlet_RH_frac,0-1,1,Cathode outlet,Stack cathode outlet RH
+stack_cathode_outlet_xO2,mol/mol,1,Cathode outlet,Stack outlet oxygen fraction
+egr_valve_opening_frac,0-1,1,Valve,EGR valve command or measured opening
+exhaust_valve_opening_frac,0-1,1,Valve,Exhaust or three-way exhaust branch opening
+back_pressure_valve_opening_frac,0-1,0,Valve,Back-pressure valve opening if installed
+egr_branch_flow_kg_s,kg/s,1,Recycle split,EGR branch flow
+exhaust_branch_flow_kg_s,kg/s,1,Recycle split,Exhaust branch flow
+separator_inlet_RH_frac,0-1,1,Separator,Separator inlet RH
+separator_outlet_RH_frac,0-1,1,Separator,Separator gas outlet RH
+separator_liquid_water_kg_s,kg/s,1,Separator,Separated liquid water rate or accumulated water/time

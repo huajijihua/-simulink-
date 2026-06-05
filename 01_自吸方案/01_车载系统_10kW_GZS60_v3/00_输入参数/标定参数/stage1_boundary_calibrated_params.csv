@@ -1,0 +1,6 @@
+parameter,value,unit,source_level,source_note,optimized_in_stage1,lower_bound,upper_bound,calibration_status,notes
+K_ca_in_kg_s_kPa,0.00135,kg/s/kPa,C,stack inlet pressure-flow coefficient,1,5e-05,0.05,stage1_candidate,Audit model/init file not overwritten; accepted candidate is recorded for review.
+K_ca_out_kg_s_kPa,0.000216,kg/s/kPa,C,stack cathode outlet pressure-flow coefficient,1,1e-05,0.05,stage1_candidate,Audit model/init file not overwritten; accepted candidate is recorded for review.
+hum_dry_dp_ref_kPa,4.58289,kPa,B,GZS60 dry-side pressure-drop equivalent,1,0.5,25,stage1_candidate,Audit model/init file not overwritten; accepted candidate is recorded for review.
+hum_wet_dp_ref_kPa,11.4663,kPa,B,GZS60 wet-side pressure-drop equivalent,1,0.5,35,unchanged,Audit model/init file not overwritten; accepted candidate is recorded for review.
+hum_dp_exp,0.868128,1,C,humidifier pressure-drop flow exponent,1,0.35,1.25,stage1_candidate,Audit model/init file not overwritten; accepted candidate is recorded for review.

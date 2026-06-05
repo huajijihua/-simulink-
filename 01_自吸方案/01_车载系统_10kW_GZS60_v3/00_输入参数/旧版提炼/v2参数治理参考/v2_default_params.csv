@@ -1,0 +1,47 @@
+parameter,value,unit,source,calibration_status,module,notes
+dt_s,1.0,s,v2 first-stage modeling decision,default_to_review,numerics,Fixed-step discrete update interval for first implementation.
+sim_stop_time_s,120,s,engineering default,default_to_review,numerics,Long enough for first conservation and trend checks; not a final transient target.
+ambient_T_C,25,degC,standard engineering boundary,default_to_review,environment,Convenience boundary converted to gas partial pressures.
+ambient_p_kPa,101.325,kPa_abs,standard atmosphere,default_to_review,environment,Used only if explicit species partial pressures are not supplied.
+ambient_RH,0.50,1,engineering default,default_to_review,environment,Convenience humidity input.
+ambient_xO2,0.2095,1,dry air convention,default_to_review,environment,Dry air oxygen mole fraction.
+stack_active_area_cm2,380,cm2,v1 stack initialization and polarization data context,from_v1_reference,stack,Used to convert current density and stack current.
+stack_cell_count,16,1,v1 stack initialization and 10 kW short-stack context,from_v1_reference,stack,Used in Faraday rates and stack voltage.
+cathode_volume_m3,2.0e-4,m3,v1 engineering default,default_to_review,stack,Representative cathode gas inventory volume.
+cathode_tail_volume_m3,2.5e-4,m3,v1 engineering default,default_to_review,stack,Representative cathode outlet/tail inventory volume.
+anode_volume_m3,1.2e-4,m3,v1 engineering default,default_to_review,stack,Representative anode gas inventory volume.
+membrane_water_capacity_kg_per_lambda,3.6e-4,kg, v1 engineering default,default_to_review,membrane,Equivalent water mass per membrane lambda unit.
+lambda_initial,8,1,engineering default,default_to_review,membrane,Initial membrane water content for first runs.
+lambda_min,1,1,standard PEMFC model bound,default_to_review,membrane,Lower numerical and physical clamp.
+lambda_max,22,1,standard PEMFC model bound,default_to_review,membrane,Upper numerical and physical clamp.
+cathode_outflow_coeff_kg_s_kPa,1.0e-4,kg/s/kPa,engineering default,default_to_calibrate,stack,Linear pressure-flow coefficient for cathode outlet.
+cathode_liquid_drain_coeff_1_s,0.05,1/s,engineering default,default_to_calibrate,stack,Simple liquid water inventory drain coefficient.
+anode_outflow_coeff_kg_s_kPa,5.0e-5,kg/s/kPa,engineering default,default_to_calibrate,anode,Linear pressure-flow coefficient for anode outlet or purge equivalent.
+anode_inlet_pressure_offset_kPa,10,kPa,second-version Gate 1 modeling decision,default_to_review,anode,Anode inlet pressure is represented as cathode inlet pressure plus this offset.
+anode_channel_dp_kPa,3,kPa,engineering default,default_to_review,anode,Simple anode channel pressure drop before outlet-to-ambient boundary.
+anode_h2_stoich,1.5,1,engineering default,default_to_review,anode,Hydrogen inlet flow multiplier relative to electrochemical H2 consumption.
+anode_inlet_RH,0.30,1,second-version Gate 1 modeling decision,default_to_review,anode,Anode inlet relative humidity used for script-core boundary.
+cathode_liquid_carry_coeff,1.0,1,engineering default,default_to_review,stack,Liquid water carry-out multiplier tied to cathode gas outlet flow.
+membrane_density_kg_m3,2000,kg/m3,Nafion-order engineering default,default_to_review,membrane,Used in quasi-static membrane water concentration calculation.
+membrane_EW_kg_mol,1.10,kg/mol,Nafion-order engineering default,default_to_review,membrane,Equivalent weight for membrane water concentration calculation.
+membrane_thickness_m,1.0e-4,m,engineering default,default_to_review,membrane,Effective membrane thickness for back-diffusion term.
+membrane_diffusion_scale,1.0,1,engineering default,default_to_review,membrane,Multiplier for book-style membrane water diffusivity correlation.
+membrane_water_flux_limit_kg_s,1.0e-5,kg/s,numerical guardrail,default_to_review,membrane,Conservative guardrail for quasi-static membrane water flux during high-flow fixed-inlet-pO2 cases.
+compressor_pressure_ratio,1.35,1,engineering default using DQ60 as boundary actuator,default_to_review,compressor,First-stage pressure rise if MAP lookup is not yet wired.
+compressor_efficiency,0.42,1,v1 DQ60 engineering assumption,from_v1_reference,compressor,Used for simple isentropic temperature rise.
+compressor_cp_J_kgK,1005,J/kg/K,air thermodynamic default,default_to_review,compressor,Gas heat capacity for first-stage compressor calculation.
+intercooler_outlet_T_C,45,degC,engineering target,default_to_review,intercooler,Used if fixed outlet temperature mode is selected.
+intercooler_dp_kPa,1.5,kPa,v1 engineering default,default_to_review,intercooler,Simple pressure drop before detailed map is available.
+humidifier_dry_dp_kPa,0.5,kPa,GZS60 parameter file or engineering fallback,default_to_review,humidifier,Use GZS60 data when available; this is fallback only.
+humidifier_wet_dp_kPa,0.5,kPa,GZS60 parameter file or engineering fallback,default_to_review,humidifier,Use GZS60 data when available; this is fallback only.
+humidifier_water_transfer_eff,0.60,1,engineering default,default_to_calibrate,humidifier,First-stage bounded transfer effectiveness; limited by wet vapor and dry capacity.
+humidifier_heat_eff,0.50,1,engineering default,default_to_calibrate,humidifier,First-stage sensible heat transfer effectiveness.
+backpressure_p_kPa,150,kPa_abs,engineering boundary,default_to_review,backpressure,Provides downstream pressure for cathode pressure-flow relation.
+egr_fraction_cmd,0.0,1,validation scenario command,scenario_input,egr,Scenario value overwritten by validation cases.
+target_current_density_A_cm2,0.10,A/cm2,first-stage validation scenario,scenario_input,operation,Used for constant-current initial validation.
+target_cell_voltage_V,0.80,V,first-stage validation scenario,scenario_input,operation,Used for constant-voltage validation after constant-current path.
+coolant_sink_T_C,60,degC,engineering default,default_to_review,thermal,Coolant boundary temperature for first energy balance.
+coolant_heat_transfer_W_K,80,W/K,v1 engineering default,default_to_review,thermal,Simple heat rejection coefficient.
+ambient_heat_transfer_W_K,8,W/K,v1 engineering default,default_to_review,thermal,Simple ambient heat loss coefficient.
+stack_heat_capacity_J_K,30000,J/K,v1 engineering default,default_to_review,thermal,Stack lumped heat capacity for first-stage energy balance.
+stack_gas_cp_J_kgK,1005,J/kg/K,air thermodynamic default,default_to_review,thermal,Used for cathode gas heat absorption and outlet temperature.

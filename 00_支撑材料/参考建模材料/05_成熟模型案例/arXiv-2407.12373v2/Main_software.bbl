@@ -1,0 +1,120 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{baoTwodimensionalModelingPolymer2015}
+C.~Bao, W.~G. Bessler, Two-dimensional modeling of a polymer electrolyte membrane fuel cell with long flow channel. {{Part I}}. {{Model}} development, Journal of Power Sources 275 (2015) 922--934, semble \^etre un excellent document sur la mod\'elisation 2D. \par L'id\'ee est exactement la m\^eme que la mienne en 1D+1D, sauf qu'il y a une connection entre les points \`a l'int\'erieur de la pile. \par Source 26 de l'article 2021 de Ling Xu afin d'obtenir une \'equation exp\'erimentale d\'ecrivant l'\'equilibre de l'eau au niveau de la membrane.
+\newblock \href {https://doi.org/10.1016/j.jpowsour.2014.11.058} {\path{doi:10.1016/j.jpowsour.2014.11.058}}.
+
+\bibitem{mayurMultitimescaleModelingMethodology2015}
+M.~Mayur, S.~Strahl, A.~Husar, W.~G. Bessler, A multi-timescale modeling methodology for {{PEMFC}} performance and durability in a virtual fuel cell car, International Journal of Hydrogen Energy 40~(46) (2015) 16466--16476, article conseill\'e par Zhongliang qui traite d'un mod\`ele 2D. Zhongliang le trouve tr\`es coh\'erent. \par Il y a aussi de bonnes consid\'erations de d\'egradation sur la membrane. Un mod\`ele simple a \'et\'e employ\'e pour prouver la faisabilit\'e du mod\`ele.
+\newblock \href {https://doi.org/10.1016/j.ijhydene.2015.09.152} {\path{doi:10.1016/j.ijhydene.2015.09.152}}.
+
+\bibitem{COMSOLMultiphysicsSoftware}
+{{COMSOL}}: {{Multiphysics Software}} for {{Optimizing Designs}}.
+
+\bibitem{xie3D+1DModelingApproach2020}
+B.~Xie, G.~Zhang, Y.~Jiang, R.~Wang, X.~Sheng, F.~Xi, Z.~Zhao, W.~Chen, Y.~Zhu, Y.~Wang, H.~Wang, K.~Jiao, ``{{3D}}+{{1D}}'' modeling approach toward large-scale {{PEM}} fuel cell simulation and partitioned optimization study on flow field, eTransportation 6 (2020) 100090, article int\'eressant qui montre une faible pente dans la courbe de pola alors que du 3D+1D est utilis\'e comme mod\`ele. \par Donne des informations sur les param\`etres de la MPL.
+\newblock \href {https://doi.org/10.1016/j.etran.2020.100090} {\path{doi:10.1016/j.etran.2020.100090}}.
+
+\bibitem{wuMathematicalModelingTransient2009}
+H.~Wu, Mathematical {{Modeling}} of {{Transient Transport Phenomena}} in {{PEM Fuel Cells}}, Ph.D. thesis, mod\'elisation 3D de la pile. \par Ca utilise le CFD (Computational Fluid Dynamic) et c'est tr\`es compliqu\'e. \par C'est un mod\`ele dynamique 3-D, avec consid\'erations de la thermique et avec 2 phases, sans vieillissement (2009).
+
+\bibitem{fanCharacteristicsPEMFCOperating2017}
+L.~Fan, G.~Zhang, K.~Jiao, Characteristics of {{PEMFC}} operating at high current density with low external humidification, Energy Conversion and Management 150 (2017) 763--774, ce document a \'et\'e relativement bien cit\'e, il a l'air bien fiable. Jiao est co-auteur. \par Il m'est utile pour confirmer la valeur de constantes, d'\'equations et m'apporte une nouvelle \'equation : la viscosit\'e dynamique de l'eau fonction de la temp\'erature. \par Il me permet aussi d'avoir une tr\`es bonne expression de la surtension. \par ``sufficient external humidification is necessary to prevent the polymer electrolyte dehydration at low current density, while at high current density, the water produced in cathode CL is enough to humidify the polymer electrolyte'' \par Takalloo et al. [17] indicated that the external humidification at anode inlet was more necessary than the cathode inlet, because the cathode could produce water and should avoid from flooding. \par En fonction de l'humidit\'e relative d'entr\'ee, les flux
+  d'eau entre GDL et GC ont une direction diff\'erente, et cette direction peut varier le long du GC~! J'ai aussi ici des informations utiles sur les vitesses en jeu et leur r\'epartition spatiale.
+\newblock \href {https://doi.org/10.1016/j.enconman.2017.08.034} {\path{doi:10.1016/j.enconman.2017.08.034}}.
+
+\bibitem{AnsysFluentFluid}
+Ansys {{Fluent}} \textbar{} {{Fluid Simulation Software}}.
+
+\bibitem{schumacher2+1DModellingPolymer2012}
+J.~O. Schumacher, J.~Eller, G.~Sartoris, T.~Colinart, B.~C. Seyfang, 2+{{1D}} modelling of a polymer electrolyte fuel cell with glassy-carbon microstructures, Mathematical and Computer Modelling of Dynamical Systems 18~(4) (2012) 355--377, article conseill\'e par Zhongliang sur la mod\'elisation 2+1D.
+\newblock \href {https://doi.org/10.1080/13873954.2011.642390} {\path{doi:10.1080/13873954.2011.642390}}.
+
+\bibitem{WolframMathematicaModern}
+Wolfram {{Mathematica}}: {{Modern Technical Computing}}.
+
+\bibitem{bealeOpensourceComputationalModel2016}
+S.~B. Beale, H.-W. Choi, J.~G. Pharoah, H.~K. Roth, H.~Jasak, D.~H. Jeon, Open-source computational model of a solid oxide fuel cell, Computer Physics Communications 200 (2016) 15--26.
+\newblock \href {https://doi.org/10.1016/j.cpc.2015.10.007} {\path{doi:10.1016/j.cpc.2015.10.007}}.
+
+\bibitem{zhangOpenFuelCell2NewComputational2024}
+S.~Zhang, S.~Hess, H.~Marschall, U.~Reimer, S.~Beale, W.~Lehnert, {{openFuelCell2}}: {{A}} new computational tool for fuel cells, electrolyzers, and other electrochemical devices and processes, Computer Physics Communications 298 (2024) 109092.
+\newblock \href {https://doi.org/10.1016/j.cpc.2024.109092} {\path{doi:10.1016/j.cpc.2024.109092}}.
+
+\bibitem{zhangOpenFuelCell22023}
+S.~Zhang, S.~Hess, S.~Beale, {{openFuelCell2}} (Sep. 2023).
+
+\bibitem{OpenFOAM2024}
+{{OpenFOAM}} (Jun. 2024).
+
+\bibitem{pukrushpanControlOrientedModelingAnalysis2004}
+J.~T. Pukrushpan, H.~Peng, A.~G. Stefanopoulou, Control-{{Oriented Modeling}} and {{Analysis}} for {{Automotive Fuel Cell Systems}}, Journal of Dynamic Systems, Measurement, and Control 126~(1) (2004) 14--25.
+\newblock \href {https://doi.org/10.1115/1.1648308} {\path{doi:10.1115/1.1648308}}.
+
+\bibitem{pukrushpanUniversityMichiganFuel2002}
+J.~T. Pukrushpan, A.~G. Stefanopoulou, H.~Peng, University of {{Michigan Fuel Cell Stack Simulation}} package (2002).
+
+\bibitem{vetterFreeOpenReference2019}
+R.~Vetter, J.~O. Schumacher, Free open reference implementation of a two-phase {{PEM}} fuel cell model, Computer Physics Communications 234 (2019) 223--234, excellent article offrant un logiciel open-source 1D. Cependant ni les auxiliaires ni le temps ne sont mod\'elis\'es.
+\newblock \href {https://doi.org/10.1016/j.cpc.2018.07.023} {\path{doi:10.1016/j.cpc.2018.07.023}}.
+
+\bibitem{schumacherPEMFC1DMMM2020}
+J.~Schumacher, R.~Vetter, R.~Herrend{\"o}rfer, {{PEMFC-1DMMM}} (2020).
+
+\bibitem{gnuGNUGeneralPublic2007}
+{GNU}, {{GNU General Public License}} (Jun. 2007).
+
+\bibitem{gassCriticalReviewProton2024}
+R.~Gass, Z.~Li, R.~Outbib, S.~Jemei, D.~Hissel, A {{Critical Review}} of {{Proton Exchange Membrane Fuel Cells Matter Transports}} and {{Voltage Polarisation}} for {{Modelling}}, Journal of The Electrochemical Society (2024).
+\newblock \href {https://doi.org/10.1149/1945-7111/ad305a} {\path{doi:10.1149/1945-7111/ad305a}}.
+
+\bibitem{gassAdvanced1DPhysicsbased2025}
+R.~Gass, Z.~Li, R.~Outbib, S.~Jemei, D.~Hissel, An advanced {{1D}} physics-based model for {{PEM}} hydrogen fuel cells with enhanced overvoltage prediction, International Journal of Hydrogen Energy 97 (2025) 1108--1125.
+\newblock \href {https://doi.org/10.1016/j.ijhydene.2024.11.374} {\path{doi:10.1016/j.ijhydene.2024.11.374}}.
+
+\bibitem{numpyStyleGuide2024}
+{Numpy}, Style guide (2024).
+
+\bibitem{scipyScipyIntegrateSolve_ivp}
+{SciPy}, Scipy.{{Integrate}}.{{Solve}}\_ivp (2024).
+
+\bibitem{xieValidationMethodologyPEM2022}
+B.~Xie, M.~Ni, G.~Zhang, X.~Sheng, H.~Tang, Y.~Xu, G.~Zhai, K.~Jiao, Validation methodology for {{PEM}} fuel cell three-dimensional simulation, International Journal of Heat and Mass Transfer 189 (2022) 122705, article conseill\'e par mon reviewer 2 de mon article review pour discuter d'une autre mani\`ere de mod\'eliser les flux d'eau liquide dans la pile.
+\newblock \href {https://doi.org/10.1016/j.ijheatmasstransfer.2022.122705} {\path{doi:10.1016/j.ijheatmasstransfer.2022.122705}}.
+
+\bibitem{EHGroupClean}
+{{EH Group Clean Energy Generation}}.
+
+\bibitem{BalticFuelCells}
+Baltic {{FuelCells}}.
+
+\bibitem{pascalGeneticalgorithm22024}
+D.~Pascal, Geneticalgorithm2 (2024).
+
+\bibitem{solgiGeneticalgorithm2020}
+R.~Solgi, Geneticalgorithm (2020).
+
+\bibitem{jiaoDesigningNextGeneration2021}
+K.~Jiao, J.~Xuan, Q.~Du, Z.~Bao, B.~Xie, B.~Wang, Y.~Zhao, L.~Fan, H.~Wang, Z.~Hou, S.~Huo, N.~P. Brandon, Y.~Yin, M.~D. Guiver, Designing the next generation of proton-exchange membrane fuel cells, Nature 595~(7867) (2021) 361--369, cet article est orient\'e vers l'am\'elioration de la densit\'e de puissance de la pile PEMFC.
+\newblock \href {https://doi.org/10.1038/s41586-021-03482-7} {\path{doi:10.1038/s41586-021-03482-7}}.
+
+\bibitem{europeanunionCleanHydrogenJoint}
+E.~Union, Clean {{Hydrogen Joint Undertaking}}. {{Strategic Research}} and {{Innovation Agenda}} 2021 -- 2027 (2022).
+
+\bibitem{amamiyaCurrentTopicsProposed}
+I.~Amamiya, S.~Tanaka, Current {{Topics Proposed}} by {{PEFC Manufacturers}}, {{Etc}}. -- {{Current Status}} and {{Topics}} of {{Fuel Cells}} for {{FCV}}.
+
+\bibitem{feigaoMultiphysicDynamic1D2010}
+{Fei Gao}, B.~Blunier, A.~Miraoui, A.~El~Moudni, A {{Multiphysic Dynamic}} 1-{{D Model}} of a {{Proton-Exchange-Membrane Fuel-Cell Stack}} for {{Real-Time Simulation}}, IEEE Trans. Ind. Electron. 57~(6) (2010) 1853--1864.
+\newblock \href {https://doi.org/10.1109/TIE.2009.2021177} {\path{doi:10.1109/TIE.2009.2021177}}.
+
+\bibitem{lunaNonlinearPredictiveControl2016}
+J.~Luna, S.~Jemei, N.~{Yousfi-Steiner}, A.~Husar, M.~Serra, D.~Hissel, Nonlinear predictive control for durability enhancement and efficiency improvement in a fuel cell power system, Journal of Power Sources 328 (2016) 250--261, le compresseur est plut\^ot finement mod\'elis\'e. \par Il calcule assez pr\'ecis\'ement l'efficacit\'e globale du syst\`eme pile \`a combustible, avec les auxiliaires. \par Il y a aussi une discussion sur la d\'egradation du platine.
+\newblock \href {https://doi.org/10.1016/j.jpowsour.2016.08.019} {\path{doi:10.1016/j.jpowsour.2016.08.019}}.
+
+\end{thebibliography}

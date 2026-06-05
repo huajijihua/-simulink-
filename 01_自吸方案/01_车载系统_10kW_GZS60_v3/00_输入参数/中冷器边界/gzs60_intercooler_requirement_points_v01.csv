@@ -1,0 +1,17 @@
+component,scenario,side,port,flow_slpm,RH_pct,T_C,p_kPa_abs,source_file,source_note
+humidifier,rated,dry,inlet,3200,,78,240,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 19-24; 100 kW requirement reference, not a 10 kW measured point
+humidifier,rated,dry,outlet,3200,42,80.5,233,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 19-24; dry side pressure drop about 7 kPa
+humidifier,rated,wet,inlet,3330,90,85,191,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 19-24; wet inlet reference condition
+humidifier,peak,dry,inlet,4355,,78,275,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 25-30; 100 kW requirement reference, not a 10 kW measured point
+humidifier,peak,dry,outlet,4535,37,83,261,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 25-30; dry side pressure drop about 14 kPa
+humidifier,peak,wet,inlet,4820,75,90,200,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 25-30; wet inlet reference condition
+humidifier,low_flow_1,dry,inlet,630,,69,142,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 27-32; low-flow estimate point, dry outlet RH blank
+humidifier,low_flow_1,dry,outlet,630,,70.5,141,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 27-32; low-flow estimate point, dry side pressure drop about 1 kPa
+humidifier,low_flow_1,wet,inlet,680,66,73,130,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 27-32; wet inlet reference condition
+humidifier,low_flow_2,dry,inlet,1400,,73.5,165,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 27-32; low-flow estimate point, dry outlet RH blank
+humidifier,low_flow_2,dry,outlet,1400,,74.6,163,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 27-32; low-flow estimate point, dry side pressure drop about 2 kPa
+humidifier,low_flow_2,wet,inlet,1520,84,76.3,143,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 27-32; wet inlet reference condition
+humidifier,low_flow_3,dry,inlet,2170,,74.7,215,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 27-32; low-flow estimate point, dry outlet RH blank
+humidifier,low_flow_3,dry,outlet,2170,,75.5,210,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 27-32; low-flow estimate point, dry side pressure drop about 5 kPa
+humidifier,low_flow_3,wet,inlet,2300,98,78.7,181,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Sheet 4 rows 27-32; wet inlet reference condition
+intercooler,requirement_table,,,,,,00_支撑材料/实验数据-设备说明书/加湿器数据/增湿器+中冷器技术需求信息表-徐明星.xlsx,Rows 34-43 are blank in the available workbook; current UA and pressure-drop values remain engineering defaults

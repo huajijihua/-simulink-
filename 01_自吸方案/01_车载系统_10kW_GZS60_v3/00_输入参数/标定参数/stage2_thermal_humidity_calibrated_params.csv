@@ -1,0 +1,8 @@
+parameter,value,initial_value,changed_in_stage2,fit_status,notes,best_trace_score
+h_cool_W_K,121,121,0,stage2_candidate,Pressure/flow coefficients fixed from stage1.,1.14044564526545
+h_amb_W_K,9,9,0,stage2_candidate,Pressure/flow coefficients fixed from stage1.,1.14044564526545
+hum_mem_area_m2,40,40,0,stage2_candidate,Pressure/flow coefficients fixed from stage1.,1.14044564526545
+hum_mem_D_eff_m2_s,1e-09,1e-09,0,stage2_candidate,Pressure/flow coefficients fixed from stage1.,1.14044564526545
+hum_beta_wet_m_s,0.06,0.02,1,stage2_candidate,Pressure/flow coefficients fixed from stage1.,1.14044564526545
+hum_beta_dry_m_s,0.06,0.02,1,stage2_candidate,Pressure/flow coefficients fixed from stage1.,1.14044564526545
+hum_heat_eff,0.5825,0.5825,0,stage2_candidate,Pressure/flow coefficients fixed from stage1.,1.14044564526545

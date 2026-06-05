@@ -1,0 +1,166 @@
+node_id,node_name,model_branch,modeling_use,node_required_for_next_calibration,signal_name,unit,signal_required,description
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,T_C,degC,1,Gas or coolant temperature
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,p_kPa_abs,kPa abs,1,Absolute pressure
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,RH_frac,0-1,1,Relative humidity for gas nodes
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+fresh_air_inlet,Fresh air inlet,"vehicle,bench",boundary,1,pO2_kPa,kPa,1,Oxygen partial pressure
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,T_C,degC,1,Gas or coolant temperature
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,p_kPa_abs,kPa abs,1,Absolute pressure
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,RH_frac,0-1,1,Relative humidity for gas nodes
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+compressor_inlet,Fresh/EGR mixer outlet and compressor inlet,"vehicle,bench",BOP calibration,1,pO2_kPa,kPa,1,Oxygen partial pressure
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,T_C,degC,1,Gas or coolant temperature
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,p_kPa_abs,kPa abs,1,Absolute pressure
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,RH_frac,0-1,1,Relative humidity for gas nodes
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+compressor_outlet,Compressor outlet,"vehicle,bench",compressor MAP,1,pO2_kPa,kPa,1,Oxygen partial pressure
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,T_C,degC,1,Gas or coolant temperature
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,p_kPa_abs,kPa abs,1,Absolute pressure
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,RH_frac,0-1,1,Relative humidity for gas nodes
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+intercooler_outlet,Intercooler outlet,"vehicle",intercooler calibration,0,pO2_kPa,kPa,1,Oxygen partial pressure
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,T_C,degC,1,Gas or coolant temperature
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,p_kPa_abs,kPa abs,1,Absolute pressure
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,RH_frac,0-1,1,Relative humidity for gas nodes
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+humidifier_dry_outlet,GZS dry-side outlet,"vehicle",GZS60 calibration,0,pO2_kPa,kPa,1,Oxygen partial pressure
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,T_C,degC,1,Gas or coolant temperature
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,p_kPa_abs,kPa abs,1,Absolute pressure
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,RH_frac,0-1,1,Relative humidity for gas nodes
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+stack_cathode_inlet,Stack cathode inlet,"vehicle,bench",stack boundary,1,pO2_kPa,kPa,1,Oxygen partial pressure
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,T_C,degC,1,Gas or coolant temperature
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,p_kPa_abs,kPa abs,1,Absolute pressure
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,RH_frac,0-1,1,Relative humidity for gas nodes
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+stack_cathode_outlet,Stack cathode outlet,"vehicle,bench",stack water/O2 balance,1,pO2_kPa,kPa,1,Oxygen partial pressure
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,T_C,degC,1,Gas or coolant temperature
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,p_kPa_abs,kPa abs,1,Absolute pressure
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,RH_frac,0-1,1,Relative humidity for gas nodes
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+back_pressure_outlet,Back-pressure valve outlet,"vehicle",back-pressure valve,0,pO2_kPa,kPa,1,Oxygen partial pressure
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,T_C,degC,1,Gas or coolant temperature
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,p_kPa_abs,kPa abs,1,Absolute pressure
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,RH_frac,0-1,1,Relative humidity for gas nodes
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+humidifier_wet_outlet,GZS wet-side outlet,"vehicle",GZS60 wet-side balance,0,pO2_kPa,kPa,1,Oxygen partial pressure
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,T_C,degC,1,Gas or coolant temperature
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,p_kPa_abs,kPa abs,1,Absolute pressure
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,RH_frac,0-1,1,Relative humidity for gas nodes
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+separator_inlet,Water separator inlet,"vehicle,bench",separator balance,1,pO2_kPa,kPa,1,Oxygen partial pressure
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,T_C,degC,1,Gas or coolant temperature
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,p_kPa_abs,kPa abs,1,Absolute pressure
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,RH_frac,0-1,1,Relative humidity for gas nodes
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+separator_outlet,Water separator gas outlet,"vehicle,bench",separator balance,1,pO2_kPa,kPa,1,Oxygen partial pressure
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,T_C,degC,1,Gas or coolant temperature
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,p_kPa_abs,kPa abs,1,Absolute pressure
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,RH_frac,0-1,1,Relative humidity for gas nodes
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+egr_branch,EGR branch after separator,"vehicle,bench",EGR split calibration,1,pO2_kPa,kPa,1,Oxygen partial pressure
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,T_C,degC,1,Gas or coolant temperature
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,p_kPa_abs,kPa abs,1,Absolute pressure
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,RH_frac,0-1,1,Relative humidity for gas nodes
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+exhaust_branch,Exhaust branch after separator,"vehicle,bench",exhaust split calibration,1,pO2_kPa,kPa,1,Oxygen partial pressure
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,T_C,degC,1,Gas or coolant temperature
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,p_kPa_abs,kPa abs,1,Absolute pressure
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,RH_frac,0-1,1,Relative humidity for gas nodes
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+coolant_stack_inlet,Stack coolant inlet,"vehicle,bench",thermal boundary,1,pO2_kPa,kPa,1,Oxygen partial pressure
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,T_C,degC,1,Gas or coolant temperature
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,p_kPa_abs,kPa abs,1,Absolute pressure
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,RH_frac,0-1,1,Relative humidity for gas nodes
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,dew_point_C,degC,0,Preferred humidity cross-check when RH sensor accuracy is uncertain
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,total_flow_kg_s,kg/s,1,Total gas or coolant mass flow
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,O2_kg_s,kg/s,0,Oxygen mass flow; may be derived from gas composition
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,N2_kg_s,kg/s,0,Nitrogen mass flow; may be derived from gas composition
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,H2O_vapor_kg_s,kg/s,0,Vapor water mass flow
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,H2O_liquid_kg_s,kg/s,0,Liquid water carryover or separated water
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,xO2_mol_frac,mol/mol,1,Oxygen mole fraction
+coolant_stack_outlet,Stack coolant outlet,"vehicle,bench",thermal balance,1,pO2_kPa,kPa,1,Oxygen partial pressure

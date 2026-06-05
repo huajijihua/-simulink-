@@ -1,0 +1,7 @@
+parameter,value,initial_value,note
+h_cool_W_K,836,121,fallback cooling coefficient for off-curve conditions
+h_amb_W_K,9,9,ambient heat-loss coefficient after thermal stage A
+coolant_rho_kg_L,1,1,water-equivalent coolant density used for bench heat reconstruction
+coolant_cp_J_kgK,4180,4180,water-equivalent coolant cp used for bench heat reconstruction
+C_stack_J_K,45000,45000,frozen thermal capacitance in stage A
+hum_heat_eff,0.5825,0.5825,frozen humidifier heat-effectiveness in stage A

@@ -1,0 +1,6 @@
+current_A,anode_stoich,cathode_stoich,anode_pressure_gauge_kPa,cathode_pressure_gauge_kPa,water_inlet_pressure_gauge_kPa,anode_inlet_T_C,cathode_inlet_T_C,anode_RH_pct,cathode_RH_pct,coolant_inlet_T_C,coolant_delta_T_C,source_file,priority_note
+0,5,5,50,40,40,60,60,30,80,60,0,00_支撑材料/实验数据-设备说明书/电堆信息及推荐测试工况.xlsx,user table / recommended test condition used as phase boundary baseline
+38,5,5,50,40,40,60,60,30,80,60,3,00_支撑材料/实验数据-设备说明书/电堆信息及推荐测试工况.xlsx,user table / recommended test condition used as phase boundary baseline
+76,3,3.6,70,55,55,62,62,30,60,62,4,00_支撑材料/实验数据-设备说明书/电堆信息及推荐测试工况.xlsx,user table / recommended test condition used as phase boundary baseline
+114,2.7,3,80,60,60,63,63,30,60,63,5,00_支撑材料/实验数据-设备说明书/电堆信息及推荐测试工况.xlsx,user table / recommended test condition used as phase boundary baseline
+152,2.5,2.4,90,70,70,65,65,30,60,65,6,00_支撑材料/实验数据-设备说明书/电堆信息及推荐测试工况.xlsx,user table / recommended test condition used as phase boundary baseline

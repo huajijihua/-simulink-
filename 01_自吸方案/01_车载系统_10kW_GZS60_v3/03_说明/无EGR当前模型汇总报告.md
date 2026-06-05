@@ -29,8 +29,10 @@
 02_脚本/init_vehicle_10kw_gzs60_v3.m
 02_脚本/calibrate_vehicle_10kw_gzs60_v3_pressurefix_stage1.m
 02_脚本/calibrate_vehicle_10kw_gzs60_v3_thermal_stageA.m
-02_脚本/calibrate_vehicle_10kw_gzs60_v3_humidity_stageB.m
+02_脚本/analyze_vehicle_10kw_gzs60_v3_humidifier_first.m
 ```
+
+`calibrate_vehicle_10kw_gzs60_v3_humidity_stageB.m` 仅作为旧 Stage B 历史对照入口保留，默认不运行，避免覆盖当前加湿器优先参数。
 
 当前默认 `current` 模式已接入：
 
@@ -47,7 +49,8 @@
 ```text
 04_验证结果/pressurefix_stage1_no_egr_diagnostic.csv
 04_验证结果/thermal_stageA_diagnostic.csv
-04_验证结果/humidity_stageB_no_egr_diagnostic.csv
+04_验证结果/humidifier_first_no_egr_system_diagnostic.csv
+04_验证结果/humidifier_first_summary.md
 ```
 
 ## 3. 建模理念和边界
@@ -190,15 +193,26 @@ T_out = T_in + dT_compressor
 
 ### 6.3 加湿器
 
-`HumidifierDryWetLumped` 采用集总干湿侧膜传水/传热模型。当前湿侧 Stage B 第一轮放开的主要参数为：
+`HumidifierDryWetLumped` 当前采用集总干湿侧膜传水/传热模型，传水源项改为低维 epsilon-NTU 水容量模型：
 
 ```text
-hum_NTU_ref        = 0.215343
-hum_flow_exp       = 0.37998
-hum_mem_D_eff_m2_s = 1.25e-09
+NTUgain = hum_NTU_ref * (m_ref / m_dry)^hum_flow_exp
+epsilon = 1 - exp(-NTUgain)
+m_transfer = epsilon * min(dry_need, wet_available)
 ```
 
-当前加湿器参数已经能改善堆入口水蒸气分压和含湿量，但 `RH_ca_in` 没有同步改善，四口先验也没有显著变好。因此湿侧结果只能定义为第一轮可接受修正，不能定义为最终收敛。
+当前湿侧参数为：
+
+```text
+hum_NTU_ref        = 0.47854
+hum_flow_exp       = 0.37998
+hum_mem_D_eff_m2_s = 1.0e-09
+hum_dry_dp_ref_kPa = 9.51831
+hum_wet_dp_ref_kPa = 11.4663
+hum_dp_exp         = 0.578752
+```
+
+当前口径已经调整：台架堆入口湿度是外部自由控制边界，不再作为车载膜加湿器出口硬拟合目标。电堆阴极入口湿度由加湿器干侧出口决定，台架 `RH_ca_in/pH2O_caIn/xH2O_caIn` 只作对比。
 
 ### 6.4 热侧
 
@@ -252,12 +266,11 @@ steady       = 13/13
 pressure_order_ok = 13/13
 ```
 
-湿侧 Stage B 接入后，当前无 EGR 诊断中的热侧结果为：
+加湿器优先湿侧接入后，当前无 EGR 诊断中的热侧结果为：
 
 ```text
-T_stack RMSE  = 0.585 C
-T_stack maxAbs = 0.864 C
-T_stack_sim range = 61.887-81.261 C
+T_stack RMSE  = 0.588 C
+T_stack_sim range = 61.887-81.293 C
 ```
 
 判断：
@@ -266,33 +279,35 @@ T_stack_sim range = 61.887-81.261 C
 - 冷却带热量仍有约 616 W RMSE，说明 `Q_cool` 只能作为辅助约束；
 - 低负荷点 `bench_j0p10` 存在冷却液出口温度低于入口温度的问题，不应作为强热平衡真值点。
 
-### 7.3 湿侧
+### 7.3 加湿器和湿侧边界
 
-当前湿侧 Stage B 第一轮结果：
+当前加湿器优先验收结果：
 
 ```text
-pH2O_caIn RMSE  = 4.500 kPa
-pH2O_caIn maxAbs = 8.185 kPa
-xH2O_caIn RMSE  = 0.02171
-RH_ca_in RMSE   = 0.166
-RH_ca_in maxAbs = 0.247
-RH_ca_in_sim range = 0.190-0.801
+dry gain direction pass     = 25/25
+wet loss direction pass     = 25/25
+transfer limit pass         = 25/25
+dry outlet dewpoint         = 62.61 C
+GZS60 dry dewpoint spec     = 59.81 C
+dry/wet pressure drop       = 9.61 / 12.78 kPa
+vehicle-vs-bench pH2O RMSE  = 10.509 kPa
+vehicle-vs-bench RH RMSE    = 0.122
 ```
 
 判断：
 
-- 堆入口水蒸气分压和含湿量相对基线已有改善；
-- 相对湿度没有同步改善，可能与温度换算口径、局部饱和假设、加湿器传热和传水耦合有关；
-- 湿侧下一轮应优先复核 `RH_ca_in` 与 `pH2O_caIn` 不同步改善的原因，不应直接进入大范围参数自由拟合。
+- 加湿器自身方向性、规格点露点和压降已达到当前验收口径；
+- 车载加湿器出口与台架堆入口湿态差异较大，优先解释为车载结构与台架自由加湿边界不同；
+- 该差异不再直接作为“湿侧拟合失败”处理，但仍需在报告中明确列出，避免误称车载系统复现了台架加湿边界。
 
 ### 7.4 电压
 
-当前湿侧 Stage B 接入后的电压结果：
+当前加湿器优先湿侧接入后的电压结果：
 
 ```text
-V_cell RMSE  = 0.0735 V/cell
-V_cell maxAbs = 0.1508 V/cell
-V_cell_sim range = 0.4280-0.8175 V
+V_cell RMSE  = 0.0760 V/cell
+V_cell maxAbs = 0.1553 V/cell
+high-current bias = -0.1036 V/cell
 ```
 
 判断：
@@ -344,12 +359,12 @@ min(lambda_O2_actual) = 1.788
 
 ### 10.1 冻结当前无 EGR 临时检查点
 
-当前压力链、热侧 Stage A、湿侧 Stage B 第一轮只能作为临时检查点，不等于最终无 EGR 基线已经完成。
+当前压力链、热侧 Stage A、加湿器优先湿侧边界只能作为临时检查点，不等于最终无 EGR 基线已经完成。
 
 建议先把当前结果明确标记为：
 
 ```text
-pressurefix + thermal Stage A + humidity Stage B first round
+pressurefix + thermal Stage A + humidifier-first humidity boundary
 ```
 
 该版本可用于问题定位和后续对比，但不作为进入 EGR 的最终门槛。
@@ -365,16 +380,16 @@ pressurefix + thermal Stage A + humidity Stage B first round
 - 冷却流量到等效换热系数的曲线是否存在过拟合或外推风险；
 - 热侧是否可以正式冻结，还是需要小范围复核。
 
-### 10.3 湿侧 Stage B 第二轮复核
+### 10.3 加湿器优先湿侧边界复核
 
 优先复核：
 
-- `RH_ca_in` 与 `pH2O_caIn` 不同步改善的原因；
-- 温度换算和饱和蒸气压口径；
-- 加湿器传热和传水是否被当前参数分配得过于耦合；
-- 是否有必要放开 `hum_beta_dry_m_s / hum_beta_wet_m_s`。
+- 四口干出口含湿量、露点和 RH 的残余误差来源；
+- GZS60 过尺寸加湿器用于 10 kW 车载系统时，是否需要等效削弱或分段化能力；
+- 温度换算、饱和蒸气压和露点口径；
+- 加湿器传热和传水是否被当前参数分配得过于耦合。
 
-不建议在原因未查清前大范围释放更多湿侧参数。
+不建议在加湿器自身四口/规格证据链未查清前，为追平台架自由加湿边界而大范围释放更多湿侧参数。
 
 ### 10.4 电压复核
 
@@ -382,7 +397,7 @@ pressurefix + thermal Stage A + humidity Stage B first round
 
 - 压力链保持冻结；
 - 热侧已被接受或明确其残余误差边界；
-- 湿侧 Stage B 第二轮或湿度边界复核完成；
+- 加湿器优先湿侧边界复核完成；
 - `V_cell` 仍存在明确系统偏差。
 
 电压复核目标不是把所有误差都用电压参数吸收，而是确认活化、欧姆、浓差项是否仍有系统偏差。
@@ -479,8 +494,9 @@ egr_fraction_cmd = 0.05-0.20
 
 - 压力链语义已理顺，13 点压力顺序全部通过；
 - 热侧温度回归较好，`T_stack RMSE` 约 0.6 C；
-- 湿侧第一轮能改善堆入口水蒸气分压，但 RH 仍需复核；
-- 电压仍有约 0.0735 V/cell RMSE，不宜提前用于高精度性能结论；
+- 加湿器自身方向性、规格点露点和压降已通过当前验收；
+- 车载入口湿态与台架自由加湿边界存在明显差异，必须作为边界差异说明；
+- 电压仍有约 0.0760 V/cell RMSE，不宜提前用于高精度性能结论；
 - 当前模型适合支撑无 EGR 工况分析和 EGR 机理趋势分析的前处理，但不适合直接给出 EGR 定量优化结论。
 
-因此，下一步不是进入 EGR，而是继续完成无 EGR 基线：先复核热侧残余误差，再推进湿侧 Stage B-2，随后做电压复核；这些完成后再生成无 EGR 参考表和恒电压分析脚本。EGR 同电流趋势分析必须放到上述门槛之后。
+因此，下一步不是进入 EGR，而是继续完成无 EGR 基线：先确认当前加湿器优先边界是否接受，再复核热侧残余误差和高电流段电压偏差；这些完成后再生成无 EGR 参考表和恒电压分析脚本。EGR 同电流趋势分析必须放到上述门槛之后。

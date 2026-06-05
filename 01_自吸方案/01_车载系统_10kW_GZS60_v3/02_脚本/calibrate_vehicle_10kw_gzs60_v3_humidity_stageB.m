@@ -5,6 +5,19 @@ function results = calibrate_vehicle_10kw_gzs60_v3_humidity_stageB()
 % This entry fits the stack-inlet water state under 13 no-EGR steady points
 % while using humidifier four-port data as a secondary prior to keep dry/wet
 % side exchange physically reasonable.
+%
+% This route is now a historical comparison. The current vehicle humidifier
+% boundary is maintained by analyze_vehicle_10kw_gzs60_v3_humidifier_first.
+% Set ALLOW_HISTORICAL_STAGEB=1 only when intentionally regenerating the old
+% stack-inlet-humidity fit, because this script overwrites
+% humidity_stageB_params.csv.
+
+if ~strcmp(getenv('ALLOW_HISTORICAL_STAGEB'), '1')
+    error(['calibrate_vehicle_10kw_gzs60_v3_humidity_stageB is historical. ', ...
+        'Run analyze_vehicle_10kw_gzs60_v3_humidifier_first for the current ', ...
+        'humidifier-first baseline, or set ALLOW_HISTORICAL_STAGEB=1 to regenerate ', ...
+        'the old comparison route.']);
+end
 
 P0 = init_vehicle_10kw_gzs60_v3("stageA");
 P0 = rebuildModuleParamsLocal(P0);
@@ -593,7 +606,7 @@ end
 T = cell2table(rows, 'VariableNames', {'parameter', 'value', 'initial_value', 'accepted', 'note'});
 end
 
-function writeSummary(path, M, baseM, candM, accepted, paramTable, opts)
+function writeSummary(path, ~, baseM, candM, accepted, paramTable, opts)
 lines = [
     "# Humidity Stage-B Summary"
     ""

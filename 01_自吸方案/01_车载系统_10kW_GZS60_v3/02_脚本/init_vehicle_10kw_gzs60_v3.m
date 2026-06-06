@@ -118,27 +118,8 @@ P.stack_m_lim_O2 = 1.20;
 P.stack_i_lim_ref_A_cm2 = 1.20;
 P.stack_lambda_O2_half = 1.20;
 
-% Tail-gas pressure chain and EGR.
-P.separator_liq_eff = 0.98;
+% EGR is modeled as a lumped splitter/return feedback in the current SLX.
 P.egr_fraction_default = 0.40;
-P.separator_dp_ref_kPa = 2.0;
-P.tailgas_manifold_dp_kPa = 0.5;
-P.egr_return_target_margin_kPa = 0.0;
-P.V_tailgas_manifold_m3 = 3.0e-3;
-P.K_tailgas_egr_out_kg_s_kPa = 4.0e-5;
-P.K_tailgas_bp_out_kg_s_kPa = 1.2e-4;
-P.egr_valve_coeff = 1.2;
-P.egr_valve_dp_fraction = 0.65;
-P.bp_valve_coeff = 2.8;
-P.egr_return_pipe_dp_ref_kPa = 1.5;
-P.egr_return_pipe_dp_exp = 1.0;
-P.p_anode_tail_downstream_kPa = 85.0;
-% Outlet manifold defaults follow the literature-scale manifold volumes to
-% keep the downstream pressure chain within a more realistic range.
-P.V_ca_manifold_m3 = 1.1e-3;
-P.V_an_manifold_m3 = 3.2e-3;
-P.K_ca_man_out_kg_s_kPa = 1.2e-3;
-P.K_an_man_out_kg_s_kPa = 4.0e-5;
 
 P = readCopiedData(P, inputDir);
 P = readVoltageFitParams(P, inputDir);
@@ -148,37 +129,6 @@ P = buildModuleParams(P);
 % Initial feedback nodes and stack inventory.
 P.egr_initial_node = [0 0 0 0 P.T_amb_C P.p_amb_kPa 0]';
 P.wet_initial_node = [0 0 0 0 70.0 P.p_cathode_back_kPa 0]';
-T0_manifold_K = 65.0 + 273.15;
-pSat0_kPa = saturationPressureKPa(65.0);
-pCaMan0_kPa = P.p_cathode_back_kPa;
-pAnMan0_kPa = P.p_anode_back_kPa;
-pO2Man0_kPa = 0.18 * max(pCaMan0_kPa - pSat0_kPa, 1e-6);
-pN2Man0_kPa = 0.82 * max(pCaMan0_kPa - pSat0_kPa, 1e-6);
-pVMan0_kPa = min(pSat0_kPa, pCaMan0_kPa - 1e-6);
-pH2Man0_kPa = max(pAnMan0_kPa - 0.30 * pSat0_kPa, 1e-6);
-pVAnMan0_kPa = min(0.30 * pSat0_kPa, pAnMan0_kPa - 1e-6);
-P.ca_manifold_initial_state = [
-    pO2Man0_kPa * 1000 * P.V_ca_manifold_m3 * P.M_O2_kg_mol / (P.R_J_molK * T0_manifold_K)
-    pN2Man0_kPa * 1000 * P.V_ca_manifold_m3 * P.M_N2_kg_mol / (P.R_J_molK * T0_manifold_K)
-    pVMan0_kPa * 1000 * P.V_ca_manifold_m3 * P.M_H2O_kg_mol / (P.R_J_molK * T0_manifold_K)
-    0
-    ];
-P.an_manifold_initial_state = [
-    pH2Man0_kPa * 1000 * P.V_an_manifold_m3 * P.M_H2_kg_mol / (P.R_J_molK * T0_manifold_K)
-    0
-    pVAnMan0_kPa * 1000 * P.V_an_manifold_m3 * P.M_H2O_kg_mol / (P.R_J_molK * T0_manifold_K)
-    0
-    ];
-pTail0_kPa = max(P.p_cathode_back_kPa - P.separator_dp_ref_kPa - P.hum_wet_dp_ref_kPa, P.p_amb_kPa);
-pVTail0_kPa = min(pSat0_kPa, pTail0_kPa - 1e-6);
-pO2Tail0_kPa = 0.18 * max(pTail0_kPa - pVTail0_kPa, 1e-6);
-pN2Tail0_kPa = 0.82 * max(pTail0_kPa - pVTail0_kPa, 1e-6);
-P.tailgas_manifold_initial_state = [
-    pO2Tail0_kPa * 1000 * P.V_tailgas_manifold_m3 * P.M_O2_kg_mol / (P.R_J_molK * T0_manifold_K)
-    pN2Tail0_kPa * 1000 * P.V_tailgas_manifold_m3 * P.M_N2_kg_mol / (P.R_J_molK * T0_manifold_K)
-    pVTail0_kPa * 1000 * P.V_tailgas_manifold_m3 * P.M_H2O_kg_mol / (P.R_J_molK * T0_manifold_K)
-    0
-    ];
 
 T0_K = 65.0 + 273.15;
 pO2_0 = 25.0;
@@ -207,31 +157,21 @@ P.stack_initial_state_audit = [
     P.stack_initial_state(8)
     ];
 
-% Keep legacy *_v2 workspace symbols for compatibility with the existing
-% v3 SLX block parameter bindings.
+clearObsoleteWorkspaceSymbols();
+
+% Keep only the workspace symbols bound by the current compact v3 SLX.
 assignin('base', 'P_v2', P);
 assignin('base', 'EnvParam_v2', P.EnvParam);
 assignin('base', 'CompressorParam_v2', P.CompressorParam);
 assignin('base', 'IntercoolerParam_v2', P.IntercoolerParam);
 assignin('base', 'HumidifierParam_v2', P.HumidifierParam);
 assignin('base', 'StackParam_v2', P.StackParam);
-assignin('base', 'SeparatorParam_v2', P.SeparatorParam);
-assignin('base', 'TailGasParam_v2', P.TailGasParam);
-assignin('base', 'EGRValveParam_v2', P.EGRValveParam);
-assignin('base', 'BackPressureValveParam_v2', P.BackPressureValveParam);
-assignin('base', 'EGRReturnPipeParam_v2', P.EGRReturnPipeParam);
 assignin('base', 'I_stack_cmd_A', P.I_stack_default_A);
 assignin('base', 'egr_fraction_cmd', 0.0);
 assignin('base', 'EGRInitialNode_v2', P.egr_initial_node);
 assignin('base', 'WetInitialNode_v2', P.wet_initial_node);
 assignin('base', 'StackInitialState_v2', P.stack_initial_state);
 assignin('base', 'StackInitialStateAudit_v3', P.stack_initial_state_audit);
-assignin('base', 'CathodeOutletManifoldParam_v3', P.CathodeOutletManifoldParam);
-assignin('base', 'AnodeOutletManifoldParam_v3', P.AnodeOutletManifoldParam);
-assignin('base', 'CathodeOutletManifoldInitialState_v3', P.ca_manifold_initial_state);
-assignin('base', 'AnodeOutletManifoldInitialState_v3', P.an_manifold_initial_state);
-assignin('base', 'TailGasManifoldInitialState_v3', P.tailgas_manifold_initial_state);
-assignin('base', 'AnodeTailDownstreamPressure_v3', P.p_anode_tail_downstream_kPa);
 
 fprintf('Initialized %s parameters (%s mode) in base workspace.\n', P.modelName, calibrationMode);
 end
@@ -518,72 +458,6 @@ P.StackParam = [
     P.book_theta6
     P.book_theta7
     ];
-
-P.SeparatorParam = [
-    P.M_O2_kg_mol
-    P.M_N2_kg_mol
-    P.M_H2O_kg_mol
-    P.separator_liq_eff
-    P.p_amb_kPa
-    P.separator_dp_ref_kPa
-    P.hum_m_ref_kg_s
-    P.hum_dp_exp
-    ];
-
-P.TailGasParam = [
-    P.R_J_molK
-    P.M_O2_kg_mol
-    P.M_N2_kg_mol
-    P.M_H2O_kg_mol
-    P.V_tailgas_manifold_m3
-    P.K_tailgas_egr_out_kg_s_kPa
-    P.K_tailgas_bp_out_kg_s_kPa
-    P.K_liq_carry_1_s
-    P.dt_s
-    P.p_amb_kPa
-    P.egr_return_target_margin_kPa
-    ];
-
-P.CathodeOutletManifoldParam = [
-    P.R_J_molK
-    P.M_O2_kg_mol
-    P.M_N2_kg_mol
-    P.M_H2O_kg_mol
-    P.V_ca_manifold_m3
-    P.K_ca_man_out_kg_s_kPa
-    P.K_liq_carry_1_s
-    P.dt_s
-    P.p_amb_kPa
-    ];
-
-P.AnodeOutletManifoldParam = [
-    P.R_J_molK
-    P.M_H2_kg_mol
-    P.M_N2_kg_mol
-    P.M_H2O_kg_mol
-    P.V_an_manifold_m3
-    P.K_an_man_out_kg_s_kPa
-    P.K_liq_carry_1_s
-    P.dt_s
-    P.p_amb_kPa
-    ];
-
-P.EGRValveParam = [
-    P.egr_valve_coeff
-    P.egr_valve_dp_fraction
-    ];
-
-P.BackPressureValveParam = [
-    P.bp_valve_coeff
-    P.p_amb_kPa
-    ];
-
-P.EGRReturnPipeParam = [
-    P.p_amb_kPa
-    P.egr_return_pipe_dp_ref_kPa
-    P.hum_m_ref_kg_s
-    P.egr_return_pipe_dp_exp
-    ];
 end
 
 function value = readField(T, name, defaultValue)
@@ -598,4 +472,23 @@ end
 
 function pws = saturationPressureKPa(T_C)
 pws = 0.61121 * exp((18.678 - T_C / 234.5) * (T_C / (257.14 + T_C)));
+end
+
+function clearObsoleteWorkspaceSymbols()
+obsolete = [
+    "SeparatorParam_v2"
+    "TailGasParam_v2"
+    "EGRValveParam_v2"
+    "BackPressureValveParam_v2"
+    "EGRReturnPipeParam_v2"
+    "CathodeOutletManifoldParam_v3"
+    "AnodeOutletManifoldParam_v3"
+    "CathodeOutletManifoldInitialState_v3"
+    "AnodeOutletManifoldInitialState_v3"
+    "TailGasManifoldInitialState_v3"
+    "AnodeTailDownstreamPressure_v3"
+    ];
+for k = 1:numel(obsolete)
+    evalin('base', sprintf("if exist('%s','var'), clear('%s'); end", obsolete(k), obsolete(k)));
+end
 end

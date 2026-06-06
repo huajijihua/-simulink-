@@ -18,6 +18,7 @@ end
 
 P = init_vehicle_10kw_gzs60_v3("current");
 mw = get_param(modelName, 'ModelWorkspace');
+clearObsoleteModelWorkspaceSymbols(mw);
 
 assignin(mw, 'P_v2', P);
 assignin(mw, 'EnvParam_v2', P.EnvParam);
@@ -25,24 +26,34 @@ assignin(mw, 'CompressorParam_v2', P.CompressorParam);
 assignin(mw, 'IntercoolerParam_v2', P.IntercoolerParam);
 assignin(mw, 'HumidifierParam_v2', P.HumidifierParam);
 assignin(mw, 'StackParam_v2', P.StackParam);
-assignin(mw, 'SeparatorParam_v2', P.SeparatorParam);
-assignin(mw, 'TailGasParam_v2', P.TailGasParam);
-assignin(mw, 'EGRValveParam_v2', P.EGRValveParam);
-assignin(mw, 'BackPressureValveParam_v2', P.BackPressureValveParam);
-assignin(mw, 'EGRReturnPipeParam_v2', P.EGRReturnPipeParam);
 assignin(mw, 'I_stack_cmd_A', P.I_stack_default_A);
 assignin(mw, 'egr_fraction_cmd', 0.0);
 assignin(mw, 'EGRInitialNode_v2', P.egr_initial_node);
 assignin(mw, 'WetInitialNode_v2', P.wet_initial_node);
 assignin(mw, 'StackInitialState_v2', P.stack_initial_state);
 assignin(mw, 'StackInitialStateAudit_v3', P.stack_initial_state_audit);
-assignin(mw, 'CathodeOutletManifoldParam_v3', P.CathodeOutletManifoldParam);
-assignin(mw, 'AnodeOutletManifoldParam_v3', P.AnodeOutletManifoldParam);
-assignin(mw, 'CathodeOutletManifoldInitialState_v3', P.ca_manifold_initial_state);
-assignin(mw, 'AnodeOutletManifoldInitialState_v3', P.an_manifold_initial_state);
-assignin(mw, 'TailGasManifoldInitialState_v3', P.tailgas_manifold_initial_state);
-assignin(mw, 'AnodeTailDownstreamPressure_v3', P.p_anode_tail_downstream_kPa);
 
 fprintf('Prepared %s model workspace for direct Run. StackParam_v2 length = %d.\n', ...
     modelName, numel(P.StackParam));
+end
+
+function clearObsoleteModelWorkspaceSymbols(mw)
+obsolete = [
+    "SeparatorParam_v2"
+    "TailGasParam_v2"
+    "EGRValveParam_v2"
+    "BackPressureValveParam_v2"
+    "EGRReturnPipeParam_v2"
+    "CathodeOutletManifoldParam_v3"
+    "AnodeOutletManifoldParam_v3"
+    "CathodeOutletManifoldInitialState_v3"
+    "AnodeOutletManifoldInitialState_v3"
+    "TailGasManifoldInitialState_v3"
+    "AnodeTailDownstreamPressure_v3"
+    ];
+for k = 1:numel(obsolete)
+    if hasVariable(mw, obsolete(k))
+        clear(mw, obsolete(k));
+    end
+end
 end

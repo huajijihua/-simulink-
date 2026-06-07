@@ -117,7 +117,7 @@ for vTarget = voltageTargets(:).'
         rowBest.condition_target = "V_cell";
         rowBest.V_cell_target = vTarget;
         rowBest.V_cell_target_error = rowBest.V_cell_sim - vTarget;
-        rowBest.current_density_solved_A_cm2 = round(Pbest.current_density_command_A_cm2, 2);
+        rowBest.current_density_solved_A_cm2 = round(Pbest.current_density_command_A_cm2, 3);
         rowBest.air_flow_control = "fixed_nearest_bench_reference";
         rowBest.lookup_quality = lookupQuality(abs(rowBest.V_cell_target_error), 0.003, 0.008);
         rows{end + 1, 1} = struct2table(rowBest); %#ok<AGROW>
@@ -163,14 +163,14 @@ end
 function [Pbest, rowBest] = solveCurrentForVoltage(vTarget, egr)
 jLo = 0.05;
 jHi = 0.60;
-candidates = unique(round([jLo, jHi, linspace(jLo, jHi, 12)], 2));
+candidates = unique(round([jLo, jHi, linspace(jLo, jHi, 12)], 3));
 rows = cell(numel(candidates), 1);
 for k = 1:numel(candidates)
     rows{k} = struct2table(runVoltageCandidate(candidates(k), egr));
 end
 T = vertcat(rows{:});
 
-for iter = 1:6
+for iter = 1:10
     T = sortrows(T, "current_density_command_A_cm2");
     err = T.V_cell_sim - vTarget;
     crossIdx = find(err(1:end-1) .* err(2:end) <= 0, 1);
@@ -179,7 +179,7 @@ for iter = 1:6
     end
     jl = T.current_density_command_A_cm2(crossIdx);
     jh = T.current_density_command_A_cm2(crossIdx + 1);
-    jNew = round(0.5 * (jl + jh), 2);
+    jNew = round(0.5 * (jl + jh), 3);
     if any(abs(T.current_density_command_A_cm2 - jNew) < 1e-12)
         break;
     end
@@ -196,7 +196,7 @@ Pbest.air_flow_scale = 1.0;
 end
 
 function row = runVoltageCandidate(jCommand, egr)
-jRounded = round(jCommand, 2);
+jRounded = round(jCommand, 3);
 caseIndex = nearestCaseIndexForCurrentDensity(jRounded);
 P = init_testbench_10kw_v01(caseIndex, egr);
 P = applyCurrentDensity(P, jRounded);
@@ -306,7 +306,7 @@ row.boundary_case_index = boundaryCaseIndex;
 row.boundary_current_A = P.current_A_boundary;
 row.boundary_current_density_A_cm2 = P.current_density_boundary_A_cm2;
 row.current_A = P.I_stack_default_A;
-row.current_density_command_A_cm2 = round(P.I_stack_default_A / P.A_cell_cm2, 2);
+row.current_density_command_A_cm2 = round(P.I_stack_default_A / P.A_cell_cm2, 3);
 row.egr_fraction_cmd = egr;
 row.air_flow_scale = P.air_flow_scale;
 row.cathode_flow_nlpm_cmd = P.cathode_flow_nlpm;
@@ -348,11 +348,11 @@ row.h_cool_effective_W_K = row.Q_cool_W / max(row.T_stack_C - P.T_cool_C, 1e-9);
 end
 
 function P = applyCurrentDensity(P, jCommand)
-P.current_density_command_A_cm2 = round(jCommand, 2);
+P.current_density_command_A_cm2 = round(jCommand, 3);
 P.current_A_boundary = P.I_stack_default_A;
 P.current_density_boundary_A_cm2 = P.current_density_A_cm2;
 P.I_stack_default_A = P.current_density_command_A_cm2 * P.A_cell_cm2;
-P.case_id = sprintf('j%0.2f_boundary_%03dA', P.current_density_command_A_cm2, round(P.current_A_boundary));
+P.case_id = sprintf('j%0.3f_boundary_%03dA', P.current_density_command_A_cm2, round(P.current_A_boundary));
 end
 
 function idx = caseIndexFromCurrentDensity(jTarget)
@@ -588,12 +588,12 @@ lines = [
     "## 工况"
     ""
     sprintf("- 恒电流：`j = %s A/cm2`，`EGR = %s`。", mat2str(currentDensityTargets), mat2str(egrGrid))
-    sprintf("- 恒电压：`V_cell = %s V`，每个 EGR 下反求电流密度并保留两位小数。", mat2str(voltageTargets))
+    sprintf("- 恒电压：`V_cell = %s V`，每个 EGR 下反求电流密度并保留三位小数。", mat2str(voltageTargets))
     "- 恒入口氧分压：在 0.10/0.20/0.30 A/cm2 下，以无 EGR `pO2_ca_in` 为目标，反求空气机流量倍率。"
     ""
     "## 说明"
     ""
-    "- 恒电压反求得到的电流以外，压力、温度、湿度和冷却边界取最近台架测试点。"
+    "- 恒电压反求得到的电流密度保留三位小数；压力、温度、湿度和冷却边界取最近台架测试点。"
     "- 当前 DQ60 map 低流量仍可能触发钳位，`dq60_map_ok=false` 作为警告保留。"
     ];
 writeText(path, lines);

@@ -440,38 +440,66 @@ axis(ax, [0 1 0 1]);
 axis(ax, 'off');
 hold(ax, 'on');
 
+fig.Position(3:4) = [1260 720];
+airColor = [0.10 0.38 0.67];
+egrColor = [0.12 0.50 0.28];
+stackColor = [0.70 0.18 0.14];
+exhaustColor = [0.42 0.46 0.50];
+drawPanel(ax, [0.018 0.875 0.964 0.095], '当前工况', [0.93 0.96 0.99], airColor);
+drawPanel(ax, [0.018 0.035 0.964 0.095], '运行诊断', [0.96 0.98 0.96], egrColor);
+drawPanel(ax, [0.025 0.565 0.950 0.285], '阴极空气供给链路', [0.965 0.982 0.995], airColor);
+drawPanel(ax, [0.025 0.210 0.950 0.320], '电堆反应与尾气循环', [0.985 0.978 0.968], stackColor);
+
 boxes = {
-    "Environment", [0.02 0.62 0.15 0.20], sprintf('T %.1f C\np %.1f kPa\nRH %.2f\nfresh %.4f kg/s', ...
-        detail.env.T_C, detail.env.p_kPa, detail.env.RH, row.m_fresh_in_kg_s)
-    "EGR mixer", [0.22 0.62 0.15 0.20], sprintf('EGR %.2f\nEGR flow %.4f\nmix xO2 %.3f\nmix omega %.1f g/kg', ...
-        row.egr_ratio_cmd, row.m_egr_return_kg_s, detail.mixer.xO2, detail.mixer.omega_g_per_kg)
-    "Compressor", [0.42 0.62 0.15 0.20], sprintf('p out %.1f kPa\nT out %.1f C\nm %.4f kg/s', ...
-        detail.compressor.p_kPa, detail.compressor.T_C, detail.compressor.m_gas_kg_s)
-    "Intercooler", [0.62 0.62 0.15 0.20], sprintf('T out %.1f C\np out %.1f kPa', ...
-        detail.intercooler.T_C, detail.intercooler.p_kPa)
-    "Humidifier", [0.82 0.62 0.15 0.20], sprintf('dry out T %.1f C\npO2 %.1f kPa\npH2O %.1f kPa\nomega %.1f g/kg\ntransfer %.2g kg/s', ...
-        detail.dry.T_C, row.pO2_ca_in_kPa, row.pH2O_caIn_kPa, row.omega_ca_in_g_per_kg_dry_air, row.mH2O_hum_transfer_kg_s)
-    "PEMFC stack", [0.42 0.25 0.20 0.24], sprintf('j %.2f A/cm2\nI %.0f A\nVcell %.3f V\nT %.1f C\nlambdaO2 %.2f\np internal %.1f kPa', ...
-        row.current_density_A_cm2, row.current_A, row.V_cell_sim, row.T_stack_sim_C, row.lambda_O2_actual, row.p_stack_internal_kPa)
-    "EGR valve / vent", [0.72 0.25 0.20 0.24], sprintf('EGR %.4f kg/s\nvent %.4f kg/s\nwet out p %.1f kPa\nvent p %.1f kPa', ...
-        row.m_egr_return_kg_s, row.m_vent_out_kg_s, row.p_wet_out_kPa, row.p_vent_out_kPa)
+    "环境入口", [0.035 0.625 0.175 0.200], sprintf('温度 %.1f ℃\n压力 %.1f kPa\n相对湿度 %.2f\n新鲜空气 %.5f kg/s', ...
+        detail.env.T_C, detail.env.p_kPa, detail.env.RH, row.m_fresh_cmd_kg_s), airColor, [0.91 0.96 1.00]
+    "EGR混合器", [0.245 0.625 0.165 0.200], sprintf('循环比 %.2f\n新鲜空气 %.5f\n循环气 %.5f\n混合xO2 %.3f\n含湿量 %.1f g/kg', ...
+        row.egr_ratio_cmd, row.m_fresh_actual_kg_s, row.m_egr_return_kg_s, detail.mixer.xO2, detail.mixer.omega_g_per_kg), egrColor, [0.92 0.98 0.94]
+    "空压机", [0.430 0.630 0.150 0.190], sprintf('入口流量 %.4f kg/s\n出口压力 %.1f kPa\n出口温度 %.1f ℃', ...
+        row.m_compressor_in_kg_s, detail.compressor.p_kPa, detail.compressor.T_C), airColor, [0.92 0.96 1.00]
+    "中冷器", [0.595 0.630 0.140 0.190], sprintf('出口温度 %.1f ℃\n出口压力 %.1f kPa', ...
+        detail.intercooler.T_C, detail.intercooler.p_kPa), airColor, [0.92 0.96 1.00]
+    "增湿器干侧", [0.775 0.630 0.150 0.190], sprintf('出口 -> 电堆\nT %.1f ℃\npO2 %.1f kPa\npH2O %.1f kPa\nω %.1f g/kg', ...
+        detail.dry.T_C, row.pO2_ca_in_kPa, row.pH2O_caIn_kPa, row.omega_ca_in_g_per_kg_dry_air), airColor, [0.92 0.96 1.00]
+    "EGR阀 / 排气", [0.255 0.255 0.220 0.255], sprintf('湿侧出口 %.5f\n循环气 %.5f\n排气 %.5f\n出口压力 %.1f kPa\n排气边界 %.1f kPa', ...
+        row.m_wet_out_kg_s, row.m_egr_return_kg_s, row.m_vent_out_kg_s, row.p_wet_out_kPa, row.p_vent_out_kPa), egrColor, [0.94 0.98 0.94]
+    "增湿器湿侧", [0.525 0.255 0.175 0.255], sprintf('电堆尾气入口\n湿侧出口 %.5f\n湿侧压力 %.1f kPa\n膜传水 %.2g kg/s', ...
+        row.m_wet_out_kg_s, row.p_wet_out_kPa, row.mH2O_hum_transfer_kg_s), exhaustColor, [0.96 0.97 0.98]
+    "PEMFC电堆", [0.735 0.260 0.240 0.245], sprintf('电流密度 %.2f A/cm2\n电流 %.2f A\n单电池电压 %.3f V  功率 %.0f W\n温度 %.1f ℃  氧计量比 %.2f\n入堆压力 %.1f kPa\n堆内压力 %.1f kPa', ...
+        row.current_density_A_cm2, row.current_A, row.V_cell_sim, row.P_stack_W, row.T_stack_sim_C, row.lambda_O2_actual, row.p_ca_in_sim_kPa, row.p_stack_internal_kPa), stackColor, [1.00 0.94 0.92]
     };
 
+boxTextHandles = gobjects(size(boxes, 1), 2);
 for k = 1:size(boxes, 1)
-    drawBox(ax, boxes{k,2}, boxes{k,1}, boxes{k,3});
+    boxTextHandles(k, :) = drawBox(ax, boxes{k,2}, boxes{k,1}, boxes{k,3}, boxes{k,4}, boxes{k,5});
 end
-drawArrow(ax, [0.17 0.72], [0.22 0.72]);
-drawArrow(ax, [0.37 0.72], [0.42 0.72]);
-drawArrow(ax, [0.57 0.72], [0.62 0.72]);
-drawArrow(ax, [0.77 0.72], [0.82 0.72]);
-drawArrow(ax, [0.90 0.62], [0.55 0.49]);
-drawArrow(ax, [0.62 0.37], [0.72 0.37]);
-drawArrow(ax, [0.74 0.49], [0.30 0.62]);
 
-statusText = sprintf('status: %s   steady: %d   pressure order: %d   fixed total compressor flow: %d', ...
-    row.interpretation_status, row.is_steady, row.pressure_order_ok, row.fixed_total_compressor_flow);
-text(ax, 0.02, 0.08, statusText, 'FontSize', 12, 'FontWeight', 'bold', 'Interpreter', 'none');
-title(ax, 'CEGR 10 kW vehicle-system topology: single operating case');
+drawArrow(ax, [0.210 0.725], [0.245 0.725], airColor, 2.2, '-');
+drawArrow(ax, [0.410 0.725], [0.430 0.725], airColor, 2.2, '-');
+drawArrow(ax, [0.580 0.725], [0.595 0.725], airColor, 2.2, '-');
+drawArrow(ax, [0.735 0.725], [0.775 0.725], airColor, 2.2, '-');
+drawPolylineArrow(ax, [0.850 0.630; 0.850 0.545; 0.855 0.505], airColor, 2.0, '-');
+drawArrow(ax, [0.735 0.383], [0.700 0.383], exhaustColor, 2.0, '-');
+drawArrow(ax, [0.525 0.383], [0.475 0.383], exhaustColor, 2.0, '-');
+drawPolylineArrow(ax, [0.370 0.510; 0.330 0.600; 0.315 0.625], egrColor, 2.4, '--');
+drawArrow(ax, [0.255 0.383], [0.055 0.383], exhaustColor, 2.0, '-');
+
+text(ax, 0.050, 0.560, '空气主流', 'FontSize', 9, 'FontWeight', 'bold', 'Color', airColor);
+text(ax, 0.300, 0.545, 'EGR回流支路', 'FontSize', 9, 'FontWeight', 'bold', 'Color', egrColor);
+text(ax, 0.070, 0.355, '排气', 'FontSize', 9, 'FontWeight', 'bold', 'Color', exhaustColor);
+
+conditionText = sprintf(['单工况计算   电流密度 %.2f A/cm2   电流 %.2f A   EGR %.2f   ', ...
+    '氧计量比命令 %.2f   固定空压机入口流量 %d'], ...
+    row.current_density_A_cm2, row.current_A, row.egr_ratio_cmd, row.oxygen_stoich_cmd, row.fixed_total_compressor_flow);
+text(ax, 0.050, 0.918, conditionText, 'FontSize', 12, 'FontWeight', 'bold', 'Interpreter', 'none', 'Color', [0.10 0.12 0.14]);
+
+massText = sprintf('质量闭合: 空压机入口 - 实际新鲜空气 - EGR = %.2e kg/s', row.mass_closure_compressor_kg_s);
+statusText = sprintf('状态 %s   稳态 %d   压力顺序 %d   缺氧预警 %d   %s', ...
+    row.interpretation_status, row.is_steady, row.pressure_order_ok, row.oxygen_warning, massText);
+text(ax, 0.050, 0.068, statusText, 'FontSize', 11, 'FontWeight', 'bold', 'Interpreter', 'none', 'Color', [0.10 0.14 0.12]);
+title(ax, '10 kW车载燃料电池cEGR系统单工况仿真控制台', 'FontWeight', 'bold');
+assignin('base', 'cegrTopologyBoxLayout', boxes);
+assignin('base', 'cegrTopologyTextHandles', boxTextHandles);
 end
 
 function targets = makeVoltageTargets(C, B, targetVoltages)
@@ -1341,16 +1369,59 @@ else
 end
 end
 
-function drawBox(ax, pos, titleText, bodyText)
-rectangle(ax, 'Position', pos, 'Curvature', 0.04, 'FaceColor', [0.96 0.97 0.98], ...
-    'EdgeColor', [0.20 0.27 0.35], 'LineWidth', 1.2);
-text(ax, pos(1) + 0.01, pos(2) + pos(4) - 0.035, titleText, 'FontWeight', 'bold', ...
-    'FontSize', 10, 'Interpreter', 'none');
-text(ax, pos(1) + 0.01, pos(2) + pos(4) - 0.075, bodyText, 'FontSize', 8.8, ...
-    'VerticalAlignment', 'top', 'Interpreter', 'none');
+function drawPanel(ax, pos, labelText, faceColor, edgeColor)
+if nargin < 4
+    faceColor = [0.985 0.988 0.992];
+end
+if nargin < 5
+    edgeColor = [0.70 0.74 0.78];
+end
+rectangle(ax, 'Position', pos, 'Curvature', 0.025, 'FaceColor', faceColor, ...
+    'EdgeColor', edgeColor, 'LineWidth', 0.9);
+text(ax, pos(1) + 0.012, pos(2) + pos(4) - 0.028, labelText, 'FontWeight', 'bold', ...
+    'FontSize', 9, 'Color', edgeColor, 'Interpreter', 'none');
 end
 
-function drawArrow(ax, p1, p2)
+function h = drawBox(ax, pos, titleText, bodyText, edgeColor, faceColor)
+if nargin < 5
+    edgeColor = [0.20 0.27 0.35];
+end
+if nargin < 6
+    faceColor = [0.96 0.97 0.98];
+end
+rectangle(ax, 'Position', pos + [0.006 -0.006 0 0], 'Curvature', 0.045, 'FaceColor', [0.84 0.87 0.90], ...
+    'EdgeColor', 'none', 'FaceAlpha', 0.35);
+rectangle(ax, 'Position', pos, 'Curvature', 0.04, 'FaceColor', faceColor, ...
+    'EdgeColor', edgeColor, 'LineWidth', 1.6);
+rectangle(ax, 'Position', [pos(1), pos(2)+pos(4)-0.052, pos(3), 0.052], ...
+    'Curvature', 0.04, 'FaceColor', edgeColor, 'EdgeColor', edgeColor, 'LineWidth', 0.8);
+hTitle = text(ax, pos(1) + 0.01, pos(2) + pos(4) - 0.035, titleText, 'FontWeight', 'bold', ...
+    'FontSize', 10.5, 'Interpreter', 'none', 'Color', 'w');
+hBody = text(ax, pos(1) + 0.012, pos(2) + pos(4) - 0.070, bodyText, 'FontSize', 8.1, ...
+    'VerticalAlignment', 'top', 'Interpreter', 'none', 'Color', [0.10 0.12 0.14]);
+h = [hTitle, hBody];
+end
+
+function drawArrow(ax, p1, p2, color, lineWidth, lineStyle)
+if nargin < 4
+    color = [0.15 0.20 0.25];
+end
+if nargin < 5
+    lineWidth = 1.2;
+end
+if nargin < 6
+    lineStyle = '-';
+end
 quiver(ax, p1(1), p1(2), p2(1) - p1(1), p2(2) - p1(2), 0, ...
-    'MaxHeadSize', 0.35, 'Color', [0.15 0.20 0.25], 'LineWidth', 1.2);
+    'MaxHeadSize', 0.28, 'Color', color, 'LineWidth', lineWidth, 'LineStyle', lineStyle);
+end
+
+function drawPolylineArrow(ax, points, color, lineWidth, lineStyle)
+if size(points, 1) < 2
+    return;
+end
+for k = 1:size(points, 1)-2
+    plot(ax, points(k:k+1,1), points(k:k+1,2), 'Color', color, 'LineWidth', lineWidth, 'LineStyle', lineStyle);
+end
+drawArrow(ax, points(end-1,:), points(end,:), color, lineWidth, lineStyle);
 end

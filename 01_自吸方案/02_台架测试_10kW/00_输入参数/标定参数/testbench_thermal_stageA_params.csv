@@ -1,0 +1,6 @@
+parameter,value,initial_value,note
+h_cool_W_K,1156.46666666667,836,bench fallback cooling coefficient from no-EGR coolant heat balance
+h_amb_W_K,9,9,ambient heat-loss coefficient kept from current baseline
+C_stack_J_K,45000,45000,thermal capacitance kept frozen in bench stage A
+coolant_rho_kg_L,1,1,water-equivalent coolant density
+coolant_cp_J_kgK,4180,4180,water-equivalent coolant heat capacity

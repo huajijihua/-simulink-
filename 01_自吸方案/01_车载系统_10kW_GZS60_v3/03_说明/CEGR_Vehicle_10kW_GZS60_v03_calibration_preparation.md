@@ -1,23 +1,23 @@
 # CEGR_Vehicle_10kW_GZS60_v03 当前标定准备说明
 
-更新时间：2026-06-05
+更新时间：2026-06-08
 
 ## 1. 当前对象
 
-当前唯一工作模型：
+车载结构当前主模型：
 
 ```text
 01_模型/CEGR_Vehicle_10kW_GZS60_v03_stage1_pressurefix.slx
 ```
 
-当前工作脚本：
+车载结构当前压力标定脚本：
 
 ```text
 02_脚本/init_vehicle_10kw_gzs60_v3.m
 02_脚本/calibrate_vehicle_10kw_gzs60_v3_pressurefix_stage1.m
 ```
 
-早期工作模型和对应脚本已不再放在主工作目录中。后续判断以当前 `pressurefix` 基线为准。
+早期工作模型和对应脚本不作为当前主线依据。后续判断以当前 `pressurefix` 车载基线、台架主模型和项目收尾检查说明为准。
 
 ## 2. 二周目目标
 

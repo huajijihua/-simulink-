@@ -22,3 +22,6 @@ work/
 *.mexm64
 *.mexa64
 *.mexmaci64
+
+# Generated presentation/app dependencies
+**/node_modules/

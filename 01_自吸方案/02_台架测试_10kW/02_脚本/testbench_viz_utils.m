@@ -46,10 +46,13 @@ C.resultDir = fullfile(C.rootDir, '04_验证结果');
 C.workbookFile = fullfile(C.resultDir, 'CEGR_testbench_visualization_results.xlsx');
 C.constantCurrentFile = fullfile(C.resultDir, 'condition_study_constant_current_egr_scan.csv');
 C.constantVoltageFile = fullfile(C.resultDir, 'condition_study_constant_voltage_solved.csv');
+C.constantPO2DQ60J0p10File = fullfile(C.resultDir, 'condition_study_constant_pO2_DQ60_speed_flow_j0p10.csv');
 C.constantPO2TwoPointFile = fullfile(C.resultDir, 'condition_study_constant_pO2_DQ60_two_point_j0p10_egr0p25.csv');
 C.constantPO2ComparisonFile = fullfile(C.resultDir, 'condition_study_constant_pO2_DQ60_two_point_j0p10_egr0p25_comparison.csv');
 C.noEgrScanFile = fullfile(C.resultDir, 'testbench_constant_current_egr_scan.csv');
 C.thermalDiagnosticFile = fullfile(C.resultDir, 'testbench_thermal_stageA_diagnostic.csv');
+C.voltageFitDiagnosticFile = fullfile(C.resultDir, 'stack_voltage_internal_state_fit_diagnostic.csv');
+C.benchConditionVoltageFitDiagnosticFile = fullfile(fileparts(C.rootDir), '01_车载系统_10kW_GZS60_v3', '04_验证结果', 'stack_voltage_bench_condition_fit_diagnostic.csv');
 C.benchDataFile = fullfile(fileparts(fileparts(C.rootDir)), '00_支撑材料', '实验数据-设备说明书', '10kw短堆稳态测试_阴极尾气循环系统模型数据.txt');
 if ~exist(C.resultDir, 'dir')
     mkdir(C.resultDir);
@@ -73,10 +76,17 @@ T = sortrows(T, ["V_cell_target", "egr_fraction_cmd"]);
 end
 
 function [T, comparison] = loadConstantPO2TwoPoint(C)
-T = readRequiredTable(C.constantPO2TwoPointFile);
+if isfile(C.constantPO2DQ60J0p10File)
+    T = readRequiredTable(C.constantPO2DQ60J0p10File);
+    T = T(abs(T.egr_fraction_cmd) < 1e-12 | abs(T.egr_fraction_cmd - 0.25) < 1e-12, :);
+else
+    T = readRequiredTable(C.constantPO2TwoPointFile);
+end
 T = addInterpretationStatus(T);
 T = sortrows(T, "egr_fraction_cmd");
-if isfile(C.constantPO2ComparisonFile)
+if isfile(C.constantPO2DQ60J0p10File)
+    comparison = buildPO2Comparison(T);
+elseif isfile(C.constantPO2ComparisonFile)
     comparison = readtable(C.constantPO2ComparisonFile, 'TextType', 'string');
 else
     comparison = buildPO2Comparison(T);
@@ -116,13 +126,41 @@ T.V_cell_err = T.V_cell_sim - T.V_cell_bench;
 T.T_stack_err_C = T.T_stack_C - T.T_stack_fit_C;
 T.p_ca_in_err_kPa = T.p_ca_in_kPa - T.cathode_in_pressure_abs_kPa;
 T.RH_ca_in_err = T.RH_ca_in - T.cathode_RH;
+T = addVoltageFitReplay(T, C.voltageFitDiagnosticFile);
 T = sortrows(T, "current_density_A_cm2");
 
 stats = table();
-stats.metric = ["V_cell"; "T_stack_C"; "p_ca_in_kPa"; "RH_ca_in"];
-stats.rmse = [localRmse(T.V_cell_err); localRmse(T.T_stack_err_C); localRmse(T.p_ca_in_err_kPa); localRmse(T.RH_ca_in_err)];
-stats.max_abs_error = [max(abs(T.V_cell_err)); max(abs(T.T_stack_err_C)); max(abs(T.p_ca_in_err_kPa)); max(abs(T.RH_ca_in_err))];
+stats.metric = ["V_cell"; "V_cell_formula_fit"; "T_stack_C"; "p_ca_in_kPa"; "RH_ca_in"];
+stats.rmse = [localRmse(T.V_cell_err); localRmse(T.V_cell_formula_fit_err); localRmse(T.T_stack_err_C); localRmse(T.p_ca_in_err_kPa); localRmse(T.RH_ca_in_err)];
+stats.max_abs_error = [max(abs(T.V_cell_err)); max(abs(T.V_cell_formula_fit_err)); max(abs(T.T_stack_err_C)); max(abs(T.p_ca_in_err_kPa)); max(abs(T.RH_ca_in_err))];
 stats.point_count = repmat(height(T), height(stats), 1);
+end
+
+function T = addVoltageFitReplay(T, diagnosticFile)
+T.V_cell_formula_fit = nan(height(T), 1);
+T.V_cell_formula_fit_err = nan(height(T), 1);
+if ~isfile(diagnosticFile)
+    diagnosticFile = '';
+end
+if strlength(string(diagnosticFile)) == 0 || ~isfile(diagnosticFile)
+    return;
+end
+F = readtable(diagnosticFile, 'TextType', 'string');
+vars = string(F.Properties.VariableNames);
+candidateCol = "selected_candidate_V";
+if ismember("internal_state_weighted_refit_V", vars)
+    candidateCol = "internal_state_weighted_refit_V";
+end
+if ~all(ismember(["current_density_A_cm2", candidateCol], vars))
+    return;
+end
+for k = 1:height(T)
+    [deltaJ, idx] = min(abs(F.current_density_A_cm2 - T.current_density_A_cm2(k)));
+    if deltaJ < 1e-9
+        T.V_cell_formula_fit(k) = F.(char(candidateCol))(idx);
+    end
+end
+T.V_cell_formula_fit_err = T.V_cell_formula_fit - T.V_cell_bench;
 end
 
 function B = readBenchTable(path)
@@ -382,8 +420,7 @@ tiledlayout(fig, 2, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
 j = T.current_density_A_cm2;
 
 nexttile;
-plotCompare(j, T.V_cell_bench, T.V_cell_sim, 'V_{cell} (V)');
-title(sprintf('Cell voltage  RMSE %.4f V', metricRmse(stats, "V_cell")));
+plotVoltageCompare(j, T, stats);
 
 nexttile;
 plotCompare(j, T.T_stack_fit_C, T.T_stack_C, 'T_{stack} (degC)');
@@ -406,7 +443,7 @@ if studyType == "constant_voltage"
     groupVar = "V_cell_target";
     groupLabel = "V";
     titlePrefix = "Testbench Constant Voltage";
-    fixedFlowText = "fixed nearest no-EGR bench compressor flow";
+    fixedFlowText = "fixed no-EGR supply boundary selected at EGR=0";
     metrics = {
         "current_A", "Current (A)", "Current response"
         "current_density_command_A_cm2", "Current density (A/cm^2)", "Current density response"
@@ -561,6 +598,27 @@ ylabel(yLabelText);
 legend('Location', 'best');
 end
 
+function plotVoltageCompare(j, T, stats)
+plot(j, T.V_cell_bench, 'o-', 'LineWidth', 1.4, 'DisplayName', 'bench');
+hold on;
+plot(j, T.V_cell_sim, 's--', 'LineWidth', 1.4, 'DisplayName', 'Simulink system');
+if ismember("V_cell_formula_fit", string(T.Properties.VariableNames)) && any(isfinite(T.V_cell_formula_fit))
+    plot(j, T.V_cell_formula_fit, 'd:', 'LineWidth', 1.4, 'DisplayName', 'internal-state fit replay');
+end
+grid on;
+xlabel('Current density (A/cm^2)');
+ylabel('V_{cell} (V)');
+legend('Location', 'best');
+
+simRmse = metricRmse(stats, "V_cell");
+fitRmse = metricRmse(stats, "V_cell_formula_fit");
+if ~isempty(fitRmse) && isfinite(fitRmse)
+    title(sprintf('Cell voltage RMSE: Simulink %.4f V / formula %.4f V', simRmse, fitRmse));
+else
+    title(sprintf('Cell voltage RMSE: Simulink %.4f V', simRmse));
+end
+end
+
 function value = metricRmse(stats, metric)
 value = stats.rmse(stats.metric == string(metric));
 end
@@ -624,7 +682,18 @@ if height(base) ~= 1
     error('CEGR:BadPO2TwoPointData', 'Expected exactly one EGR=0 row for pO2 comparison.');
 end
 comparison = table();
-comparison.case_label = T.case_label;
+if ismember("case_label", string(T.Properties.VariableNames))
+    comparison.case_label = T.case_label;
+else
+    comparison.case_label = strings(height(T), 1);
+    for k = 1:height(T)
+        if abs(T.egr_fraction_cmd(k)) < 1e-12
+            comparison.case_label(k) = "j0p10_EGR0_baseline";
+        else
+            comparison.case_label(k) = sprintf('j0p10_EGR%.2f_DQ60', T.egr_fraction_cmd(k));
+        end
+    end
+end
 comparison.current_density_A_cm2 = T.current_density_command_A_cm2;
 comparison.EGR = T.egr_fraction_cmd;
 comparison.air_flow_scale = T.air_flow_scale;
@@ -644,7 +713,7 @@ comparison.lambda_O2_actual = T.lambda_O2_actual;
 comparison.RH_ca_in = T.RH_ca_in;
 comparison.T_stack_C = T.T_stack_C;
 comparison.risk_label = T.risk_label;
-comparison.normal_operation_ok = T.normal_operation_ok;
+comparison.normal_operation_ok = logical(T.normal_operation_ok);
 end
 
 function writeResultSheet(C, sheetName, T)

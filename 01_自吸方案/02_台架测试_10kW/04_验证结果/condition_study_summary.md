@@ -1,11 +1,11 @@
 # Testbench EGR Condition Study Summary
 
-Date: 2026-06-07 15:07:47
+Date: 2026-06-08 12:42:51
 
 ## Scope
 
-- Constant-current and constant-voltage studies keep compressor flow fixed to the no-EGR bench reference for the selected/nearest boundary point.
-- Constant-voltage solves current density to three decimals, then uses the nearest bench test point for inlet pressure, temperature, humidity and coolant boundary.
+- Constant-current studies keep compressor flow fixed to the no-EGR bench reference for the selected current-density point.
+- Constant-voltage studies first solve the no-EGR current for each voltage target, select the nearest no-EGR bench supply boundary once, and keep that external boundary fixed during the EGR scan.
 - Constant-pO2-inlet study uses `pO2_ca_in` as target and solves air-flow scale after EGR is enabled.
 
 ## Inputs

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PEMFC 寿命计算模块公式</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --ink:#1f1f1f;
+      --muted:#666;
+      --blue:#2d67ad;
+      --line:#d8e0ea;
+      --soft:#f5f8fc;
+      --soft2:#eef4fb;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:#f3f6fa;
+      font-family: "Microsoft YaHei","Noto Sans SC","PingFang SC",Arial,sans-serif;
+      color:var(--ink);
+    }
+    .page{
+      width:1280px;
+      height:720px;
+      margin:0 auto;
+      background:var(--bg);
+      position:relative;
+      overflow:hidden;
+      padding:28px 40px 24px;
+    }
+    .title{
+      text-align:center;
+      font-size:32px;
+      font-weight:700;
+      letter-spacing:0;
+      margin:0;
+    }
+    .subtitle{
+      text-align:center;
+      font-size:16px;
+      color:var(--muted);
+      margin:8px 0 0;
+    }
+    .panel{
+      border:1.5px solid var(--line);
+      background:#fbfdff;
+      border-radius:22px;
+    }
+    .main{
+      margin-top:18px;
+      padding:18px 24px 16px;
+    }
+    .tag{
+      color:var(--blue);
+      font-size:15px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    .eq{
+      text-align:center;
+      font-family:"Consolas","Menlo","Courier New",monospace;
+      font-size:25px;
+      line-height:1.35;
+      margin:8px 0;
+      word-break:keep-all;
+      white-space:normal;
+    }
+    .eq.small{
+      font-size:18px;
+      color:#4f4f4f;
+    }
+    .divider{
+      height:1px;
+      background:var(--line);
+      margin:12px 0 10px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:16px;
+      margin-top:16px;
+    }
+    .card{
+      border:1.5px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:#fff;
+      min-height:220px;
+    }
+    .card-h{
+      background:var(--soft2);
+      color:var(--blue);
+      padding:10px 14px;
+      font-size:16px;
+      font-weight:700;
+    }
+    .card-b{
+      padding:12px 14px 10px;
+      font-family:"Consolas","Menlo","Courier New",monospace;
+      font-size:12px;
+      line-height:1.65;
+      color:var(--ink);
+      word-break:break-word;
+      overflow-wrap:anywhere;
+    }
+    .note{
+      padding:0 14px 12px;
+      color:var(--muted);
+      font-size:12px;
+      font-family:"Microsoft YaHei","Noto Sans SC",sans-serif;
+    }
+    .footer{
+      position:absolute;
+      left:40px;
+      right:40px;
+      bottom:24px;
+      border:1.5px solid var(--line);
+      border-radius:18px;
+      padding:12px 16px 10px;
+      background:#fcfcfc;
+    }
+    .footer .k{
+      color:var(--blue);
+      font-size:15px;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+    .footer .v{
+      text-align:center;
+      font-size:16px;
+      line-height:1.5;
+    }
+    .footer .m{
+      text-align:center;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .footmark{
+      position:absolute;
+      right:40px;
+      bottom:8px;
+      color:#999;
+      font-size:11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1 class="title">PEMFC 寿命计算模块公式</h1>
+    <div class="subtitle">简化版：输入因子 → 等效衰减率 → 累计衰减 / 预计寿命 / ECSA 代理量</div>
+
+    <div class="panel main">
+      <div class="tag">核心输出</div>
+      <div class="eq">life_damage_rate_mV_h = base_decay_mV_h × f_V × f_RH × f_T × f_j × f_cycle</div>
+      <div class="divider"></div>
+      <div class="eq small">delta_V_deg_mV = life_damage_rate_mV_h × duration_h &nbsp;&nbsp;|&nbsp;&nbsp; projected_life_to_EOL_h = allowable_decay_mV / life_damage_rate_mV_h</div>
+      <div class="eq small">ECSA_ratio_proxy = 1 - (1 - ECSA_EOL_ratio) × sat01(damage_index)</div>
+    </div>
+
+    <div style="text-align:center;margin-top:12px;color:var(--blue);font-size:16px;font-weight:700;">四个主因子 + 一个循环项</div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-h">f_V  电位因子</div>
+        <div class="card-b">
+f_base_V = exp(k_potential_exp × (V_cell - V_ref))<br/>
+over_high = max((V_cell - V_high) / V_scale_high, 0)<br/>
+under_low = max((V_low - V_cell) / V_scale_low, 0)<br/>
+f_V = sat(f_base_V × (1 + k_over_high × over_high^2)<br/>
++ k_low_voltage × under_low^2)
+        </div>
+        <div class="note">重点惩罚高电位 &gt; 0.8 V</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">f_RH  湿度因子</div>
+        <div class="card-b">
+dryness = max((RH_min - RH_ca_in) / RH_min, 0)<br/>
+f_RH = sat(1 + k_dry × dryness^2)
+        </div>
+        <div class="note">只对干燥风险加罚</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">f_T  温度因子</div>
+        <div class="card-b">
+T_K = T_stack_C + 273.15<br/>
+f_T = exp(Ea / R × (1 / T_ref - 1 / T_K))
+        </div>
+        <div class="note">Arrhenius 等效加速</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">f_j / f_cycle</div>
+        <div class="card-b">
+low_current = max((j_low - j) / j_low, 0)<br/>
+high_current = max((j - j_high) / j_high, 0)<br/>
+f_j = sat(1 + k_j_low × low_current^2<br/>
++ k_j_high × high_current^2)<br/>
+f_cycle = sat(1 + k_djdt × |dj/dt| / djdt_ref)
+        </div>
+        <div class="note">稳态扫描中 f_cycle = 1</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="k">参数口径</div>
+      <div class="v">base_decay_mV_h = 0.012 mV/h &nbsp;&nbsp;|&nbsp;&nbsp; allowable_decay_mV = 75 mV &nbsp;&nbsp;|&nbsp;&nbsp; ECSA_EOL_ratio = 0.60</div>
+      <div class="m">说明：该模型用于相对寿命排序与趋势比较，未做长期耐久绝对标定。</div>
+    </div>
+
+    <div class="footmark">可直接用于 PPT 另存为 PDF / 截图</div>
+  </div>
+</body>
+</html>

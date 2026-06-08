@@ -1,6 +1,6 @@
 # DQ60 Constant-pO2 Study Summary
 
-Date: 2026-06-07 13:10:31
+Date: 2026-06-08 11:06:43
 
 ## Scope
 
@@ -17,8 +17,8 @@ Date: 2026-06-07 13:10:31
 
 - Rows: 11.
 - Solved within DQ60 map: 1.
-- Near target / review: 8.
-- Best-effort unreachable: 0.
+- Near target / review: 1.
+- Best-effort unreachable: 9.
 - Normal-operation rows: 0/11.
 
 ## Output

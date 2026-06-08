@@ -92,11 +92,12 @@ for jTarget = currentDensityTargets
         row.pO2_ca_in_target_error_kPa = row.pO2_ca_in_kPa - pO2Target;
         row.air_flow_control = "solved_flow_and_DQ60_speed";
         row.lookup_quality = lookupQuality(abs(row.pO2_ca_in_target_error_kPa), 0.10, 0.30);
-        rows{end + 1, 1} = struct2table(row); %#ok<AGROW>
+        rows{end + 1, 1} = row; %#ok<AGROW>
     end
 end
 
-T = vertcat(rows{:});
+rows = alignStructFields(rows);
+T = structRowsToTable(rows);
 T = addStudyCriteria(T);
 
 suffix = char(runMode);
@@ -134,14 +135,14 @@ egrTarget = str2double(tokens{3} + "." + tokens{4});
 end
 
 function results = mergeExistingResults(resultDir)
-files = [
+files = string([
     fullfile(resultDir, 'condition_study_constant_pO2_DQ60_speed_flow_j0p10.csv')
     fullfile(resultDir, 'condition_study_constant_pO2_DQ60_speed_flow_j0p20.csv')
     fullfile(resultDir, 'condition_study_constant_pO2_DQ60_speed_flow_j0p30.csv')
-    ];
+    ]);
 pointFiles = dir(fullfile(resultDir, 'condition_study_constant_pO2_DQ60_speed_flow_point_j*_egr*.csv'));
 for k = 1:numel(pointFiles)
-    files(end + 1, 1) = fullfile(pointFiles(k).folder, pointFiles(k).name); %#ok<AGROW>
+    files(end + 1, 1) = string(fullfile(pointFiles(k).folder, pointFiles(k).name)); %#ok<AGROW>
 end
 tables = {};
 for k = 1:numel(files)
@@ -152,7 +153,8 @@ end
 if isempty(tables)
     T = table();
 else
-    T = vertcat(tables{:});
+    T = alignTables(tables);
+    T = deduplicateMergedGrid(T);
 end
 outFile = fullfile(resultDir, 'condition_study_constant_pO2_DQ60_speed_flow.csv');
 summaryFile = fullfile(resultDir, 'condition_study_constant_pO2_DQ60_speed_flow_summary.md');
@@ -165,6 +167,15 @@ results.table = T;
 results.outputFile = outFile;
 results.summaryFile = summaryFile;
 fprintf('Merged DQ60 constant-pO2 results: %s\n', outFile);
+end
+
+function T = deduplicateMergedGrid(T)
+if isempty(T) || ~all(ismember(["current_density_target_A_cm2", "egr_fraction_cmd"], string(T.Properties.VariableNames)))
+    return;
+end
+key = compose('%.6g|%.6g', T.current_density_target_A_cm2, T.egr_fraction_cmd);
+[~, keep] = unique(key, 'stable');
+T = T(keep, :);
 end
 
 function results = runTwoPointRepresentativeStudy(P0, studyModel, studyFile)
@@ -197,7 +208,7 @@ for k = 1:numel(rows)
 end
 
 rows = alignStructFields(rows);
-T = vertcat(struct2table(rows{1}), struct2table(rows{2}));
+T = structRowsToTable(rows);
 T = addStudyCriteria(T);
 comparison = buildTwoPointComparison(T);
 
@@ -264,7 +275,7 @@ refineScaleHi = min(maxScale, best.air_flow_scale * 1.15);
 refineFlows = unique(linspace(refineScaleLo, refineScaleHi, 3));
 refineTrials = runTrialGrid(caseIndex, jTarget, egr, pO2Target, refineSpeeds, refineFlows, studyModel, studyFile);
 
-allTrials = [trials; refineTrials]; %#ok<AGROW>
+allTrials = [trials; refineTrials];
 rowBest = selectBestTrial(allTrials);
 rowBest.condition = "constant_pO2_DQ60_speed_flow";
 rowBest.solve_status = solveStatus(rowBest);
@@ -280,10 +291,11 @@ for speed = speedGrid
         row.pO2_ca_in_target_error_kPa = row.pO2_ca_in_kPa - pO2Target;
         [row.dq60_speed_min_flow_lpm, row.dq60_speed_max_flow_lpm, row.dq60_speed_flow_in_grid] = speedFlowEnvelope(row.dq60_speed_rpm, row.dq60_flow_lpm);
         row.solve_status = "trial";
-        rows{end + 1, 1} = struct2table(row); %#ok<AGROW>
+        rows{end + 1, 1} = row; %#ok<AGROW>
     end
 end
-T = vertcat(rows{:});
+rows = alignStructFields(rows);
+T = structRowsToTable(rows);
 end
 
 function row = selectBestTrial(T)
@@ -333,6 +345,52 @@ for k = 1:numel(rows)
         rows{k}.(char(f)) = missingValueForField(char(f));
     end
     rows{k} = orderfields(rows{k}, cellstr(allFields));
+end
+end
+
+function T = structRowsToTable(rows)
+tables = cell(numel(rows), 1);
+for k = 1:numel(rows)
+    tables{k} = struct2table(rows{k});
+end
+T = vertcat(tables{:});
+end
+
+function T = alignTables(tables)
+allNames = strings(0, 1);
+for k = 1:numel(tables)
+    allNames = union(allNames, string(tables{k}.Properties.VariableNames), 'stable');
+end
+for k = 1:numel(tables)
+    missing = setdiff(allNames, string(tables{k}.Properties.VariableNames), 'stable');
+    for name = missing.'
+        tables{k}.(char(name)) = tableMissingColumn(char(name), height(tables{k}), tables);
+    end
+    tables{k} = tables{k}(:, cellstr(allNames));
+end
+T = vertcat(tables{:});
+end
+
+function col = tableMissingColumn(name, n, tables)
+template = [];
+for k = 1:numel(tables)
+    if ismember(name, tables{k}.Properties.VariableNames)
+        template = tables{k}.(name);
+        break;
+    end
+end
+if isstring(template)
+    col = strings(n, 1);
+elseif iscellstr(template)
+    col = repmat({''}, n, 1);
+elseif iscategorical(template)
+    col = categorical(repmat(missing, n, 1), categories(template));
+elseif islogical(template)
+    col = false(n, 1);
+elseif isnumeric(template)
+    col = NaN(n, 1, 'like', template);
+else
+    col = repmat(missingValueForField(name), n, 1);
 end
 end
 

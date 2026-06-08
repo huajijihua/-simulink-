@@ -18,9 +18,13 @@ V = getNumeric(Tout, ["V_cell_sim", "V_cell", "cell_voltage_V"], NaN(n, 1));
 j = getNumeric(Tout, ["current_density_command_A_cm2", "current_density_target_A_cm2", ...
     "current_density_A_cm2", "current_density_solved_A_cm2"], P.j_ref .* ones(n, 1));
 RH = getNumeric(Tout, ["RH_ca_in", "cathode_RH", "RH"], P.RH_ref .* ones(n, 1));
-T_C = getNumeric(Tout, ["T_stack_C", "stack_temperature_C", "T_C"], (P.T_ref_K - 273.15) .* ones(n, 1));
+T_C = getNumeric(Tout, ["T_stack_sim_C", "T_stack_C", "stack_temperature_C", "T_C"], (P.T_ref_K - 273.15) .* ones(n, 1));
 duration_h = getNumeric(Tout, ["duration_h", "equivalent_duration_h"], options.duration_h .* ones(n, 1));
-normalOk = getLogical(Tout, "normal_operation_ok", true(n, 1));
+normalOk = getLogicalAny(Tout, ["normal_operation_ok", "scan_usable", "pressure_order_ok"], true(n, 1));
+if ~ismember('normal_operation_ok', Tout.Properties.VariableNames) && ismember('interpretation_status', Tout.Properties.VariableNames)
+    status = lower(string(Tout.interpretation_status));
+    normalOk = normalOk & (status == "normal" | status == "usable");
+end
 
 if any(isnan(V))
     error('pemfc_life_evaluate_table_v01:MissingVoltage', 'Input table must include V_cell_sim or equivalent.');
@@ -53,6 +57,9 @@ Tout.life_dry_exposure_h = core.dry_exposure_h;
 Tout.life_high_potential_margin_mV = core.high_potential_margin_mV;
 Tout.life_interpretation_status = repmat("usable", n, 1);
 Tout.life_interpretation_status(~normalOk) = "trend_reference";
+if ismember('egr_ratio_cmd', Tout.Properties.VariableNames) && ~ismember('egr_fraction_cmd', Tout.Properties.VariableNames)
+    Tout.egr_fraction_cmd = Tout.egr_ratio_cmd;
+end
 
 [Tout, summary] = addBaselineComparison(Tout, normalOk);
 end
@@ -87,10 +94,29 @@ if ismember(name, T.Properties.VariableNames)
 end
 end
 
+function x = getLogicalAny(T, names, defaultValue)
+names = string(names);
+x = defaultValue;
+for k = 1:numel(names)
+    name = char(names(k));
+    if ismember(name, T.Properties.VariableNames)
+        raw = T.(name);
+        if islogical(raw)
+            x = raw(:);
+        elseif isnumeric(raw)
+            x = raw(:) ~= 0;
+        else
+            x = lower(string(raw(:))) == "true" | string(raw(:)) == "1";
+        end
+        return;
+    end
+    end
+end
+
 function [T, summary] = addBaselineComparison(T, normalOk)
 n = height(T);
 keys = makeGroupKey(T);
-egr = getNumeric(T, ["egr_fraction_cmd", "EGR", "egr"], NaN(n, 1));
+egr = getNumeric(T, ["egr_fraction_cmd", "egr_ratio_cmd", "EGR", "egr"], NaN(n, 1));
 T.life_group_key = keys;
 T.life_rate_ratio_to_noEGR = NaN(n, 1);
 T.life_benefit_vs_noEGR_pct = NaN(n, 1);
@@ -123,6 +149,8 @@ for k = 1:numel(uniqueKeys)
     row.best_benefit_vs_noEGR_pct = (1 - bestRate ./ baseRate) .* 100;
     if ismember('egr_fraction_cmd', bestRow.Properties.VariableNames)
         row.best_egr_fraction_cmd = bestRow.egr_fraction_cmd(1);
+    elseif ismember('egr_ratio_cmd', bestRow.Properties.VariableNames)
+        row.best_egr_fraction_cmd = bestRow.egr_ratio_cmd(1);
     elseif ismember('EGR', bestRow.Properties.VariableNames)
         row.best_egr_fraction_cmd = bestRow.EGR(1);
     else

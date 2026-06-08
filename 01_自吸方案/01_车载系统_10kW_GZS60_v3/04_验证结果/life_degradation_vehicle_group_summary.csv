@@ -1,0 +1,4 @@
+life_group_key,baseline_rate_mV_h,best_rate_mV_h,best_benefit_vs_noEGR_pct,best_egr_fraction_cmd,life_source_file
+constant_current_fixed_flow|j=0.1,0.0280223135608748,0.0143403422089097,48.8252739098177,0.7,CEGR_visualization_results.xlsx::egr_constant_current
+constant_current_fixed_flow|j=0.2,0.0189693396196992,0.00857566361815218,54.7919759460338,0.7,CEGR_visualization_results.xlsx::egr_constant_current
+constant_current_fixed_flow|j=0.3,0.0178231275223807,0.00906524793818717,49.137726098835,0.7,CEGR_visualization_results.xlsx::egr_constant_current

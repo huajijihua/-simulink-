@@ -4,8 +4,9 @@ function results = run_testbench_10kw_v01_condition_study(runMode)
 % Routes:
 % 1) Constant current: j = 0.10/0.20/0.30 A/cm2, fixed compressor flow
 %    referenced to the corresponding no-EGR bench point.
-% 2) Constant voltage: V = 0.800/0.775/0.750 V/cell, fixed compressor flow
-%    referenced to the nearest bench boundary after current-density solve.
+% 2) Constant voltage: V = 0.800/0.775/0.750 V/cell. For each voltage target,
+%    the no-EGR solved current selects one bench supply boundary; all EGR
+%    points then keep that external supply boundary fixed.
 % 3) Constant inlet pO2: j = 0.10/0.20/0.30 A/cm2, pO2_ca_in target equals
 %    same-current no-EGR pO2_ca_in; compressor flow is solved by air_flow_scale.
 
@@ -65,7 +66,7 @@ switch runMode
 end
 
 cc = addUnifiedCriteria(cc, "constant_current_fixed_flow");
-cv = addUnifiedCriteria(cv, "constant_voltage_fixed_flow");
+cv = addUnifiedCriteria(cv, "constant_voltage_fixed_noEGR_boundary");
 po2 = addUnifiedCriteria(po2, "constant_pO2_inlet_variable_flow");
 criteria = combineCriteriaTables(cc, cv, po2);
 
@@ -112,13 +113,22 @@ end
 function T = runConstantVoltageStudy(voltageTargets, egrGrid)
 rows = {};
 for vTarget = voltageTargets(:).'
+    [~, rowNoEGRProbe] = solveCurrentForVoltage(vTarget, 0.0);
+    fixedCaseIndex = rowNoEGRProbe.boundary_case_index;
+    Pboundary = init_testbench_10kw_v01(fixedCaseIndex, 0.0);
+    fixedBoundaryCurrentA = Pboundary.I_stack_default_A;
+    fixedBoundaryCurrentDensity = Pboundary.current_density_A_cm2;
     for egr = egrGrid
-        [Pbest, rowBest] = solveCurrentForVoltage(vTarget, egr);
+        [Pbest, rowBest] = solveCurrentForVoltage(vTarget, egr, fixedCaseIndex);
         rowBest.condition_target = "V_cell";
         rowBest.V_cell_target = vTarget;
         rowBest.V_cell_target_error = rowBest.V_cell_sim - vTarget;
         rowBest.current_density_solved_A_cm2 = round(Pbest.current_density_command_A_cm2, 3);
-        rowBest.air_flow_control = "fixed_nearest_bench_reference";
+        rowBest.fixed_noEGR_boundary_case_index = fixedCaseIndex;
+        rowBest.fixed_noEGR_boundary_current_A = fixedBoundaryCurrentA;
+        rowBest.fixed_noEGR_boundary_current_density_A_cm2 = fixedBoundaryCurrentDensity;
+        rowBest.fixed_noEGR_boundary_source = "EGR0_voltage_solution_nearest_bench";
+        rowBest.air_flow_control = "fixed_noEGR_boundary_selected_at_EGR0";
         rowBest.lookup_quality = lookupQuality(abs(rowBest.V_cell_target_error), 0.003, 0.008);
         rows{end + 1, 1} = struct2table(rowBest); %#ok<AGROW>
     end
@@ -160,13 +170,16 @@ end
 T = vertcat(rows{:});
 end
 
-function [Pbest, rowBest] = solveCurrentForVoltage(vTarget, egr)
+function [Pbest, rowBest] = solveCurrentForVoltage(vTarget, egr, fixedCaseIndex)
+if nargin < 3
+    fixedCaseIndex = [];
+end
 jLo = 0.05;
 jHi = 0.60;
 candidates = unique(round([jLo, jHi, linspace(jLo, jHi, 12)], 3));
 rows = cell(numel(candidates), 1);
 for k = 1:numel(candidates)
-    rows{k} = struct2table(runVoltageCandidate(candidates(k), egr));
+    rows{k} = struct2table(runVoltageCandidate(candidates(k), egr, fixedCaseIndex));
 end
 T = vertcat(rows{:});
 
@@ -183,7 +196,7 @@ for iter = 1:10
     if any(abs(T.current_density_command_A_cm2 - jNew) < 1e-12)
         break;
     end
-    T = [T; struct2table(runVoltageCandidate(jNew, egr))]; %#ok<AGROW>
+    T = [T; struct2table(runVoltageCandidate(jNew, egr, fixedCaseIndex))]; %#ok<AGROW>
 end
 
 T = sortrows(T, "current_density_command_A_cm2");
@@ -195,13 +208,22 @@ Pbest = applyCurrentDensity(Pbest, rowBest.current_density_command_A_cm2);
 Pbest.air_flow_scale = 1.0;
 end
 
-function row = runVoltageCandidate(jCommand, egr)
+function row = runVoltageCandidate(jCommand, egr, fixedCaseIndex)
+if nargin < 3
+    fixedCaseIndex = [];
+end
 jRounded = round(jCommand, 3);
-caseIndex = nearestCaseIndexForCurrentDensity(jRounded);
+if isempty(fixedCaseIndex)
+    caseIndex = nearestCaseIndexForCurrentDensity(jRounded);
+    condition = "constant_voltage_boundary_probe";
+else
+    caseIndex = fixedCaseIndex;
+    condition = "constant_voltage_fixed_noEGR_boundary";
+end
 P = init_testbench_10kw_v01(caseIndex, egr);
 P = applyCurrentDensity(P, jRounded);
 P = rebuildScaledFlow(P, 1.0);
-row = runCase(P, "constant_voltage_fixed_flow", caseIndex, egr);
+row = runCase(P, condition, caseIndex, egr);
 row.current_density_command_A_cm2 = jRounded;
 end
 
@@ -545,8 +567,8 @@ lines = [
     ""
     "## Scope"
     ""
-    "- Constant-current and constant-voltage studies keep compressor flow fixed to the no-EGR bench reference for the selected/nearest boundary point."
-    "- Constant-voltage solves current density to three decimals, then uses the nearest bench test point for inlet pressure, temperature, humidity and coolant boundary."
+    "- Constant-current studies keep compressor flow fixed to the no-EGR bench reference for the selected current-density point."
+    "- Constant-voltage studies first solve the no-EGR current for each voltage target, select the nearest no-EGR bench supply boundary once, and keep that external boundary fixed during the EGR scan."
     "- Constant-pO2-inlet study uses `pO2_ca_in` as target and solves air-flow scale after EGR is enabled."
     ""
     "## Inputs"

@@ -1,12 +1,14 @@
 # Bench-Condition Stack Voltage Fit Summary
 
-Date: 2026-06-05
+Date: 2026-06-08
 
 ## Scope
 
 - Voltage fitting uses bench stack test conditions only.
 - The vehicle humidifier, compressor, intercooler and cooling auxiliaries are not fitting targets.
-- The voltage equation is rewritten in direct book theta form.
+- The voltage equation keeps direct book theta form, but the fit is physically constrained.
+- `theta3` keeps the book sign and is intentionally amplified to retain oxygen-concentration sensitivity.
+- The ohmic branch is anchored to the BT3564 stack resistance converted to per-cell resistance.
 - Accepted candidate auto-applied: true.
 
 ## Formula
@@ -21,25 +23,27 @@ Date: 2026-06-05
 ## Bench Condition Fit
 
 - Raw book reference RMSE: 5.4302 V/cell, high-current bias -5.1359 V/cell.
-- Current applied params RMSE: 0.0047 V/cell, high-current bias -0.0011 V/cell.
-- Book-theta refit RMSE: 0.0042 V/cell, high-current bias -0.0025 V/cell.
-- Selected candidate: book_theta_refit (bench stack condition fit passes error and sign gates).
-- Selected RMSE: 0.0042 V/cell, max abs 0.0071 V/cell.
+- Current applied params RMSE: 0.0093 V/cell, high-current bias 0.0015 V/cell.
+- Oxygen-constrained refit RMSE: 0.0093 V/cell, high-current bias 0.0015 V/cell.
+- Selected candidate: oxygen_constrained_refit (oxygen-constrained fit passes error, sign and ohmic gates).
+- Selected RMSE: 0.0093 V/cell, max abs 0.0295 V/cell.
+- Selected ohmic resistance RMSE: 3.02934e-06 ohm/cell.
+- Selected mean ohmic resistance: 0.000305205 ohm/cell; bench target mean 0.000304327 ohm/cell.
 - Selected max positive voltage step: 0.0000 V/cell.
 - Selected terms physical: true.
 
 ## Parameter Movement
 
-- theta1: 0.7084 -> 0.30834965 -> 0.30401719.
-- theta2: 0.00143 -> 2.1394978e-05 -> 2.2530616e-05.
-- theta3: -0.0001527 -> -1.0358993e-26 -> -2.4322043e-40.
-- theta4: 0.0001043 -> 6.2251637e-05 -> 6.6267871e-05.
-- theta5: 0.525 -> 0.094296359 -> 0.045547324.
-- theta6: 0.2173 -> 0.014595518 -> 6.5768466e-05.
-- theta7: -302.06 -> -6.9768547e-17 -> -1.5287418.
-- theta8: 0.000513 -> 0.00015630667 -> 9.6381364e-05.
-- theta9: 5.2e-10 -> 7.9414035e-41 -> 2.4286926e-06.
-- theta10: 0.0335 -> 5.9886101e-15 -> 0.009792891.
+- theta1: 0.7084 -> 0.0002875354 -> 0.0002875354.
+- theta2: 0.00143 -> 0.00036268845 -> 0.00036268845.
+- theta3: -0.0001527 -> -0.00022905 -> -0.00022905.
+- theta4: 0.0001043 -> 4.9406565e-324 -> 4.9406565e-324.
+- theta5: 0.525 -> 0.525 -> 0.525.
+- theta6: 0.2173 -> 0.2173 -> 0.2173.
+- theta7: -302.06 -> -302.06 -> -302.06.
+- theta8: 0.000513 -> 0.00029762048 -> 0.00029762048.
+- theta9: 5.2e-10 -> 7.8008974e-05 -> 7.8008974e-05.
+- theta10: 0.0335 -> 3.1576485e-20 -> 3.1576485e-20.
 
 ## Decision
 
@@ -51,6 +55,7 @@ Date: 2026-06-05
 
 - `04_验证结果/stack_voltage_bench_condition_fit_diagnostic.csv`
 - `04_验证结果/stack_voltage_bench_condition_fit_candidates.csv`
+- `04_验证结果/stack_voltage_oxygen_sensitivity_check.csv`
 - `04_验证结果/stack_voltage_bench_candidate_vehicle_check.csv`
 - `00_输入参数/电堆物理模型/stack_voltage_book_theta_params_candidate.csv`
 - `00_输入参数/电堆物理模型/stack_voltage_book_theta_params.csv`

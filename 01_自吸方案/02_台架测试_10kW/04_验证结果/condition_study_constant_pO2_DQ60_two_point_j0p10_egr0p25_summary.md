@@ -1,6 +1,6 @@
 # DQ60 Constant-pO2 Two-Point Summary
 
-Date: 2026-06-07 15:00:07
+Date: 2026-06-08 09:57:07
 
 ## Scope
 
@@ -13,9 +13,9 @@ Date: 2026-06-07 15:00:07
 ## Key Comparison
 
 - Baseline pO2_ca_in: 26.4314 kPa.
-- EGR=0.25 pO2_ca_in: 25.3309 kPa; delta: -1.1004 kPa.
+- EGR=0.25 pO2_ca_in: 25.3307 kPa; delta: -1.1006 kPa.
 - EGR=0.25 DQ60 operating point: 86.0 L/min at 3000 rpm; flow scale = 1.500; map-ok = 1.
-- EGR=0.25 voltage delta vs baseline: 0.000126 V/cell.
+- EGR=0.25 voltage delta vs baseline: 0.002666 V/cell.
 - EGR=0.25 risk label: `pO2_target_miss`; normal operation = 0.
 
 ## Outputs

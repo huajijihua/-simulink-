@@ -21,6 +21,7 @@ candidateFile = fullfile(outDir, 'stack_voltage_bench_condition_fit_candidates.c
 paramFile = fullfile(voltageDir, 'stack_voltage_book_theta_params_candidate.csv');
 appliedParamFile = fullfile(voltageDir, 'stack_voltage_book_theta_params.csv');
 vehicleCheckFile = fullfile(outDir, 'stack_voltage_bench_candidate_vehicle_check.csv');
+oxygenSensitivityFile = fullfile(outDir, 'stack_voltage_oxygen_sensitivity_check.csv');
 summaryFile = fullfile(outDir, 'stack_voltage_bench_condition_fit_summary.md');
 docFile = fullfile(docDir, '无EGR电压台架条件拟合说明.md');
 
@@ -36,7 +37,7 @@ currentParams = voltageParamsFromP(P0, "current_applied");
 
 bookEval = evaluateVoltage(bench, P0, bookParams);
 currentEval = evaluateVoltage(bench, P0, currentParams);
-fit = fitBenchVoltage(bench, P0, currentParams);
+fit = fitBenchVoltage(bench, P0, bookParams);
 fitEval = evaluateVoltage(bench, P0, fit.params);
 
 selected = selectCandidate(bookEval.metrics, currentEval.metrics, fitEval.metrics, bookParams, currentParams, fit.params);
@@ -45,12 +46,14 @@ selectedEval = evaluateVoltage(bench, P0, selected.params);
 diagTable = buildDiagnosticTable(bench, bookEval, currentEval, fitEval, selectedEval);
 candidateTable = buildCandidateTable(bookEval.metrics, currentEval.metrics, fitEval.metrics, selectedEval.metrics, ...
     bookParams, currentParams, fit.params, selected.params);
-autoApply = selected.label == "book_theta_refit";
+oxygenSensitivity = buildOxygenSensitivityTable(bench, P0, selected.params);
+autoApply = ismember(selected.label, ["oxygen_constrained_refit", "current_oxygen_constrained"]);
 paramTable = buildParamTable(selected.params, selectedEval.metrics, selected, autoApply);
 vehicleCheck = qualitativeVehicleCheckPlaceholder(P0, selected.params);
 
 writetable(diagTable, diagFile);
 writetable(candidateTable, candidateFile);
+writetable(oxygenSensitivity, oxygenSensitivityFile);
 writetable(paramTable, paramFile);
 if autoApply
     writetable(paramTable, appliedParamFile);
@@ -62,6 +65,7 @@ writeDoc(docFile, summaryFile, paramFile);
 
 fprintf('Wrote bench-condition voltage diagnostic to %s\n', diagFile);
 fprintf('Wrote bench-condition candidate metrics to %s\n', candidateFile);
+fprintf('Wrote oxygen sensitivity check to %s\n', oxygenSensitivityFile);
 fprintf('Wrote bench-condition candidate params to %s\n', paramFile);
 if autoApply
     fprintf('Applied bench-condition theta params to %s\n', appliedParamFile);
@@ -94,6 +98,7 @@ S.RH_an = D.anode_RH;
 S.lambda_mem = membraneLambdaFromRH(S.RH_ca, S.RH_an);
 S.lambda_O2_actual = benchLambdaFromFlow(D, P);
 S.C_O2_mol_m3 = max(1.97e-7 .* (S.pO2_ca_kPa * 1000) .* exp(498 ./ S.TK), 1e-12);
+S.R_ohm_cell_target_ohm = benchOhmicCellResistance(D, P);
 S.V_nt_V = 1.229 - 8.5e-4 .* (S.TK - 298.15) ...
     + P.R_J_molK .* S.TK ./ (2 * P.F_C_mol) ...
     .* log(max(S.pH2_an_kPa * 1000, 1) / 101325 .* sqrt(max(S.pO2_ca_kPa * 1000, 1) / 101325));
@@ -119,6 +124,15 @@ nTotal = flow_m3_s / 0.022414;
 nO2 = P.xO2_dry * nTotal;
 nO2Need = D.current_A * P.N_cell / (4 * P.F_C_mol);
 lambda = nO2 ./ max(nO2Need, 1e-12);
+end
+
+function Rcell = benchOhmicCellResistance(D, P)
+Rcell = NaN(height(D), 1);
+if ismember("stack_resistance_mOhm", string(D.Properties.VariableNames))
+    Rcell = double(D.stack_resistance_mOhm) * 1e-3 / P.N_cell;
+elseif ismember("area_specific_resistance_ohm_cm2", string(D.Properties.VariableNames))
+    Rcell = double(D.area_specific_resistance_ohm_cm2) / P.A_cell_cm2;
+end
 end
 
 function params = bookReferenceParams()
@@ -151,19 +165,50 @@ params.theta9 = P.book_theta9;
 params.theta10 = P.book_theta10;
 end
 
-function fit = fitBenchVoltage(S, P, initialParams)
-x0 = encodeParams(initialParams);
-obj = @(x) fitObjective(x, S, P);
-opts = optimset('Display', 'off', 'MaxIter', 3000, 'MaxFunEvals', 30000, 'TolX', 1e-11, 'TolFun', 1e-13);
-x = fminsearch(obj, x0, opts);
-fit = struct();
-fit.params = decodeParams(x);
-fit.params.label = "book_theta_refit";
-fit.objective = obj(x);
+function fit = fitBenchVoltage(S, P, bookParams)
+base = bookParams;
+base.theta5 = bookParams.theta5;
+base.theta6 = bookParams.theta6;
+base.theta7 = bookParams.theta7;
+base.theta8 = fitOhmicTheta8(S, P, base);
+
+theta3ScaleCandidates = [1.5 2.0 3.0];
+best = struct('objective', inf, 'params', base);
+opts = optimset('Display', 'off', 'MaxIter', 4000, 'MaxFunEvals', 40000, 'TolX', 1e-11, 'TolFun', 1e-13);
+for k = 1:numel(theta3ScaleCandidates)
+    candidate = base;
+    candidate.theta3 = theta3ScaleCandidates(k) * bookParams.theta3;
+    x0 = encodeFreeParams(candidate);
+    obj = @(x) fitObjective(x, S, P, candidate);
+    x = fminsearch(obj, x0, opts);
+    params = decodeFreeParams(x, candidate);
+    value = obj(x);
+    if value < best.objective
+        best.objective = value;
+        best.params = params;
+    end
 end
 
-function score = fitObjective(x, S, P)
-params = decodeParams(x);
+fit = struct();
+fit.params = best.params;
+fit.params.label = "oxygen_constrained_refit";
+fit.objective = best.objective;
+end
+
+function theta8 = fitOhmicTheta8(S, P, params)
+Rm = ohmicMembraneResistance(S, P, params);
+target = S.R_ohm_cell_target_ohm;
+valid = isfinite(target) & target > 0 & isfinite(Rm);
+if nnz(valid) < 1
+    theta8 = params.theta8;
+else
+    theta8 = median(max(target(valid) - Rm(valid), 0), 'omitnan');
+end
+theta8 = max(theta8, 0);
+end
+
+function score = fitObjective(x, S, P, fixedParams)
+params = decodeFreeParams(x, fixedParams);
 E = evaluateVoltage(S, P, params);
 err = E.table.V_pred - S.V_cell_meas;
 score = mean(err .^ 2, 'omitnan');
@@ -175,39 +220,32 @@ end
 if ~voltageParamSignsOk(params)
     score = score + 10;
 end
-if max(E.table.V_act_V) > 1.0 || max(E.table.V_ohm_V) > 0.55 || max(E.table.V_conc_V) > 0.35
+if max(E.table.V_act_V) > 1.0 || max(E.table.V_ohm_V) > 0.55 || max(E.table.V_conc_V) > 0.18
     score = score + 10;
 end
+targetOhm = S.R_ohm_cell_target_ohm;
+ohmErr = E.table.R_ohm_total_ohm - targetOhm;
+score = score + 1e3 * mean(ohmErr(isfinite(ohmErr)) .^ 2, 'omitnan');
 end
 
-function x = encodeParams(p)
+function x = encodeFreeParams(p)
 x = [
     log(max(p.theta1, 1e-9))
     log(max(p.theta2, 1e-12))
-    log(max(-p.theta3, 1e-12))
     log(max(p.theta4, 1e-12))
-    log(max(p.theta5, 1e-9))
-    log(max(p.theta6, 1e-9))
-    log(max(-p.theta7, 1e-9))
-    log(max(p.theta8, 1e-12))
     log(max(p.theta9, 1e-14))
-    log(max(p.theta10, 1e-8))
+    log(max(p.theta10, 1e-10))
     ];
 end
 
-function p = decodeParams(x)
-p = struct();
-p.label = "decoded";
+function p = decodeFreeParams(x, fixedParams)
+p = fixedParams;
+p.label = "decoded_constrained";
 p.theta1 = exp(x(1));
 p.theta2 = exp(x(2));
-p.theta3 = -exp(x(3));
-p.theta4 = exp(x(4));
-p.theta5 = exp(x(5));
-p.theta6 = exp(x(6));
-p.theta7 = -exp(x(7));
-p.theta8 = exp(x(8));
-p.theta9 = exp(x(9));
-p.theta10 = exp(x(10));
+p.theta4 = exp(x(3));
+p.theta9 = exp(x(4));
+p.theta10 = exp(x(5));
 end
 
 function E = evaluateVoltage(S, P, params)
@@ -216,8 +254,7 @@ VactRaw = params.theta1 + params.theta2 .* S.TK ...
     + params.theta3 .* S.TK .* log(S.C_O2_mol_m3) ...
     + params.theta4 .* S.TK .* log(I);
 Vact = max(VactRaw, 0);
-Rm = P.membraneThickness_cm ./ max(P.A_cell_cm2 .* (params.theta5 .* S.lambda_mem + params.theta6) ...
-    .* exp(params.theta7 .* (1 / 303.15 - 1 ./ S.TK)), 1e-12);
+Rm = ohmicMembraneResistance(S, P, params);
 Vohm = I .* (Rm + params.theta8);
 Vconc = max(params.theta9 .* exp(min(params.theta10 .* I, 50)), 0);
 Vraw = S.V_nt_V - Vact - Vohm - Vconc;
@@ -237,6 +274,8 @@ T.V_ohm_V = Vohm;
 T.V_conc_V = Vconc;
 T.Rm_ohm = Rm;
 T.Rc_ohm = repmat(params.theta8, height(S), 1);
+T.R_ohm_total_ohm = Rm + params.theta8;
+T.R_ohm_target_ohm = S.R_ohm_cell_target_ohm;
 T.C_O2_mol_m3 = S.C_O2_mol_m3;
 T.pO2_ca_kPa = S.pO2_ca_kPa;
 T.pH2_an_kPa = S.pH2_an_kPa;
@@ -248,6 +287,11 @@ T.high_current_flag = S.current_density_A_cm2 >= 1.1;
 E = struct();
 E.table = T;
 E.metrics = voltageMetrics(T);
+end
+
+function Rm = ohmicMembraneResistance(S, P, params)
+Rm = P.membraneThickness_cm ./ max(P.A_cell_cm2 .* (params.theta5 .* S.lambda_mem + params.theta6) ...
+    .* exp(params.theta7 .* (1 / 303.15 - 1 ./ S.TK)), 1e-12);
 end
 
 function M = voltageMetrics(T)
@@ -263,6 +307,9 @@ M.mean_V_act_V = mean(T.V_act_V, 'omitnan');
 M.mean_V_ohm_V = mean(T.V_ohm_V, 'omitnan');
 M.mean_V_conc_V = mean(T.V_conc_V, 'omitnan');
 M.max_V_conc_V = max(T.V_conc_V);
+M.ohm_resistance_rmse_ohm = rmsLocal(T.R_ohm_total_ohm - T.R_ohm_target_ohm);
+M.mean_R_ohm_total_ohm = mean(T.R_ohm_total_ohm, 'omitnan');
+M.mean_R_ohm_target_ohm = mean(T.R_ohm_target_ohm, 'omitnan');
 M.max_positive_dV_step = max([0; diff(T.V_pred)]);
 M.terms_physical = all(T.V_act_V >= -1e-9) && all(T.V_ohm_V >= -1e-9) && all(T.V_conc_V >= -1e-9) ...
     && all(T.V_nt_V > T.V_pred);
@@ -273,9 +320,13 @@ selected = struct();
 if fitM.rmse_cell_V <= 0.035 && abs(fitM.high_current_bias_cell_V) <= 0.035 ...
         && fitM.max_abs_error_cell_V <= 0.08 && fitM.max_positive_dV_step <= 0.005 ...
         && fitM.terms_physical && voltageParamSignsOk(fitParams)
-    selected.label = "book_theta_refit";
+    selected.label = "oxygen_constrained_refit";
     selected.params = fitParams;
-    selected.reason = "bench stack condition fit passes error and sign gates";
+    selected.reason = "oxygen-constrained fit passes error, sign and ohmic gates";
+elseif oxygenConstrainedParamsOk(currentM, currentParams)
+    selected.label = "current_oxygen_constrained";
+    selected.params = currentParams;
+    selected.reason = "current applied parameters already pass oxygen and ohmic gates";
 elseif currentM.rmse_cell_V < bookM.rmse_cell_V && currentM.terms_physical && voltageParamSignsOk(currentParams)
     selected.label = "current_applied";
     selected.params = currentParams;
@@ -287,6 +338,17 @@ else
 end
 end
 
+function ok = oxygenConstrainedParamsOk(metrics, params)
+bookTheta3 = -1.527e-4;
+ok = metrics.rmse_cell_V <= 0.035 ...
+    && metrics.max_abs_error_cell_V <= 0.08 ...
+    && abs(metrics.high_current_bias_cell_V) <= 0.035 ...
+    && metrics.ohm_resistance_rmse_ohm <= 1.0e-5 ...
+    && params.theta3 <= 1.2 * bookTheta3 ...
+    && voltageParamSignsOk(params) ...
+    && metrics.terms_physical;
+end
+
 function ok = voltageParamSignsOk(params)
 ok = params.theta1 > 0 && params.theta2 > 0 && params.theta3 < 0 && params.theta4 > 0 ...
     && params.theta5 > 0 && params.theta6 > 0 && params.theta7 < 0 ...
@@ -295,13 +357,13 @@ end
 
 function T = buildDiagnosticTable(S, bookEval, currentEval, fitEval, selectedEval)
 T = S(:, {'case_id','current_A','current_density_A_cm2','V_cell_meas','T_stack_C', ...
-    'pO2_ca_kPa','pH2_an_kPa','pH2O_ca_kPa','pH2O_an_kPa','RH_ca','RH_an','lambda_mem','lambda_O2_actual','C_O2_mol_m3','V_nt_V'});
+    'pO2_ca_kPa','pH2_an_kPa','pH2O_ca_kPa','pH2O_an_kPa','RH_ca','RH_an','lambda_mem','lambda_O2_actual','C_O2_mol_m3','R_ohm_cell_target_ohm','V_nt_V'});
 T.book_reference_V = bookEval.table.V_pred;
 T.book_reference_err_V = bookEval.table.V_err;
 T.current_applied_V = currentEval.table.V_pred;
 T.current_applied_err_V = currentEval.table.V_err;
-T.book_theta_refit_V = fitEval.table.V_pred;
-T.book_theta_refit_err_V = fitEval.table.V_err;
+T.oxygen_constrained_refit_V = fitEval.table.V_pred;
+T.oxygen_constrained_refit_err_V = fitEval.table.V_err;
 T.selected_candidate_V = selectedEval.table.V_pred;
 T.selected_candidate_err_V = selectedEval.table.V_err;
 T.selected_V_act_V = selectedEval.table.V_act_V;
@@ -309,10 +371,11 @@ T.selected_V_ohm_V = selectedEval.table.V_ohm_V;
 T.selected_V_conc_V = selectedEval.table.V_conc_V;
 T.selected_Rm_ohm = selectedEval.table.Rm_ohm;
 T.selected_Rc_ohm = selectedEval.table.Rc_ohm;
+T.selected_R_ohm_total_ohm = selectedEval.table.R_ohm_total_ohm;
 end
 
 function T = buildCandidateTable(bookM, currentM, fitM, selectedM, bookParams, currentParams, fitParams, selectedParams)
-labels = ["book_reference"; "current_applied"; "book_theta_refit"; "selected_candidate"];
+labels = ["book_reference"; "current_applied"; "oxygen_constrained_refit"; "selected_candidate"];
 metrics = [bookM; currentM; fitM; selectedM];
 params = [bookParams; currentParams; fitParams; selectedParams];
 T = table();
@@ -325,6 +388,9 @@ T.mean_V_act_V = arrayfun(@(m) m.mean_V_act_V, metrics);
 T.mean_V_ohm_V = arrayfun(@(m) m.mean_V_ohm_V, metrics);
 T.mean_V_conc_V = arrayfun(@(m) m.mean_V_conc_V, metrics);
 T.max_V_conc_V = arrayfun(@(m) m.max_V_conc_V, metrics);
+T.ohm_resistance_rmse_ohm = arrayfun(@(m) m.ohm_resistance_rmse_ohm, metrics);
+T.mean_R_ohm_total_ohm = arrayfun(@(m) m.mean_R_ohm_total_ohm, metrics);
+T.mean_R_ohm_target_ohm = arrayfun(@(m) m.mean_R_ohm_target_ohm, metrics);
 T.max_positive_dV_step = arrayfun(@(m) m.max_positive_dV_step, metrics);
 T.terms_physical = arrayfun(@(m) m.terms_physical, metrics);
 T.theta1 = arrayfun(@(p) p.theta1, params);
@@ -337,6 +403,37 @@ T.theta7 = arrayfun(@(p) p.theta7, params);
 T.theta8 = arrayfun(@(p) p.theta8, params);
 T.theta9 = arrayfun(@(p) p.theta9, params);
 T.theta10 = arrayfun(@(p) p.theta10, params);
+end
+
+function T = buildOxygenSensitivityTable(S, P, params)
+caseIds = ["low_current_j0p10"; "mid_current_j0p70"; "high_current_j1p50"];
+targetJ = [0.1; 0.7; 1.5];
+pO2Scales = [1.0; 0.8; 0.6; 0.5];
+T = table();
+for i = 1:numel(targetJ)
+    [~, idx] = min(abs(S.current_density_A_cm2 - targetJ(i)));
+    baseRow = S(idx, :);
+    baseEval = evaluateVoltage(baseRow, P, params).table;
+    for k = 1:numel(pO2Scales)
+        trial = baseRow;
+        trial.pO2_ca_kPa = baseRow.pO2_ca_kPa * pO2Scales(k);
+        trial.C_O2_mol_m3 = max(1.97e-7 .* (trial.pO2_ca_kPa * 1000) .* exp(498 ./ trial.TK), 1e-12);
+        evalRow = evaluateVoltage(trial, P, params).table;
+        row = table();
+        row.case_group = caseIds(i);
+        row.source_case_id = baseRow.case_id;
+        row.current_density_A_cm2 = baseRow.current_density_A_cm2;
+        row.pO2_scale = pO2Scales(k);
+        row.pO2_ca_kPa = trial.pO2_ca_kPa;
+        row.V_cell = evalRow.V_pred;
+        row.delta_V_vs_base = evalRow.V_pred - baseEval.V_pred;
+        row.eta_act_V = evalRow.V_act_V;
+        row.delta_eta_act_vs_base = evalRow.V_act_V - baseEval.V_act_V;
+        row.eta_ohm_V = evalRow.V_ohm_V;
+        row.eta_con_V = evalRow.V_conc_V;
+        T = [T; row]; %#ok<AGROW>
+    end
+end
 end
 
 function T = buildParamTable(params, metrics, selected, autoApply)
@@ -379,7 +476,7 @@ V.theta10 = params.theta10;
 end
 
 function writeSummary(path, bookM, currentM, fitM, selectedM, bookParams, currentParams, selectedParams, selected, autoApply)
-if selected.label == "book_theta_refit"
+if selected.label == "oxygen_constrained_refit"
     decision = "bench_condition_voltage_refit_candidate_accepted";
 else
     decision = "bench_condition_voltage_refit_not_accepted";
@@ -393,7 +490,9 @@ lines = [
     ""
     "- Voltage fitting uses bench stack test conditions only."
     "- The vehicle humidifier, compressor, intercooler and cooling auxiliaries are not fitting targets."
-    "- The voltage equation is rewritten in direct book theta form."
+    "- The voltage equation keeps direct book theta form, but the fit is physically constrained."
+    "- `theta3` keeps the book sign and is intentionally amplified to retain oxygen-concentration sensitivity."
+    "- The ohmic branch is anchored to the BT3564 stack resistance converted to per-cell resistance."
     sprintf("- Accepted candidate auto-applied: %s.", string(autoApply))
     ""
     "## Formula"
@@ -409,9 +508,11 @@ lines = [
     ""
     sprintf("- Raw book reference RMSE: %.4f V/cell, high-current bias %.4f V/cell.", bookM.rmse_cell_V, bookM.high_current_bias_cell_V)
     sprintf("- Current applied params RMSE: %.4f V/cell, high-current bias %.4f V/cell.", currentM.rmse_cell_V, currentM.high_current_bias_cell_V)
-    sprintf("- Book-theta refit RMSE: %.4f V/cell, high-current bias %.4f V/cell.", fitM.rmse_cell_V, fitM.high_current_bias_cell_V)
+    sprintf("- Oxygen-constrained refit RMSE: %.4f V/cell, high-current bias %.4f V/cell.", fitM.rmse_cell_V, fitM.high_current_bias_cell_V)
     sprintf("- Selected candidate: %s (%s).", selected.label, selected.reason)
     sprintf("- Selected RMSE: %.4f V/cell, max abs %.4f V/cell.", selectedM.rmse_cell_V, selectedM.max_abs_error_cell_V)
+    sprintf("- Selected ohmic resistance RMSE: %.6g ohm/cell.", selectedM.ohm_resistance_rmse_ohm)
+    sprintf("- Selected mean ohmic resistance: %.6g ohm/cell; bench target mean %.6g ohm/cell.", selectedM.mean_R_ohm_total_ohm, selectedM.mean_R_ohm_target_ohm)
     sprintf("- Selected max positive voltage step: %.4f V/cell.", selectedM.max_positive_dV_step)
     sprintf("- Selected terms physical: %s.", string(selectedM.terms_physical))
     ""
@@ -438,6 +539,7 @@ lines = [
     ""
     "- `04_验证结果/stack_voltage_bench_condition_fit_diagnostic.csv`"
     "- `04_验证结果/stack_voltage_bench_condition_fit_candidates.csv`"
+    "- `04_验证结果/stack_voltage_oxygen_sensitivity_check.csv`"
     "- `04_验证结果/stack_voltage_bench_candidate_vehicle_check.csv`"
     "- `00_输入参数/电堆物理模型/stack_voltage_book_theta_params_candidate.csv`"
     "- `00_输入参数/电堆物理模型/stack_voltage_book_theta_params.csv`"

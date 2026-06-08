@@ -178,14 +178,15 @@ targets = makeVoltageTargets(C, B, options.TargetVoltage);
 rows = {};
 for k = 1:height(targets)
     target = targets(k, :);
+    fixedBoundaryRow = nearestBenchRow(B, target.fixed_noEGR_boundary_current_density_A_cm2);
     ratios = buildInitialRatios(options.InitialMaxEgr, options.BaseStep);
     ratioIdx = 1;
     while ratioIdx <= numel(ratios)
         r = ratios(ratioIdx);
-        [row, Pbest] = tuneCurrentForVoltage(C, B, target, r);
+        [row, Pbest] = tuneCurrentForVoltage(C, B, target, r, fixedBoundaryRow);
         row.case_id = "v" + replace(string(sprintf('%.3f', target.V_cell_target)), ".", "p") ...
             + "_egr" + replace(string(sprintf('%.2f', r)), ".", "p");
-        row.condition = "constant_voltage_egr_fixed_total_compressor_flow";
+        row.condition = "constant_voltage_egr_fixed_noEGR_supply_boundary";
         row.V_cell_target = target.V_cell_target;
         row.target_error_V = row.V_cell_sim - target.V_cell_target;
         row.reference_case_id = string(target.reference_case_id);
@@ -195,6 +196,10 @@ for k = 1:height(targets)
         row.base_oxygen_stoich_cmd = target.base_oxygen_stoich_cmd;
         row.base_fresh_O2_flow_kg_s = target.base_fresh_O2_flow_kg_s;
         row.oxygen_stoich_cmd = Pbest.oxygen_stoich;
+        row.fixed_noEGR_boundary_case_id = string(fixedBoundaryRow.case_id);
+        row.fixed_noEGR_boundary_current_A = target.fixed_noEGR_boundary_current_A;
+        row.fixed_noEGR_boundary_current_density_A_cm2 = target.fixed_noEGR_boundary_current_density_A_cm2;
+        row.fixed_noEGR_boundary_source = "EGR0_voltage_solution_nearest_bench";
         row.egr_ratio_cmd = r;
         row.fixed_total_compressor_flow = true;
         row.interpretation_status = interpretationStatus(row);
@@ -510,19 +515,30 @@ for k = 1:numel(targetVoltages)
     ref = B(idx, :);
     baseStoich = round(cathodeStoichFromBench(ref, C.P0), 1);
     baseStoich = max(baseStoich, 0.5);
-    [baseRow, Pbase] = tuneNoEgrVoltageBaseFixedStoich(C, B, targetV, ref.current_A, baseStoich);
-    baseO2Flow = freshO2FlowFromCurrent(C.P0, Pbase.I_stack_default_A, baseStoich);
+    [probeRow, Pprobe] = tuneNoEgrVoltageBaseFixedStoich(C, B, targetV, ref.current_A, baseStoich);
+    fixedBoundary = nearestBenchRow(B, Pprobe.I_stack_default_A / C.P0.A_cell_cm2);
+    fixedBoundaryStoich = round(cathodeStoichFromBench(fixedBoundary, C.P0), 1);
+    fixedBoundaryStoich = max(fixedBoundaryStoich, 0.5);
+    baseO2Flow = freshO2FlowFromCurrent(C.P0, fixedBoundary.current_A, fixedBoundaryStoich);
+    [baseRow, Pbase] = tuneCurrentForVoltageFlow(C, B, targetV, baseO2Flow, 0.0, Pprobe.I_stack_default_A, fixedBoundary);
     row = table();
     row.V_cell_target = targetV;
     row.reference_case_id = string(ref.case_id);
     row.nearest_bench_current_A = ref.current_A;
     row.nearest_bench_current_density_A_cm2 = ref.current_density_A_cm2;
     row.nearest_bench_V_cell = ref.cell_voltage_from_stack_V;
+    row.boundary_probe_current_A = Pprobe.I_stack_default_A;
+    row.boundary_probe_current_density_A_cm2 = Pprobe.I_stack_default_A / C.P0.A_cell_cm2;
+    row.boundary_probe_V_cell = probeRow.V_cell_sim;
+    row.fixed_noEGR_boundary_case_id = string(fixedBoundary.case_id);
+    row.fixed_noEGR_boundary_current_A = fixedBoundary.current_A;
+    row.fixed_noEGR_boundary_current_density_A_cm2 = fixedBoundary.current_density_A_cm2;
+    row.fixed_noEGR_boundary_oxygen_stoich_cmd = fixedBoundaryStoich;
     row.reference_current_A = Pbase.I_stack_default_A;
     row.reference_current_density_A_cm2 = Pbase.I_stack_default_A / C.P0.A_cell_cm2;
     row.reference_V_cell = baseRow.V_cell_sim;
     row.reference_voltage_error_V = baseRow.V_cell_sim - targetV;
-    row.base_oxygen_stoich_cmd = baseStoich;
+    row.base_oxygen_stoich_cmd = Pbase.oxygen_stoich;
     row.base_fresh_O2_flow_kg_s = baseO2Flow;
     targets = [targets; row]; %#ok<AGROW>
 end
@@ -574,31 +590,31 @@ if abs(roundedCurrent - Pbest.I_stack_default_A) > 1e-9
 end
 end
 
-function [row, Pbest] = tuneCurrentForVoltage(C, B, target, egrRatio)
+function [row, Pbest] = tuneCurrentForVoltage(C, B, target, egrRatio, fixedBoundaryRow)
 refCurrent = max(target.reference_current_A, 0.5);
-[row, Pbest] = tuneCurrentForVoltageFlow(C, B, target.V_cell_target, target.base_fresh_O2_flow_kg_s, egrRatio, refCurrent);
+[row, Pbest] = tuneCurrentForVoltageFlow(C, B, target.V_cell_target, target.base_fresh_O2_flow_kg_s, egrRatio, refCurrent, fixedBoundaryRow);
 row.voltage_search_abs_error_V = abs(row.V_cell_sim - target.V_cell_target);
 end
 
-function [bestRow, Pbest] = tuneCurrentForVoltageFlow(C, B, targetV, fixedO2Flow, egrRatio, refCurrent)
+function [bestRow, Pbest] = tuneCurrentForVoltageFlow(C, B, targetV, fixedO2Flow, egrRatio, refCurrent, fixedBoundaryRow)
 maxCurrent = min(0.98 * C.P0.A_cell_cm2 * 2.0, max(10, stoichLimitedCurrent(C.P0, fixedO2Flow, 0.22)));
 low = max(0.5, min(refCurrent * 0.02, maxCurrent));
 high = min(maxCurrent, max(refCurrent * 1.25, low + 1));
-[lowRow, lowP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, low);
-[highRow, highP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, high);
+[lowRow, lowP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, low, fixedBoundaryRow);
+[highRow, highP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, high, fixedBoundaryRow);
 while highRow.V_cell_sim > targetV && high < maxCurrent
     low = high;
     lowRow = highRow;
     lowP = highP;
     high = min(maxCurrent, high * 1.8);
-    [highRow, highP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, high);
+    [highRow, highP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, high, fixedBoundaryRow);
 end
 while lowRow.V_cell_sim < targetV && low > 0.5
     high = low;
     highRow = lowRow;
     highP = lowP;
     low = max(0.5, low * 0.5);
-    [lowRow, lowP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, low);
+    [lowRow, lowP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, low, fixedBoundaryRow);
 end
 
 candidates = {lowRow, highRow};
@@ -606,7 +622,7 @@ candidateP = {lowP, highP};
 if lowRow.V_cell_sim >= targetV && highRow.V_cell_sim <= targetV
     for iter = 1:8
         mid = 0.5 * (low + high);
-        [midRow, midP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, mid);
+        [midRow, midP] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, mid, fixedBoundaryRow);
         candidates{end + 1} = midRow; %#ok<AGROW>
         candidateP{end + 1} = midP; %#ok<AGROW>
         if midRow.V_cell_sim >= targetV
@@ -622,13 +638,17 @@ bestRow = candidates{bestIdx};
 Pbest = candidateP{bestIdx};
 roundedCurrent = round(Pbest.I_stack_default_A, 2);
 if abs(roundedCurrent - Pbest.I_stack_default_A) > 1e-9
-    [bestRow, Pbest] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, roundedCurrent);
+    [bestRow, Pbest] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, roundedCurrent, fixedBoundaryRow);
 end
 end
 
-function [row, P] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, currentA)
+function [row, P] = runVoltageAtCurrent(C, B, targetV, fixedO2Flow, egrRatio, currentA, fixedBoundaryRow)
 stoich = stoichForFixedO2Flow(C.P0, fixedO2Flow, currentA);
-P = configureInterpolatedCurrentCase(C.P0, B, currentA, stoich);
+if nargin >= 7 && ~isempty(fixedBoundaryRow)
+    P = configureFixedBoundaryCurrentCase(C.P0, fixedBoundaryRow, currentA, stoich);
+else
+    P = configureInterpolatedCurrentCase(C.P0, B, currentA, stoich);
+end
 [row, ~] = runOperatingCase(C, P, egrRatio, "constant_voltage_trial");
 row.V_cell_target = targetV;
 row.target_error_V = row.V_cell_sim - targetV;
@@ -704,6 +724,14 @@ end
 function P = configureInterpolatedCurrentCase(P, B, currentA, oxygenStoich)
 currentDensity = currentA / P.A_cell_cm2;
 row = nearestBenchRow(B, currentDensity);
+row.current_A = currentA;
+row.current_density_A_cm2 = currentDensity;
+P = configureCaseFromBenchRow(P, row, currentA, oxygenStoich);
+end
+
+function P = configureFixedBoundaryCurrentCase(P, boundaryRow, currentA, oxygenStoich)
+currentDensity = currentA / P.A_cell_cm2;
+row = boundaryRow;
 row.current_A = currentA;
 row.current_density_A_cm2 = currentDensity;
 P = configureCaseFromBenchRow(P, row, currentA, oxygenStoich);
@@ -1223,7 +1251,7 @@ if contains(condition, "constant_voltage")
     groupVar = "V_cell_target";
     groupLabel = "V";
     titlePrefix = "Constant Voltage";
-    fixedFlowText = "fixed no-EGR baseline compressor inlet mass flow";
+    fixedFlowText = "fixed no-EGR supply boundary selected at EGR=0";
 elseif contains(condition, "constant_pO2")
     groupVar = "current_density_A_cm2";
     groupLabel = "A/cm2";

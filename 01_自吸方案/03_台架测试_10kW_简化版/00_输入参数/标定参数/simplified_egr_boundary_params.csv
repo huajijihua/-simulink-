@@ -1,0 +1,7 @@
+parameter,value
+egr_fraction_scale,1
+egr_fraction_bias,0
+separator_T_offset_C,0
+separator_p_offset_kPa,0
+stack_in_flow_scale,1
+fresh_supply_flow_scale,1

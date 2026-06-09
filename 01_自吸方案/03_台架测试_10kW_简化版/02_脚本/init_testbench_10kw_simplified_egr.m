@@ -204,6 +204,14 @@ P.StackParam(75) = P.egr_fraction_cmd;
 P.StackParam(76) = P.egr_loss_k_V;
 P.StackParam(77) = P.egr_loss_exp;
 P.StackParam(78) = P.egr_loss_rh_V;
+if numel(P.StackParam) < 83
+    P.StackParam(83) = 0;
+end
+P.StackParam(79) = P.tau_memb_s;
+P.StackParam(80) = P.k_mem_eff;
+P.StackParam(81) = P.a_memb_min;
+P.StackParam(82) = P.a_memb_max;
+P.StackParam(83) = P.membrane_dynamic_mode;
 end
 
 function P = readLocalCalibration(P)
@@ -216,6 +224,11 @@ P.fresh_supply_flow_scale = 1.0;
 P.egr_loss_k_V = 0.0;
 P.egr_loss_exp = 1.0;
 P.egr_loss_rh_V = 0.0;
+P.tau_memb_s = 10.0;
+P.k_mem_eff = 0.05;
+P.a_memb_min = 0.0;
+P.a_memb_max = 1.0;
+P.membrane_dynamic_mode = 1.0;
 
 paramDir = fullfile(P.rootDir, '00_输入参数', '标定参数');
 stackFile = fullfile(paramDir, 'simplified_noegr_stack_params.csv');
@@ -263,6 +276,9 @@ pO2 = max((pDry - pV) * P.xO2_dry, 1e-6);
 pN2 = max((pDry - pV) * P.xN2_dry, 1e-6);
 pH2 = max(P.p_anode_in_kPa * 0.85, 1e-6);
 pH2OvAn = min(P.RH_an_in * satKPa(P.bench_stack_in_T_C), 0.30 * P.p_anode_in_kPa);
+aCa0 = min(max(pV / max(satKPa(P.bench_stack_in_T_C), 1e-6), P.a_memb_min), P.a_memb_max);
+aAn0 = min(max(pH2OvAn / max(satKPa(P.bench_stack_in_T_C), 1e-6), P.a_memb_min), P.a_memb_max);
+aMemb0 = min(max(0.5 * (aCa0 + aAn0), P.a_memb_min), P.a_memb_max);
 P.stack_initial_state = [
     pO2 * 1000 * P.V_ca_m3 * P.M_O2_kg_mol / (P.R_J_molK * T0_K)
     pN2 * 1000 * P.V_ca_m3 * P.M_N2_kg_mol / (P.R_J_molK * T0_K)
@@ -270,6 +286,7 @@ P.stack_initial_state = [
     pH2 * 1000 * P.V_an_m3 * P.M_H2_kg_mol / (P.R_J_molK * T0_K)
     pH2OvAn * 1000 * P.V_an_m3 * P.M_H2O_kg_mol / (P.R_J_molK * T0_K)
     P.bench_stack_in_T_C
+    aMemb0
     ];
 P.egr_initial_node = zeros(7, 1);
 P.egr_initial_node(5) = P.separator_T_C;

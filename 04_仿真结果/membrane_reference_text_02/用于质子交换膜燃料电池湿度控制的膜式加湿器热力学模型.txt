@@ -1,0 +1,557 @@
+                                                         A Thermodynamic Model of
+                                                         Membrane Humidifiers for PEM
+                      Dongmei Chen                       Fuel Cell Humidification Control
+                            Huei Peng1
+                     e-mail: hpeng@umich.edu             Maintaining proper membrane humidity is crucial to ensure optimal operation of a poly-
+                                                         mer electrolyte membrane fuel cell system. A membrane humidifier using the fuel cell
+         Department of Mechanical Engineering,           exhaust gas to humidify the dry air is studied in this paper. We first develop a thermo-
+    University of Michigan, Ann Arbor, MI 48109          dynamic model, which captures the crucial dynamic variables of the humidifier, including
+                                                         the pressure, flow rate, temperature, and relative humidity of the air flow. Steady-state
+                                                         simulations are then conducted to optimize the humidifier design. Subsequently, dynamic
+                                                         simulations are performed to predict the behavior of the humidifier during transient
+                                                         operations typical for automotive applications. A simple proportional controller was
+                                                         designed to control the humidifier operation. 关DOI: 10.1115/1.1978910兴
+
+
+
+
+1    Introduction                                                                    humidity condition 关2–4,10,11兴. The cell current is determined by
+                                                                                     the load condition. The temperature rise inside the fuel cell de-
+   The polymer electrolyte membrane 共PEM兲 fuel cell is consid-
+                                                                                     pends on the fuel cell current and is controlled by the cooling
+ered as one of the most promising alternative automotive power
+                                                                                     system that aims to keep the fuel cell temperature at 80° C. Both
+sources to compete with internal combustion 共IC兲 engines due to
+                                                                                     of them are hardly controllable during fuel cell operation. How-
+its lower overall emission and higher efficiency. With the intro-
+                                                                                     ever, the inlet gas humidity condition is not affected by the fuel
+duction of Honda’s first limited-quantity fuel cell vehicle, FCX, in
+                                                                                     cell operation, and provides the most leverage on controlling the
+2002 and a similar offering from Toyota, PEMFC has passed its
+                                                                                     fuel cell membrane humidity. To control the inlet gas humidity
+initial feasibility evaluation stage and is gradually becoming a
+                                                                                     condition, a humidifier at the fuel cell inlet can be used. Develop-
+viable technology to compete with IC engines in the automotive
+                                                                                     ing a dynamic model to describe the humidifier transient phenom-
+market. To realize its full potential, however, significant improve-
+                                                                                     ena is the essential first step before the humidifier control design.
+ment is still needed. The improvement includes, but is not limited
+                                                                                        Little information related to the transient humidification phe-
+to, cost and size reduction, improved reliability against fuel varia-
+                                                                                     nomena is available in the literature. Even though many theoreti-
+tion and impurity, on-board storage, and improved cold-dry envi-
+                                                                                     cal and empirical models have been developed to predict fuel cell
+ronment operability.
+                                                                                     membrane humidity, most of them either are for steady-state
+   One of the key challenges for optimum fuel cell performance is
+                                                                                     analysis or are computation intensive. For example, a one-
+to maintain proper membrane humidity of the PEM fuel cells 关1兴.
+                                                                                     dimensional 共1D兲 steady state PEM fuel cell model was developed
+Less than full hydration of the membrane will decrease the pro-
+                                                                                     to predict the water transport mechanisms and their effects on fuel
+tonic conductivity and lead to increased resistive loss, decreased
+                                                                                     cell performance 关2兴. A two-dimensional 共2D兲 steady state PEM
+net fuel cell stack power 关2兴, and local hot spots that could dra-
+                                                                                     fuel cell model was developed to compare the effectiveness of
+matically reduce the life of the membrane. On the other hand, if
+                                                                                     different humidification strategies 关1兴. A three-dimensional 共3D兲
+excessive water is present in the membrane and/or the gas diffu-
+                                                                                     steady state CFD PEM fuel cell model was developed to predict
+sion layer, a situation commonly known as flooding will occur.
+                                                                                     the temperature distribution inside the fuel cell channels and the
+Flooding causes the blockage of the gas flow channels, electrodes,
+                                                                                     effect of heat produced by the fuel cell 关10兴. Although these mod-
+and backing layers, and thus bears detrimental effects on the fuel
+                                                                                     els provide useful guidelines for fuel cell design, they usually are
+cell performance and life 关3,4兴. Therefore, it is crucial to control
+                                                                                     only applicable to steady-state operations, and the overall system
+the membrane humidity of the fuel cells to avoid dehydration and
+                                                                                     is optimized accordingly. For automotive applications, the fuel
+flooding. Maintaining proper membrane humidity is especially
+                                                                                     cell has to be controlled to operate at its peak performance under
+important in automotive applications where the electric current
+                                                                                     varying load conditions. This calls for dynamic models that are
+drawn from the fuel cell changes rapidly with the road load and
+                                                                                     relatively simple and yet accurate enough for control design and
+driver demand. Future automotive fuel cell systems must have
+                                                                                     analysis.
+desirable membrane humidity under unpredictable power demand
+                                                                                        The purpose of this paper is to develop a control-oriented
+and environmental conditions 关4,5兴.
+                                                                                     model that describes the transient thermodynamic behavior of
+   The membrane humidity of PEM fuel cells is characterized by
+                                                                                     membrane humidifiers. The membrane humidifier outputs are
+many intrinsic parameters of the membrane, such as the water
+                                                                                     modeled as functions of the time-varying mass flow rates, pres-
+diffusion coefficient, electro-osmotic drag coefficient, water sorp-
+                                                                                     sures, humidity, and temperatures of the gases. The model will
+tion isotherms, membrane conductivity, and thickness 关3,6–9兴.
+                                                                                     enable not only steady-state analysis, but also dynamic analysis
+These parameters cannot be easily changed after the fuel cell is
+                                                                                     for transient response and automatic humidification control. The
+designed and the membrane is selected. The membrane humidity
+                                                                                     steady-state analysis provides critical insight for the humidifier
+is also found to be a function of external variables including cell
+                                                                                     design optimization. The dynamic analysis is used for developing
+current, the temperature rise inside the fuel cell, and the inlet gas
+                                                                                     control algorithms to regulate the vapor concentration of the hu-
+                                                                                     midifier outlet gas according to the fuel cell stack operation.
+   1
+     Corresponding author, Associate Professor, Department of Mechanical Engineer-
+ing, University of Michigan, Ann Arbor, MI 48109-2133, 734-936-0352.
+   Contributed by the Dynamic Systems, Measurement, and Control Division of THE      2   Analysis of Membrane Humidification
+AMERICAN SOCIETY OF MECHANICAL ENGINEERS for publication in the ASME JOURNAL
+OF DYNAMIC SYSTEMS, MEASUREMENT, AND CONTROL. Manuscript received: February            2.1 Humidification Devices. The reactants entering the fuel
+23, 2004; Final revision: October 22, 2004. Associate Editor: Hemant M. Sardar.      cells, if untreated, could have temperature and humidity within a
+
+424 / Vol. 127, SEPTEMBER 2005                                       Copyright © 2005 by ASME                            Transactions of the ASME
+                                                                                             Fig. 2 Humidifier channel plate
+
+
+
+
+                                                                         the gases flow in parallel to the hydrated membrane. Nafion1
+                                                                         membrane is selected as the humidity exchange membrane. The
+                                                                         channel plate structure is detailed in Fig. 2. A conventional
+                                                                         straight flow channel design is used. The dimensions “H” and
+                                                                         “W” in Fig. 2 characterize the channel size. Their effects on the
+                                                                         overall humidifier performance will be discussed later.
+                                                                            The flow channel of a humidifier unit is shown in Fig. 3. There
+                                                                         are three gas channels in each humidifier unit: A channel “A,”
+                                                                         which is the humidification channel, a channel “B,” which is the
+                                                                         heat transfer channel, and a channel “C,” which is the exhaust gas
+                                                                         channel. The dry inlet gas goes through either channel “A” or
+                                                                         channel “B.” When the inlet gas passes through channel “A,” both
+                                                                         heat and water vapor exchanges with channel “C” will occur. On
+                                                                         the contrary, when the gas passes through channel “B,” only heat
+                                                                         exchange will happen. Depending on the position of the sliding
+Fig. 1 „a… Membrane humidifier integrated with fuel cell stack.          plate, the gas will be directed to go through either channel “A” as
+„b… Humidifier structure.                                                in Fig. 3共a兲 to be humidified, or channel “B” as in Fig. 3共b兲 to be
+                                                                         heated only.
+                                                                            Assuming there are N humidifier units, the number of units
+                                                                         designated as type “A” can be any number between 0 and N,
+                                                                         depending on the desired relative humidity of the exiting gas. For
+wide range and thus significantly affect the performance of PEM          example, if the desired relative humidity is 100%, the sliding
+fuel cells. To solve this problem, a humidifier at the fuel cell inlet   plates are moved so that all the gas goes through “A” channels.
+can be used to adjust the inlet reactants relative humidity. Mem-        Similarly, if the desired relative humidity is 0%, all the “A” chan-
+brane humidity, i.e., membrane water content, varies with the            nels will be closed. In general, the number of channel “A” will be
+cathode and anode reactants relative humidity. For PEM fuel cell         0 艋 n 艋 N, and is calculated based on the fuel cell stack current
+stacks, the goal of a humidifier is to manipulate the reactant rela-     and the desired relative humidity. It should be noted that the au-
+tive humidity so that the fuel cell membrane humidity stays close        thority of the humidifier in reducing humidity is limited. When the
+to 100% without flooding.                                                inlet air has a nonzero relative humidity, we will not get 0% at the
+   Other researchers have proposed several PEM fuel cell humidi-         outlet even though no channel “A” is used.
+fication mechanisms. The most common ones are nozzle spray,                 2.2 Control Volume Definition. To derive the governing
+gas bubbling, the “enthalpy wheel” 关12兴, and membrane humidi-            thermodynamic equations, we first need to define the control vol-
+fication. The nozzle spray and gas bubbling mechanisms do not            umes of the humidifier system. For the humidifier design pre-
+always provide high relative humidity boost at the operating tem-        sented in Sec. 2.1, two control volumes are defined as shown in
+perature of PEM fuel cells due to the heat loss of the vaporization      Fig. 4. Control Volume 1 includes either Channel “A” or Channel
+process and the low inlet temperature of the reactants. Water heat-      “B.” Control Volume 2 includes Channel “C.” For Control Volume
+ers can be added to provide additional control authority. However,       1, the dry gas inlet mass flow rate, pressure, temperature, and
+they are not preferred because of the added weight, complexity,          relative humidity 共RH兲 are denoted as M 1,in, P1,in, T1,in, and ⌽1,in,
+cost, and parasitic loss 关13兴. The enthalpy wheel device and the         respectively. The gas outlet mass flow rate, pressure, temperature,
+membrane humidification mechanism reuse the heat and water               and RH are denoted as M 1,out, P1,out, T1,out, and ⌽1,out, respec-
+vapor exhausted from the fuel cell to heat and humidify the dry          tively. If Control Volume 1 includes Channel “A,” both vapor
+gas. They recover some of the fuel cell exhaust energy and help to       transfer M 1,v,tr and heat transfer Q1 occur. If Control Volume 1
+increase the overall system efficiency. Membrane humidification          includes Channel “B,” only heat transfer Q1 occurs. For Control
+has been used in several prior studies by other researchers 关14–17兴      Volume 2, the exhaust gas inlet 共exhausted from fuel cell兲 mass
+and is one of the most promising humidification mechanisms. This         flow rate, pressure, temperature, and RH are denoted as M 2,in,
+paper will focus on membrane humidification as well.                     P2,in, T2,in, and ⌽2,in, respectively. The exhaust gas outlet mass
+   A schematic of the integrated fuel cell and membrane humidi-          flow rate, pressure, temperature, and RH are denoted as M 2,out,
+fier system is shown in Fig. 1共a兲. The fuel cell exhaust gas is fed      P2,out, T2,out, and ⌽2,out, respectively. The dry gas and the exhaust
+to the humidifier to warm up and humidify the dry gas. The hu-           gas can flow in several patterns 共parallel, cross, and counter flow
+midifier internal structure is described in Fig. 1共b兲. The humidity      patterns兲. Figure 4 shows that the dry gas and the exhaust gas flow
+exchange membrane is sandwiched between the backing layers               in the counter flow arrangement.
+and flow channel plates. The dry reactant flows into one channel
+plate and the fuel cell exhaust gas flows into the other one. Water
+                                                                           1
+diffuses from one side of the membrane to the other side, while                Nafion is a trademark of DuPont Company
+
+
+Journal of Dynamic Systems, Measurement, and Control                                                    SEPTEMBER 2005, Vol. 127 / 425
+                                                                                          Fig. 4 Control volumes of one humidifier unit
+
+
+
+
+                                                                                 rived to describe the transient behavior of the gases in the two
+                                                                                 control volumes based on thermodynamics principle, mass conti-
+                                                                                 nuity equations, heat transfer theories, and experimental results
+                                                                                 共published in the literature兲for membrane diffusion.
+                                                                                   3.2.1 The First Law of Thermodynamics. Based on the first
+                                                                                 law of thermodynamics, the governing equation for control vol-
+                                                                                 umes 1 and 2 is 关18兴:
+
+                                                                                      兺                                     兺
+                                                                                          dmk1,k2,out              dQk1         dmk1,k2,in
+                                                                                                      hk1,k2,out =      +                  hk1,k2,in
+                                                                                             dt                     dt            dt
+
+                                                                                                                +
+                                                                                                                    n dmk1,v,tr
+                                                                                                                    N dt
+                                                                                                                                htr −    冋
+                                                                                                                                      dmk1,k2
+                                                                                                                                        dt
+                                                                                                                                              uk1,k2
+
+
+                                                                                                                +
+                                                                                                                    duk1,k2
+                                                                                                                      dt
+                                                                                                                            mk1,k2   册                 共1兲
+
+                                                                                 where mk1,k2,in is the mass entering in the control volume,
+Fig. 3 „a… Three channels of a humidifier unit: Exhaust gas                      mk1,k2,out is the mass leaving the control volume, and mk1,v,tr is the
+channel „right…, humidification channel „center, open…, and heat                 mass transferred across the membrane. The third term on the right
+exchanging channel „left, closed…. „b… Three channels of a hu-
+midifier unit: Exhaust gas channel „right…, humidification chan-
+                                                                                 hand side of the equation shows the effect of control, where n
+nel „center, closed…, and heat exchanging channel „left, open….                  denotes the number of units using channel “A,” and N is the total
+                                                                                 number of humidifier units. The equations governing the gas en-
+                                                                                 thalpy h and internal energy u are
+3       Thermodynamic Modeling of Membrane Humidifier                                                     duk1,k2        dTk1
+                                                                                                                  = Cvk2                               共2兲
+    3.1     Assumptions. The model assumptions are:                                                         dt            dt
+
+    •     The flows in both control volumes are fully developed lami-                                   dhk1,k2,k3        dTk1,k3
+                                                                                                                   = Cpk2                              共3兲
+          nar flows.                                                                                       dt               dt
+    •     All gases follow the ideal gas law.
+                                                                                 where the subscripts k1, k2, and k3 are explained in Table 1. Since
+    •     The humidifier units are well insulated from its surround-
+                                                                                 the humidifier is isolated from its surroundings, dQ1 / dt is equal to
+          ings thus heat transfer occurs only across the membrane,
+                                                                                 −dQ2 / dt. In addition, because of mass continuity, dm1,v,tr / dt is
+          between channel “A” and “C” or “B” and “C” 共which are
+                                                                                 equal to −dm2,v,tr / dt.
+          assumed to have the same heat conductivity兲.
+    •     The kinetic and potential energies of the gas molecules are              3.2.2 Vapor Mass Diffusion. Vapor mass transfer ṁk1,v,tr oc-
+          neglected.                                                             curs between the two control volumes when channel “A” is used,
+    •     No external work is done to the system.                                due to the humidity gradient across the membrane. The amount of
+    •     The flow specific heats are constant.                                  vapor mass transferred would be determined by the membrane
+    •     The overall convection heat transfer coefficient is constant.          coefficient of diffusion and the gradient of RH across the mem-
+    •     The membrane water transfer is a function of water concen-             brane, and can be written as 关1,4兴
+          tration and temperature gradients.
+    •     The nominal fuel cell exhaust gas temperature is assumed to                                 dmk1,v,tr      C2 − C1
+                                                                                                                = Dw         M vA                      共4兲
+          be 80° C.                                                                                     dt             tm
+    •     The following inlet gas properties are the inputs to the dy-
+          namic system: M 1,in, P1,in, T1,in, ⌽1,in, M 2,in, P2,in, T2,in, and   where M v is the vapor molar mass, C1 and C2 represent water
+          ⌽2,in.                                                                 concentrations in Control Volumes 1 and 2, respectively, and will
+                                                                                 be explained in Eq. 共7兲. The membrane coefficient of diffusion,
+    3.2     Dynamic Equations. The governing equations are de-                   Dw is determined by the following empirical equation 关2,4兴
+
+426 / Vol. 127, SEPTEMBER 2005                                                                                          Transactions of the ASME
+                                                            Table 1 Subscripts parameter table
+
+                                 k1                                           k2                                                k3
+
+                      1 共Control Volume 1兲                    g 共dry gas兲 or v 共vapor兲 in Control                        In, out, or tr
+                                                                           Volume 1                               共inlet, outlet, or transfer兲
+                      2 共Control Volume 2兲                     Ex 共exhaust gas兲 or v 共vapor兲 in                          In, out, or tr
+                                                                      Control Volume 2                            共inlet, outlet, or transfer兲
+
+
+
+
+                            Dw = D␭e2416共1/303−1/Tm兲                       共5兲     flow arrangement, the log mean temperature difference is calcu-
+                                                                                   lated from
+where Tm is the membrane temperature. The coefficient D␭ is
+determined empirically 关2,4兴 and has a piecewise-linear form:                                                  共T2,in − T1,in兲 − 共T2,out − T1,out兲
+                                                                                                    ⌬T2/1 =                                            共15a兲
+
+
+
+                 冦                                                冧
+                     10−6                          ␭m ⬍ 2                                                     ln共共T2,in − T1,in兲/共T2,out − T1,out兲兲
+                     10−6共1 + 2共␭m − 2兲兲           2 艋 ␭m 艋 3                      For counter flow arrangement, the log mean temperature differ-
+          D␭ =                                                             共6兲
+                     10−6共3 − 1.67共␭m − 3兲兲 3 ⬍ ␭m ⬍ 4.5                           ence is calculated from
+                     1.25*10−6                     ␭m 艌 4.5                                                    共T2,in − T1,out兲 − 共T2,out − T1,in兲
+where ␭m is the membrane water content which will be defined in                                     ⌬T2/1 =                                            共15b兲
+                                                                                                              ln共共T2,in − T1,out兲/共T2,out − T1,in兲兲
+Eq. 共8兲. The water concentration of both Channel “A” and Chan-
+nel “C” is                                                                              3.2.4 Ideal Gas Law. Applying the ideal gas law to the two
+                                     ␳m,dry                                        control volumes, the following equations are obtained
+                               Ck1 =         ␭k1                           共7兲
+                                     M m,dry                                                             Pk1,k2,outVk1 = Rk2Tk1,outmk1,k2               共16兲
+where ␳m,dry is the membrane dry density, M m,dry is the membrane
+dry equivalent weight. ␭k1 is the water content of Control Volumes                                                         M v P1,v,k3
+1 or 2. Both ␭m and ␭k1 can be expressed as                                                                      ␻1,k3 =                               共17a兲
+                                                                                                                           M g P1,g,k3
+           ␭k4 = 共0.043 + 17.81ak4 − 39.85a2k4 + 36.0a3k4兲                 共8兲
+                                                                                                                           M v P2,v,k3
+where k4 can be 1, 2 共the two control volumes兲 or m 共for the                                                    ␻2,k3 =                                共17b兲
+membrane兲. For both control volumes, the water activity is de-                                                             M exP2,ex,k3
+fined as
+                                                                                                                             Pk1,v,k3
+                                 ak1 =
+                                         Pk1,v
+                                                                           共9兲                                   ⌽k1,k3 =                               共18兲
+                                         Pk1,sat                                                                             Pk1,sat,k3
+
+where Pk1,v is the partial pressure of the vapor stored in Control                 where Vk1 is the volume of the control volume k1, Rk2 is the gas
+Volume k1, and is assumed to be equal to Pk1,v,out · Pk1,sat is the                constant, M v, M g, and M ex are the molar mass of vapor, dry gas,
+saturation pressure of the vapor stored in Control Volume k1,                      and exhaust gas, respectively. Then the outlet mass flow rates are
+which is determined by 关19兴                                                        obtained from
+
+ log10共Pk1,sat兲 = − 1.69 · 10−10T4k1 + 3.85 · 10−7T3k1 − 3.39 · 10−4T2k1                                  dm1,g,k3       1    dm1,k3
+                                                                                                                   =                                   共19a兲
+                 + 0.143Tk1 − 20.92                                       共10兲                              dt       1 + ␻1,k3 dt
+where Tk1 = Tk1,out due to the uniformity assumption. The mem-
+                                                                                                          dm2,ex,k3       1    dm2,k3
+brane water activity and temperature are calculated from                                                            =                                  共19b兲
+                                                                                                            dt        1 + ␻2,k3 dt
+                                         a1 + a2
+                                 am =                                     共11兲
+                                            2                                           3.2.5 Conservation of Mass. The mass conservation equa-
+and                                                                                tions for the two control volumes are
+
+
+                                                                                                                  兺                  兺
+                      T1 + T2 T1,in + T1,out + T2,in + T2,out                                        dmk1,k2          mk1,k2,in           mk1,k2,out
+             Tm =            =                                            共12兲                               =                  −                       共20兲
+                         2                   4                                                         dt               dt                   dt
+                                                                                   which can be used to calculate the gas or water vapor mass stored
+     3.2.3 Heat Transfer. The heat transfer rate between the two
+                                                                                   in Control Volumes, mk1,k2.
+control volumes is 关20兴
+                                                                                      3.2.6 Flow Restriction Equation. The gas mass flow rates of
+                               dQ1
+                                   = UA⌬T2/1                              共13兲     the two control volumes are constrained by the intake areas and
+                                dt                                                 can be approximated by the orifice equation 关21兴
+where A is the membrane area, ⌬T2/1 is the log mean temperature
+                                                                                                                 = Crk1冑Pk1,out − Pk1,sub
+difference between the two control volumes, and U is the overall                                        dmk1,out
+                                                                                                                                                        共21兲
+heat transfer coefficient defined as 关20兴                                                                 dt
+
+                                   h̄           kNuD                               where Crk1 is the orifice restriction constant which is a function of
+                              U=         h̄ =                             共14兲     the orifice size and the gas density and can be obtained through
+                                   2             Dh                                either theoretical calculation 关21兴 or testing. Pk1,sub is the pressure
+where k is the membrane thermal conductivity, NuD is the Nusselt                   at the subsequent system. For example, if the outlet is connected
+number, and Dh is the channel hydraulic diameter. For parallel                     to the atmosphere, then Pk1,sub is the atmosphere pressure.
+
+Journal of Dynamic Systems, Measurement, and Control                                                               SEPTEMBER 2005, Vol. 127 / 427
+                                                       Fig. 5 Humidifier model in SIMULINK
+
+
+4   Simulations                                                                 RH without flooding the channels. For the fuel cell stack studied,
+                                                                                the maximum additional vapor needed at the humidifier is
+   A mathematic model is developed in the SIMULINK environ-
+                                                                                0.0042281 kg/ s at the current level of 90 A. Starting from the low
+ment based on Eqs. 共1兲–共21兲 presented above. The model is non-
+                                                                                current, the water added is essentially proportional to stack cur-
+linear and its input-output and state variables are summarized as
+                                                                                rent. When the stack current becomes higher than 90 A, more
+follows. The six state variables are x = 关m1,g m1,v T1,out
+                                                                                water will be generated at the cathode and thus the amount of
+m2,ex m2,v T2,out兴T, the control input is u = 1 / N关n兴, and the uncon-          water needed decreases. When the current is higher than 250 A,
+trolled inputs 共disturbance inputs兲 are w = 关ṁ1,in T1,in P1,in                 the fuel cell stack is over saturated even with 0% inlet air RH. To
+⌽1,in ṁ2,in T2,in P2,in ⌽2,in兴T. The performance variable, which               avoid flooding the fuel cell stack, water needs to be removed
+characterizes the humidifier operation, is z = 关ṁ1,v,tr兴                       共which, of course, is beyond the ability of our humidifier system兲.
+= f共m1,g m1,v T1,out m2,ex m2,v T2,out兲. Possible measurements in-              The negative number shown in Fig. 7 means the water needs to be
+clude y = 关Q̇1 ṁ1,v,tr ṁ1,out ṁ2,out ⌽1,out ⌽2,out P1,out P2,out兴T, all or   removed from the stack.
+part of the measurements can be used in the control signal calcu-
+lation.                                                                         5   Results and Discussion
+   The Simulink diagram of the model is shown in Fig. 5, and its
+heat transfer sub-model is highlighted in Fig. 6. The arrows going                 5.1 Steady State Results. Several simulations were con-
+into the left side of the system are system inputs, and the arrows              ducted under steady-state conditions to illustrate the characteris-
+going out of the right side of the system are system outputs. The               tics of the integrated system as well as to show how the model can
+model was developed for an imagined cathode humidifier used for                 be used for humidifier design optimization. The performance goal
+a 75 kW fuel cell stack designed for the Ford P2000 concept                     is to achieve the desired humidifier vapor transfer rate that keeps
+electrical vehicle. An earlier analysis shows that adding an anode              the optimal air RH at the fuel cell cathode inlet without flooding
+humidifier bears little benefit 关22兴. Therefore, we focus on the                the fuel cell stack at its operating temperature of 80° C. Once the
+effects of a cathode humidifier in this paper. A simulation model               stack current is given, the required vapor transfer rate can be
+for this P2000 fuel cell stack has been described in an earlier                 calculated, as depicted in Fig. 7. We first study the effect of flow
+publication 关4兴. By combining the developed humidifier model                    channel arrangement on system performance. The analysis results
+and the fuel cell stack model developed in 关4兴, an in-depth analy-              of counter flow versus parallel flow arrangements, under the con-
+sis of the overall system becomes possible. The parameters of the               dition that 100% air go through Channel “A,” are shown in Fig. 8.
+humidifier system are listed in Table 2.                                        The x axis is the fuel cell inlet air flow rate, the starting and the
+   When a fuel cell stack operates at different power levels, the               ending points correspond to the stack currents of 60 and 310 A,
+amount of water generated will be proportional to the stack cur-                respectively. The first and the second plots in Fig. 8 show that the
+rent. Therefore, the amount of vapor to be added to its inlet reac-             counter flow arrangement is more effective in heat transfer. The
+tants change accordingly. In particular, the amount of water vapor              third plot shows that the counter-flow arrangement also allows
+needed at the humidifier varies with the stack current and envi-                more water vapor to pass through the membrane. Therefore, the
+ronment air temperature and humidity. Assuming the inlet air is at              counter flow arrangement is selected over its parallel flow
+0% RH and 80° C, to maintain 100% membrane RH, the required                     counterpart.
+vapor transfer rate added to the cathode inlet reactants is shown in               The channel cross-section design of the humidifier units is an-
+Fig. 7. By adding vapor at this rate, we will achieve the highest               other important factor affecting the system performance. Keeping
+
+428 / Vol. 127, SEPTEMBER 2005                                                                                      Transactions of the ASME
+                                                  Fig. 6 Heat transfer sub-model in SIMULINK
+
+
+the unit number the same, three channel cross section areas are           because both of them have the same membrane area. The vapor
+compared. The cross section size is determined by the channel             transfer rate across the membrane is mainly a function of the
+width W and height H as shown in Fig. 2. We selected the number           membrane temperature and RH gradient, which are similar for
+of humidifier cells to be 381 for the optimization study, the same        these two cases in this simulation.
+as the number of cells of the P2000 stack. The result of keeping W           Another observation is that the air outlet temperature is lower
+at 1 mm and the number of units at 381 is shown in Fig. 9. It can         than the fuel cell operation temperature for the simulated inlet
+be seen that 1 mm⫻ 4 mm channels provide the highest air outlet           temperature of 30° C and fuel cell exhaust gas temperature of
+temperature and vapor transfer rate. This is because that 4 mm,           80° C. If the fuel cell operation requires 100% RH at the air inlet,
+which is along the membrane surface, allows more surface area to          a heater is required to heat the air before it enters the humidifier.
+conduct heat and mass transfer than the 2 and 1 mm cases. How-            Otherwise, the air with 100% RH at low temperature will not have
+ever, the membrane selected for the humidifier is very thin, only         100% RH once it is heated to the fuel cell temperature.
+0.0025 cm thick. A 4 mm gap between the supporting walls might               The number of humidifier units is also an important design
+cause the membrane to deform excessively if there is pressure             factor for humidifier sizing. Keeping all the other parameters fixed
+gradient across the membrane. A careful flow channel simulation           and assuming all the air goes through Channel “A,” four different
+and structure integrity study is required if the 1 mm⫻ 4 mm case          unit numbers are simulated and the result is shown in Fig. 11. It
+is to be used.                                                            can be seen that the outlet air temperature and vapor transfer rate
+   The results with fixed H at 1 mm and changing W between 0.5
+and 1 mm are shown in Fig. 10. Plot 1 of Fig. 10 shows that under
+the same input condition, the configuration 0.5 mm⫻ 1 mm with
+381 units has higher outlet air temperature than 1 mm⫻ 1 mm
+with 381 does. Plot 2 shows that under the same input condition,
+both configurations generate similar vapor transfer rates. This is
+
+
+Table 2 Humidifier parameters for P2000 75 kW fuel cell stack
+
+Membrane cross section area                                280 cm2
+Membrane thickness                                        0.0025 cm
+Membrane dry density                                    0.001 kg/ cm3
+Membrane dry equivalent weight                            1.0 kg/ mol
+Number of humidifier unit                                     571
+Dimension “H”                                              0.001 m
+Dimension “W”                                              0.001 m
+Channel hydraulic diameter                                 0.001 m
+Nusselt number                                                5.4
+Humidifier air channel “A” volume                          0.015 m3
+Humidifier air channel “B” volume                          0.015 m3
+Humidifier exhaust channel “C” volume                      0.015 m3
+Heat transfer efficiency                                     80%
+Air thermal conductivity                                0.028 W / m · K
+Air channel orifice restriction coefficient                   0.42
+Exhaust gas channel orifice restriction coefficient           0.42        Fig. 7 Required vapor rate added to the P2000 cathode inlet at
+                                                                          80° C
+
+Journal of Dynamic Systems, Measurement, and Control                                                SEPTEMBER 2005, Vol. 127 / 429
+                                                                        Fig. 10 Comparison of two different cross-section designs
+Fig. 8 Counter flow vs parallel flow arrangements. Solid line:          with constant 381 units with varying channel width “W”. Solid
+Counter flow; Dashed line: Parallel flow.                               line: 1 mmÃ 1 mm; Dashed line: 0.5 mmÃ 1 mm.
+
+
+increase with the number of humidifier units increasing. Figure 7
+shows that the worst-case requires vapor transfer rate of               the fuel cell stack power demand, and augment it with an energy
+0.004 2281 kg/ s at about 90 A. The dotted line in plot 2 of Fig. 11    storage element 共e.g., battery or ultra-capacitor兲 may solve the
+meets this requirement. For 1 mm⫻ 1 mm cross-section configu-           drivability problem. However, this may not be enough to prevent
+ration, 571 units with properly controlled n / N can generate the       flooding or dehydration. In this case, a properly designed active
+vapor transfer rate shown in Fig. 7.                                    controller is necessary to reduce the transient error. For instance,
+                                                                        the second plot of Fig. 12 shows that if the humidifier is not
+   5.2 Dynamic Results. When the humidifier is used in auto-            actively controlled, the membrane vapor transfer rate has under-
+motive applications, the operating conditions 共power, air flow,         shoot that results in inadequate water vapor is added to the sys-
+etc.兲 are constantly changing. A simulation with two-step changes       tem. When a simple P controller is added to control the number of
+in airflow is shown in Fig. 12.                                         humidifying units “n,” the transient effect will reduce. The control
+   Figure 12 shows that the humidifier system response has large        block diagram is shown in Fig. 13. The P control law uses a
+transient dynamics after each step input. The transient errors may      proportional gain of 1800, and rounded down to obtain the final
+affect the fuel cells performance in two ways. First, the initial       control “n.” The simulation results is shown in Fig. 14, which
+outputs may affect the vehicle drivability—the passengers may           reveals that the simple P controller increases the amount of water
+feel the torque disruption due to the transient effect. A quantified    added to the system from the solid line to the dashed line so that
+systematic study on the integrated humidifier and the fuel cell         the undershoot is decreased and more water vapor is added to the
+stack in a vehicle will provide a quantified measure on this effect.    system. More control study will be conducted to search for the
+Secondly, the transient response may adversely affect the fuel cell     optimum control law that results in minimum or zero undershoot.
+life, e.g., due to flooding or dehydration. Adding low pass filter to
+
+
+
+
+Fig. 9 Comparison of three different cross-section designs              Fig. 11 Comparison of four different unit numbers with
+with constant 381 units with varying channel height “H”. Solid          1 mmÃ 1 mm channel cross section. Solid line: 95 units;
+line: 1 mmÃ 1 mm; Dashed line: 1 mmÃ 2 mm; Dash-dot line:               Dashed line: 190 units; Dash-dot line: 381 units; Dotted line:
+1 mmÃ 4 mm.                                                             571 units.
+
+430 / Vol. 127, SEPTEMBER 2005                                                                              Transactions of the ASME
+Fig. 12 Dynamic response of the membrane vapor transfer                Fig. 14 Membrane vapor transfer rate under two conditions:
+rate under step inputs                                                 No control vs P control
+
+
+6   Conclusions
+   A thermodynamic model was developed for a membrane hu-                          k ⫽ Membrane thermal conductivity 共W/m·K兲
+midifier of a PEM fuel cell system, which allows dry inlet air to                 m ⫽ Mass 共kg兲
+be humidified by the fuel cell exhaust gas. This model includes                  M ⫽ Molecular mass 共kg/mol兲
+crucial dynamic variables of the humidifier such as the airflow              M m,dry ⫽ Membrane dry equivalent weight 共kg/mol兲
+pressure, flow rate, temperature, and relative humidity. This model               N ⫽ Total numbers of humidifier units
+enables both steady state analysis for design optimization and dy-                n ⫽ No. of humidifier units with “A” opened
+namic analysis for transient response and active control. Simula-              NuD ⫽ Nusselt number
+tions were performed to identify the minimum number of units                      P ⫽ Pressure 共Pa兲
+necessary for a target fuel cell stack. The channel flow structures,              R ⫽ Gas constant 共J · kg−1 · K−1兲
+dimensions, and cross-section geometry are also studied. The hu-
+                                                                                  T ⫽ Temperature 共K兲
+midifier transient phenomena were captured and a simple P con-
+trol strategy was employed to reduce the transient effect over the                 t ⫽ Time 共s兲
+system performance. The integration of the humidifier and the fuel               tm ⫽ Membrane thickness 共cm兲
+cell, and the impact of the humidifier on the fuel cell performance               Q ⫽ Heat 共J兲
+will be studied in the future.                                                    u ⫽ Internal energy 共J兲 or system input
+                                                                                  U ⫽ Overall heat transfer coefficient 共W / m2 · K兲
+Acknowledgments                                                                   V ⫽ Volume 共m3兲
+                                                                                   x ⫽ System state vector
+   The authors wish to acknowledge the support from the Univer-
+                                                                                   y ⫽ System measurements
+sity of Michigan Rackham Graduate School Fellowship, and the
+valuable inputs from Jay T. Pukrushpan, Chan-Chiao Lin, Sang-                     ␾ ⫽ Relative humidity
+seok Yu, and Professor Claus Borgnakke.                                           ␭ ⫽ Water content
+                                                                                  ␳ ⫽ Density 共kg/ cm3兲
+                                                                                  ␻ ⫽ Humidity ratio
+Nomenclature
+           A ⫽ Humidifier membrane area 共cm2兲                          Subscripts
+           a ⫽ Water activity                                                     1 ⫽ Control volume 1
+           C ⫽ Water concentration 共mol/ cm3兲                                     2 ⫽ Control volume 2
+          Cp ⫽ Specific heat of constant pressure 共J · kg−1 · K−1兲                a ⫽ Air
+                                                                                 ex ⫽ Exhaust gas
+          Cr ⫽ Orifice restriction constant
+                                                                                  g ⫽ Dry gas
+          Cv ⫽ Specific heat of constant volume 共J · kg−1 · K−1兲
+                                                                                 in ⫽ Inlet
+          Dh ⫽ Channel hydraulic diameter 共m兲
+                                                                                 m ⫽ Membrane
+          Dw ⫽ Membrane diffusion coefficient 共cm2 / s兲                         out ⫽ Outlet
+           h ⫽ Enthalpy 共J兲                                                     sat ⫽ Saturation
+           h̄ ⫽ Heat transfer coefficient 共W / m2 · K兲                            v ⫽ Vapor
+
+
+
+
+                                              Fig. 13 Humidifier control block diagram
+
+Journal of Dynamic Systems, Measurement, and Control                                           SEPTEMBER 2005, Vol. 127 / 431
+References                                                                            关11兴 S. Ahmed, J. Kopasz, R. Kumar, and M. Krumpelt, 2002, “Water Balance in a
+                                                                                           Polymer Electrolyte Fuel Cell System,” J. Power Sources, 112, pp. 519–530.
+ 关1兴 T. V. Nguyen and R. E. White, 1993, “A Water and Heat Management Model           关12兴 R. A. Dubose, Enthalpy Wheel Humidifiers, Presentation from 2002 Fuel Cell
+     for Proton-Exchange-Membrane Fuel Cells,” J. Electrochem. Soc., 140, No. 8,           Seminar.
+     pp. 2178–2186.                                                                   关13兴 D. Chu and R. Z. Jiang, 1999, “Performance of Polymer Electrolyte Membrane
+ 关2兴 T. E. Springer, T. A. Zawodzinski, and S. Gottesfeld, 1991, “Polymer Electro-         Fuel Cell 共PEMFC兲 Stacks, Part I. Evaluation and Simulation of an Air-
+     lyte Fuel Cell Model,” J. Electrochem. Soc., 138, No. 8, pp. 2334–2342.               Breathing PEMFC Stack,” J. Power Sources, 83, pp. 128–133.
+ 关3兴 M. Ceraolo, C. Miulli, and A. Pozio, 2003, “Modelling Static and Dynamic         关14兴 K. H. Choi, D. J. Park, Y. W. Rho, Y. T. Kho, and T. H. Lee, 1998, “A Study
+     Behavior of Proton Exchange Membrane Fuel Cells on the Basis of Electro-
+                                                                                           of the Internal Humidification of An Integrated PEMFC Stack,” J. Power
+     chemical Description,” J. Power Sources, 113, pp. 131–144.
+                                                                                           Sources, 74, pp. 146–150.
+ 关4兴 J. T. Pukrushpan, H. Peng, and A. G. Stefanopoulou, “Simulation and Analysis
+                                                                                      关15兴 S. Miachon and P. Aldebert, 1995, “Internal Hydration H2/O2 100 cm2 Poly-
+     of Transient Fuel Cell System Performance Based on a Dynamic Reactant
+     Flow Model,” Proceeding of 2002 ASME International Mechanical Engineer-               mer Electrolyte Membrane Fuel Cell,” J. Power Sources, 56, pp. 31–36.
+     ing Congress & Exposition, New Orleans, Louisiana.                               关16兴 D. Staschewski and Z. Q. Mao, 1999, “Hydrogen-Air PEMFC Operation with
+ 关5兴 P. Sridhar, R. Perumal, N. Rajalakshmi, M. Raja, and K. S. Dhathathreyan,             Extraordinarily Low Gas Pressures and Internal Humidification-Conception
+     2001, “Humidification Studies on Polymer Electrolyte Membrane Fuel Cell,”             and Experimental Prototype Stack,” Int. J. Hydrogen Energy, 24, pp. 543–
+     J. Power Sources, 101, pp. 72–78.                                                     548.
+ 关6兴 K. Broka and P. Ekdunge, 1997, Oxygen and Hydrogen Permeation Properties         关17兴 F. N. Buchi and S. Srinivasan, 1997, “Operating Proton Exchange Membrane
+     and Water Uptake of Nafion 117 Membrane and Recast Film for PEM Fuel                  Fuel Cells without External Humidification of the Reactant Gases-
+     Cell, Sweden, Chapman & Hall.                                                         Fundamental Aspects,” J. Electrochem. Soc., 144, No. 8, pp. 2767–2772.
+ 关7兴 G. J. M. Janssen and M. L. J. Overvelde, 2001, “Water Transport in the Proton-   关18兴 R. E. Sonntag, C. Borgnakke, and G. J. Van Wylen, 1998, Fundamentals of
+     Exchange-Membrane Fuel Cell: Measurements of the Effective Drag Coeffi-               Thermodynamics, 5th ed., Wiley, New York.
+     cient,” J. Power Sources, 101, pp. 117–125.                                      关19兴 J. T. Pukrushpan, “Modeling and Control of PEM Fuel Cell Systems and Fuel
+ 关8兴 C. S. Fadley and R. A. Wallace, “Electopolymer Studies-II. Electrical Conduc-         Processors,” Ph.D. Dissertation, University of Michigan, 2003.
+     tivity of a Polystyrene Sulfonic Acid Membrane,” Journal of Electrochemical      关20兴 F. P. Incropera and D. P. DeWitt, 1996, Introduction to Heat Transfer, 3rd ed.,
+     Society, Solid State Science, December, 1968.                                         Wiley, New York.
+ 关9兴 D. R. Morris and X. Sun, 1993, “Water-Sorption and Transport Properties of       关21兴 D. F. Young, A Brief Introduction to Fluid Mechanics, 2nd ed., Wiley, New
+     Nafion 117H,” J. Appl. Polym. Sci., 50, pp. 1445–1452.                                York, 2001.
+关10兴 S. Shimpalee and S. Dutta, 2000, “Numerical Prediction of Temperature Dis-       关22兴 D. Chen and H. Peng, “Modeling and Simulation of a PEM Fuel Cell Humidi-
+     tribution in PEM Fuel Cells,” Journal of Numer. Heat Transfer, Part A: Appli-         fication System,” Proceeding of 2004 American Control Conference, Boston,
+     cations, 38, pp. 111–128.                                                             Massachusetts.
+
+
+
+
+432 / Vol. 127, SEPTEMBER 2005                                                                                                    Transactions of the ASME
+

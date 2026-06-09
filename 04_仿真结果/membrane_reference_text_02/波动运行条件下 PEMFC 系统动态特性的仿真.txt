@@ -1,0 +1,1648 @@
+          energies
+Article
+Simulation of the Dynamic Characteristics of a
+PEMFC System in Fluctuating Operating Conditions
+Jiangyan Yan 1,2 , Chang Zhou 3 , Zhihai Rong 4 , Haijiang Wang 1, *, Hui Li 3,5, * and Xuejiao Hu 2
+ 1    Department of Mechanical and Energy Engineering, Southern University of Science and Technology,
+      Shenzhen 518055, China; yanjiangyan2012@163.com
+ 2    Department of Power Engineering, Wuhan University, Wuhan 430072, China; xjhu@whu.edu.cn
+ 3    Department of Materials Science and Engineering, Southern University of Science and Technology,
+      Shenzhen 518055, China; 11849049@mail.sustech.edu.cn
+ 4    Research Institute, China Resources Power, Shenzhen 518001, China; tommyxx131@126.com
+ 5    Shenzhen Key Laboratory of Hydrogen Energy, Southern University of Science and Technology,
+      Shenzhen 518055, China
+ *    Correspondence: wanghj@sustech.edu.cn (H.W.); hui.li@sustech.edu.cn (H.L.)
+                                                                                                    
+ Received: 28 May 2020; Accepted: 10 July 2020; Published: 13 July 2020                             
+
+
+ Abstract: A greater understanding of the dynamic processes inside the stack is urgently needed
+ to optimize the PEMFC (proton exchange membrane fuel cell). In this study, we examined the
+ gas, water and electrochemical processes inside the stack, studied the physical dynamics of system
+ accessories such as gas supplement, flow and pressure-regulating devices, then used Simulink to
+ build a mathematical model of a complete PEMFC system; a segmented testing platform was built
+ to test the spatial distribution of RH (relative humidity) and pressure, which was used to verify
+ the simulation model; based on this model, the complicated phenomena occurring inside the stack
+ during fluctuating operating states were calculated. Our findings showed that the pressure in the
+ gas channel and exhaust manifolds decreased when the external load increased, changing sharply at
+ the moment of load change. The transient pressure difference between the cathode and anode sides
+ (several kPa) had a huge impact on the MEA (membrane electrode assembly); when the load current
+ increased, RH in cathode and cathode channel increased gradually, and the increasing rate of anode
+ side was bigger than that in cathode side. The influence of variance magnitude and change interval
+ of external load were also studied based on the model.
+
+ Keywords: dynamic characteristic; output voltage; proton exchange membrane fuel cell; pressure;
+ water content
+
+
+
+1. Introduction
+      It is widely known that the development of new-energy vehicles (NEV), especially those powered
+by lithium-ion batteries (LIBs), has made great strides in recent years [1]. However, large-scale
+commercialization of LIB vehicles is hindered by their inadequate driving mileage and long charging
+times. In this context, the proton exchange membrane fuel cell (PEMFC) is considered a more promising
+solution for NEV applications [2]. The PEMFC uses hydrogen fuel (143 M J kg−1 ), can be driven
+further before recharging, and can be refueled in a few minutes. In addition, it is environmentally
+benign, as water is its only by-product. After the release of the Toyota Mirai and Honda Clarity,
+PEMFC research gained huge support from governments and powerful syndicates. A 2019 report by
+the Chinese government [3] states that the country aims to produce 5.5 million PEMFC systems per
+year, and that the production of PEMFC vehicles will reach 5.2 million per year by 2050.
+      Currently, PEMFCs still face many challenges before widespread industrial commercialization
+will be possible. A reliable system that experiences fewer failures and has a long lifetime is vital. Such a
+
+
+Energies 2020, 13, 3596; doi:10.3390/en13143596                                www.mdpi.com/journal/energies
+Energies 2020, 13, x FOR PEER REVIEW                                                                                                       2 of 17
+Energies 2020, 13, 3596                                                                                                                    2 of 17
+      Currently, PEMFCs still face many challenges before widespread industrial commercialization
+will be possible. A reliable system that experiences fewer failures and has a long lifetime is vital.
+system
+Such      also hasalso
+       a system     to behas
+                           equipped    with a reliable
+                               to be equipped       withcontrol   strategy
+                                                          a reliable         thatstrategy
+                                                                       control     can correctly monitor,
+                                                                                           that can          diagnose,
+                                                                                                       correctly        and
+                                                                                                                  monitor,
+predict   the stack’s   state. To  realize this, researchers    from  all  over  the world   have  done
+diagnose, and predict the stack’s state. To realize this, researchers from all over the world have done   copious   work  to
+study the
+copious      basic
+           work   tophysical
+                      study the processes   occurring
+                                   basic physical         insideoccurring
+                                                     processes    the stack, inside
+                                                                               to provide   a basis
+                                                                                       the stack,  to for effective
+                                                                                                       provide      system
+                                                                                                                a basis  for
+management.         Figure   1 presents   a  sketch   of a  PEMFC     system—specifically,
+effective system management. Figure 1 presents a sketch of a PEMFC system—specifically, a 100    a  100  kW   stack testing
+                                                                                                                        kW
+platform
+stack       built
+       testing     in our lab.
+                platform    builtIt in
+                                    consists  of It
+                                       our lab.  a fuel  cell stack
+                                                    consists         assembled
+                                                              of a fuel   cell stackusing a bipolar
+                                                                                      assembled        plate,
+                                                                                                   using      gas diffusion
+                                                                                                           a bipolar  plate,
+layer  (GDL),   and   catalyst-coated    PEM   (active   surface  and   tightening   torque  of
+gas diffusion layer (GDL), and catalyst-coated PEM (active surface and tightening torque of the the  membrane     electrode
+assembly (MEA)
+membrane      electrodeare 186  cm2 and
+                           assembly        7 N m,
+                                        (MEA)    arerespectively),
+                                                      186 cm2 and gas 7 Nlines    supplying airgas
+                                                                            m, respectively),     andlines
+                                                                                                        hydrogen   (shutoff
+                                                                                                             supplying   air
+valve   (SOV)   and   positive   crankcase   ventilation    (PCV)  are   used   to control the hydrogen
+and hydrogen (shutoff valve (SOV) and positive crankcase ventilation (PCV) are used to control the          flow  and  keep
+it safe) at aflow
+hydrogen       specific
+                    and flow
+                          keeprate    and pressure,
+                                 it safe）at            andflow
+                                              a specific     accessories
+                                                                  rate and forpressure,
+                                                                                heat andand
+                                                                                          water   management.
+                                                                                               accessories         A spray
+                                                                                                              for heat  and
+humidifier     was   applied   to regulate   the  humidity.
+water management. A spray humidifier was applied to regulate the humidity.
+
+
+
+
+                     Figure 1.
+                     Figure     Schematicof
+                            1. Schematic ofaaproton
+                                             protonexchange
+                                                    exchange membrane
+                                                             membrane fuel
+                                                                       fuel cell
+                                                                            cell (PEMFC)
+                                                                                  (PEMFC) system.
+                                                                                          system.
+
+        The physical
+       The    physical phenomena
+                          phenomena taking    taking place
+                                                       place in in the
+                                                                    the cathode
+                                                                          cathode and  and anode
+                                                                                              anode channels
+                                                                                                        channels are are relatively
+                                                                                                                           relatively easy easy toto
+ understand       and   can   be    described      using     a modified       ideal    gas   state
+understand and can be described using a modified ideal gas state equation [4]. The mass transfer     equation      [4].   The    mass     transfer
+process, which
+process,      which isis related
+                         related to  to the
+                                         the distribution
+                                               distribution of   of moisture,
+                                                                     moisture, pressure,
+                                                                                    pressure, and  and temperature
+                                                                                                          temperatureinside  insidethe  thestack,
+                                                                                                                                             stack,
+ is complicated,     and    numerous        papers    have    been    published      on  the
+is complicated, and numerous papers have been published on the subject. To calculate the mass  subject.    To  calculate    the   mass    transfer
+ of  hydrogen
+transfer    of and
+                hydrogen  air in
+                              and  a air
+                                      porousin a GDL,
+                                                  porousthe     Stefan–Maxwell
+                                                              GDL, the                    equation is
+                                                                             Stefan–Maxwell                 used is
+                                                                                                     equation       [5].used [5].
+                                                                                                                           However, for
+                                                                                                                                      However,  the
+ catalyst
+for          layers, it
+      the catalyst       consists
+                     layers,     it of    a
+                                    consists complex,
+                                                 of       multi-phase,
+                                                    a complex,                nanostructured
+                                                                      multi-phase,                    porous porous
+                                                                                          nanostructured          material that
+                                                                                                                              materialis that
+                                                                                                                                          difficult
+                                                                                                                                                  is
+ to  characterize,     and   it  hosts     an   array  of   coupled      transport      phenomena
+difficult to characterize, and it hosts an array of coupled transport phenomena including the flow of      including       the   flow    of gases,
+ liquid liquid
+gases,     water, heat
+                    water, andheatcharged       occurring in
+                                       and charged                conjunction
+                                                            occurring        in      with     electrochemical
+                                                                                 conjunction with                    reactions. reactions.
+                                                                                                             electrochemical          Therefore,
+ the  multi-physics      dynamics        inside   the  catalyst    layers    still need
+Therefore, the multi-physics dynamics inside the catalyst layers still need to be studied  to  be  studied    comprehensively.            In some
+ research,     to  simplify     the    analysis,     the   catalyst     layer    (CL)     and
+comprehensively. In some research, to simplify the analysis, the catalyst layer (CL) and membranemembrane         are    usually     simplified,
+ using
+are       only asimplified,
+      usually      permeance        parameter
+                                 using     only a related
+                                                    permeance  to inner     pressure
+                                                                      parameter          [6]. to inner pressure [6].
+                                                                                      related
+       With respect to water content, different methods haveadopted
+        With   respect   to  water     content,    different    methods       have     been                to monitor
+                                                                                                 been adopted            to water
+                                                                                                                              monitormovement
+                                                                                                                                            water
+ in  multilayer
+movement         in structures.
+                     multilayer Steven structures.Holdcroft’s
+                                                        Steven group          studied
+                                                                    Holdcroft’s            liquid
+                                                                                       group         water and
+                                                                                                  studied      liquidvapor      absorption
+                                                                                                                          water and         vapor by
+ a  Nafion 211
+absorption          membrane
+                  by a     Nafion by   211 measuring
+                                               membrane    weight
+                                                                by change,
+                                                                       measuring    then     quantifying
+                                                                                         weight      change,   thethen
+                                                                                                                    relationship
+                                                                                                                            quantifying  betweenthe
+proton conductivity
+relationship       betweenand         membrane
+                                  proton               humidity
+                                               conductivity        and[7].membrane
+                                                                               In Japan, humidity
+                                                                                              Phengxay [7].   Deevanhxay’s
+                                                                                                                    In Japan, team    Phengxayused
+ high-resolutionteam
+Deevanhxay’s          soft used
+                             X-ray radiography
+                                     high-resolution     to soft
+                                                             monitor
+                                                                   X-ray  the dynamic
+                                                                             radiography to   process of
+                                                                                                    monitor  water
+                                                                                                                 thediffusion
+                                                                                                                      dynamicin the   processGDL, of
+ CL,   and   membrane       and    found     that  more    water    gathered      at  the   interface
+water diffusion in the GDL, CL, and membrane and found that more water gathered at the interface         of the   GDL     and    CL   than   at  the
+ interface
+of  the GDL   of the
+                  andCL CL and
+                             thanmembrane         [8]. In reference
+                                      at the interface        of the CL  [9],and
+                                                                               soft membrane
+                                                                                     X-ray radiography           was used to
+                                                                                                      [8]. In reference         [9],compare
+                                                                                                                                      soft X-ray the
+ liquid
+radiographywater was
+                   distribution
+                         used to in       carbon the
+                                      compare       paper     and water
+                                                          liquid    carbon cloth        GDL, in
+                                                                              distribution       and the
+                                                                                                     carbon  effect  of and
+                                                                                                                 paper    microporous        layer
+                                                                                                                                  carbon cloth
+(MPL)      in liquid   water    transportation        between       GDL     and    CL   was    also
+GDL, and the effect of microporous layer (MPL) in liquid water transportation between GDL and CL     observed       by   the  high    resolution
+ method.
+was     also Other
+               observedmethods,
+                            by thesuch   highasresolution
+                                                  magnetic method.
+                                                                resonanceOther   imaging,       have also
+                                                                                          methods,       suchbeenas used
+                                                                                                                     magnetic  to study     water
+                                                                                                                                      resonance
+ distribution
+imaging,          [10].
+               have  alsoActually,
+                             been used watertosorption
+                                                   study on  waterthedistribution
+                                                                        membrane [11]      [10].and   transferwater
+                                                                                                  Actually,       across the      porous
+                                                                                                                            sorption       onGDL,
+                                                                                                                                                the
+ CL   are  very   complex     process.       Jay  Benziger’s      team     in Princeton
+membrane [11] and transfer across the porous GDL, CL are very complex process. Jay Benziger’s University      observed       the   water    drops,
+ slugs in
+team      and  flooding process
+            Princeton     University    in the   GDL and
+                                            observed     the flow
+                                                                waterchannel
+                                                                         drops, by      experimental
+                                                                                    slugs and      flooding methods,
+                                                                                                                 processand       alsoGDL
+                                                                                                                             in the      revealed
+                                                                                                                                              and
+ their   influence   on   PEMFC        performance         such    as  current     ignition
+flow channel by experimental methods, and also revealed their influence on PEMFC performance    and    remaining      aspects      [12].   On   the
+ aspect    of simulation     method,        a mathematical        description        of changes
+such as current ignition and remaining aspects [12]. On the aspect of simulation method, a           in  water    between       the   liquid   and
+ gaseous
+mathematical states under     different
+                    description             pressureinand
+                                      of changes          watertemperature
+                                                                    between the   conditions
+                                                                                       liquid and can be    found in
+                                                                                                        gaseous     statesref.under
+                                                                                                                               [13]. Studies
+                                                                                                                                        different of
+ electrochemical       characteristics—especially               in   terms     of  cell
+pressure and temperature conditions can be found in ref. [13]. Studies of electrochemicalvoltage—have           been    published        in many
+ journals and      books [14],
+characteristics—especially          examining
+                                        in          Nernst
+                                             terms of      cellvoltage,     activationbeen
+                                                                 voltage—have              overvoltage,
+                                                                                                  published inconcentration
+                                                                                                                      many journalsovervoltage,
+                                                                                                                                              and
+ and
+books  ohmic
+          [14], resistance
+                examiningloss.  Nernst voltage, activation overvoltage, concentration overvoltage, and ohmic
+resistance loss.
+Energies 2020, 13, 3596                                                                              3 of 17
+
+
+
+       Drawing upon such earlier research on the physical characteristics and processes inside the stack,
+various groups have tried to build models of the stack, combining different components and physical
+phenomena to calculate the stack state, explain certain special experimental results, and improve the
+PEMFC system design [15–17]. For example, reference [18] reviewed the macroscopic and microscopic
+models of catalyst layers. This also examined modeling of liquid water transport in the catalyst layer
+and its implications on the overall transport properties. Review [19] introduced recent progress in terms
+of cathodic and anodic reactions with a focus on rational design. Xu Liangfei built a model of a PEMFC
+to explore the reliability of a self-humidification system with cathodic exhaust gas recirculation [20].
+A pseudo-2D model of a cathode CL together with a 1D model of a membrane have been proposed to
+analyze all of the various kinds of voltage loss inside the stack [21]. Similarly, an anode fuel supply
+system was built [22] to study the influence of a purging valve on system stability. Compared to a
+lumped parameter calculation, field spatial distribution is a more straightforward approach to reveal
+the spatial distribution of different fields inside the stack. For example, the temperature distribution of
+a PEMFC cooling system was simulated using a 1D and 3D combined simulation method to study an
+optimized thermal management strategy [23]. In reference [24], a non-isothermal, two-phase model
+was developed to investigate simultaneous heat and mass transfer in the cathode gas diffusion layer
+GDL. The anisotropy in the GDL properties was taken into account and found to be an important factor
+controlling the temperature distribution in the GDL. A review [25] in 2009 summarized the development
+of multi-phase mass transport models using CFD method, also pointed out the problems it faced.
+These are very useful references when building our own models. Although CFD simulation usually
+reveals more spatial details of field distribution, it is too complicated for industry use, especially when
+it is used in system simulation.
+       Instead of simulation methods, many researchers have tried to reveal the inner state of a PEMFC
+through experimental testing. Traditional testing can only determine the temperature, humidity,
+and pressure outside the stack, so a segmented cell method has been developed to monitor the stack’s
+inner state. In segmented cell testing, the stack is divided into dozens of parts on the bipolar plates,
+and sensors for humidity, current density, pressure, and resistance are inserted in each part of the plates,
+yielding direct measurements of the stack’s inner state [26,27]. Segmented cell testing can provide
+detailed information about the stack’s operating state, which can be used to study dynamic stack
+characteristics [28], start-stop strategies [29], and aging mechanisms [30]. However, current segmented
+cell testing is limited by the sensitivity of the sensors, and the sensors inevitably influence the field
+distribution. Hence, better experimental methods are needed to achieve accurate results, especially
+when so many physical phenomena are influencing one another. Previous research has made significant
+progress in understanding physical mechanisms, establishing models, and conducting experimental
+testing on PEMFCs, but how the dynamic characteristics inside the stack are altered by sharp changes
+in load has seldom been reported which has great significance for optimizing PEMFC control.
+       In this paper, we describe studying pressure, gas flow, water content, and electrochemical processes
+using a mathematical model of a PEMFC system that we built using MATLAB/Simulink. With this
+model we were able to simulate the instantaneous state inside the stack by making a series of changes
+in the operating conditions. Applying this dynamic model, we studied water transport and phase
+transition, the impact of transient pressure on the membrane, and electrochemical changes during
+the stack operating process. By combining our findings with experimental results, we revealed the
+effects of sharp changes in load. However, some critical issues, such as the mass transport and phase
+transition at different interface, water droplets and slugs formation were not considered in this paper
+because we have difficulty building the complex model of those accurately and quantitatively currently.
+We aimed to build a simplified model which can be used in industry, so this model has its own limits
+upon revealing more subtle details.
+
+2. Mathematical Model and Experimental Platform
+      We claim the following assumptions made behind the model:
+Energies 2020, 13, 3596                                                                                 4 of 17
+
+
+
+(a)   The gas dynamics follow the ideal gas equation of state (EoS).
+(b)   Temperature, pressure and humidity distributed uniformly.
+(c)   The stack operated well during the calculating period, local clogging, flooding and their influence
+      on the stack state were not considered in this paper.
+(d)   The water management was not considered in the model of water dynamics.
+
+2.1. Operational Voltage
+     A single cell is calculated in this paper, which is consistent with the experimental method. The stack
+voltage, Vcell , can be described as Equation (1):
+
+                                   Vcell = VNerst − Vact − Vconc − Icell Rohm                              (1)
+
+where Icell is the stack current, VNernst is the Nernst voltage, Vact is the activation overvoltage loss,
+Vconc is the concentration overvoltage loss, and Rohm is the ohmic resistance.
+     The value of VNernst can be calculated by the Nernst equation, as shown in Equation (2):
+                                                                     s
+                                                   RT f c
+                                                     PH ,an                PO2 ,ca
+                                 VNerst = V0 +    ln( 2                            )                       (2)
+                                               2F     P0                    P0
+
+where V 0 is the reversible cell potential at standard pressure, R = 8.31 J mol−1 K−1 and is the ideal gas
+constant, F = 96,483 C mol−1 and is the Faraday constant, Tfc is the cell temperature, the average values
+of temperature from experimental results under different current were calculated and applied as known
+parameters in the simulation. PH2 ,an and PO2 ,ca are the partial pressures of hydrogen and oxygen gases
+in the anode and cathode channels, respectively, and P0 = 100 kPa is the normalization coefficient.
+     The activation voltage loss, Vact , can be calculated using a Tafel equation:
+
+                                                  RT f c       I + In
+                                         Vact =             ln( cell   )                                   (3)
+                                                   2αF              I0
+
+where α is the charge transfer coefficient, In is the internal current due to fuel crossover, and I0 is the
+exchange current.
+    V conc is the concentration voltage loss and can be calculated using Equation (4):
+
+                                                 RT f c    I + In
+                                       Vconc =       ln(1 − cell   )                                       (4)
+                                                  2F            I1
+
+where I1 is the limiting current at which the fuel is used at the maximum supply rate.
+      The cell ohmic resistance (Rohm ) consists of the resistance of the membrane, Rcell , and the conducting
+resistance, R0 (see Equation (5)). Rcell is a function of water content and cell temperature, and it can be
+fitted using the experimental data from Peron et al. [7]:
+                                           
+                                           
+                                           
+                                            ROhm = Rcell + R0
+                                             Rcell = A Lmσm
+                                           
+                                                                                                           (5)
+                                           
+                                           
+                                                     cell
+                                            σm = f (λ)
+                                           
+                                           
+
+where Lm is membrane thickness, σm is membrane conductivity, Acell is the active area of the cell, and λ
+is the water content in the PEM, the value of which can be obtained using Dutta et al.’s study [31].
+
+2.2. Fluid Physics
+    The dynamic model for the cathode side includes air compressor, humidifier, supply and exhaust
+manifolds, cathode channel, and back valve; the anode side has similar structures except that hydrogen
+Energies 2020, 13, 3596                                                                               5 of 17
+
+
+
+is discharged to the atmosphere directly. The mathematical models of different parts of the anode and
+cathode will be introduced below.
+
+2.2.1. Gas Flow into the Stack
+     The hydrogen comes out from a high-pressure tank on the anode side and a flowmeter is used
+to regulate the fuel flow. On cathode side, air flow is controlled by the air compressor. To reduce
+calculations, the gas flow is simplified as Equation (6):
+                                              .
+                                             W in τ + Win = Win,tg                                       (6)
+
+where Win,tg is the target value for the mass flow of hydrogen and air, and τ is the time delay to reach
+the target value.
+     Win,tg in anode and cathode sides can be calculated by as follows:
+
+                                      Win,catg = 0.0167Nεca Iρair /60                                    (7)
+
+                                     Win,antg = 0.00697Nεan IρH2 /60                                     (8)
+
+where N is the cell number, εca = 2.0 and εan = 1.3 are the stoichiometric ratios in cathode and anode,
+ρair and ρH 2 are density of air and hydrogen.
+
+2.2.2. Humidifier
+    The pressure difference between the humidifier and the supply manifold is negligible. The mole
+and mass fractions for the humidifier can be calculated as follows:
+
+                                    xvap,hum = Psat (Tdew,hum )RH/Phum                                   (9)
+
+                                                    (1 − xvap,hum )M gas
+                              y gas,hum =                                                              (10)
+                                            (1 − xvap,hum )M gas + xvap,hum MH2 O
+where xvap,hum is the mole fraction of vapor at the output port of the humidifier, Phum is the gas pressure
+in the humidifier, ygas,hum is the mass fraction of air or hydrogen at the output port of the humidifier,
+Tdew,hum is the dew point of the humidified air, Psat is the saturated vapor pressure, RH is the relative
+humidity in %, and Mgas and MH 2 O are the molecular weights of reactant gases and water, respectively.
+We used Equation (11) to calculate the flow rate of mixed air and vapor in the humidifier:
+
+                                       Whum = Wcp y gas,atm /y gas,hum                                 (11)
+
+where Wcp is the rate of air flowing out from the air compressor, and ygas,atm can be calculated as shown
+in Equation (10) using the atmospheric parameters.
+
+2.2.3. Supply Manifolds
+     Assuming the temperature and pressure in the supply manifolds are uniform, the mass flow
+at the output port of the supply manifolds, Wsm,ca , can be expressed as follows (taking cathode side
+as example):
+                                    Wsm,ca = ksm,ca (Psm,ca − Pca )                              (12)
+
+where ksm,ca is the nozzle orifice coefficient of the supply manifolds, Psm,ca and Pca are the gas pressures
+in the supply manifolds and the cathode volume, respectively, and Psm,ca is the supply manifold
+pressure, which can be expressed as follows:
+
+                                 dPsm,ca      RTcell
+                                         =               (Whum,ca − Wsm,ca )                           (13)
+                                   dt      vsm,ca Msm,ca
+Energies 2020, 13, 3596                                                                                            6 of 17
+
+
+
+     In Equation (13), vsm,ca is the volume of the supply manifolds on the cathode side, Msm,ca is the
+molar mass of the air mixture in the cathode manifolds, and Whum is the mass flow rate of air through
+the humidifier. The molar mass of the mixed gas in the cathode manifolds Msm,ca can be expressed as:
+
+                                   Msm,ca = (1 − xvap,hum )Mair + xvap,hum MH2 O                                    (14)
+
+2.2.4. Cathode Channel
+    The cathode channel contains oxygen, nitrogen, water vapor, and liquid water. The mass balance
+equations are as follows:
+
+                                   dmO2                   I
+                                        = Wsm,ca yO2 ,sm − cell MO2 − Wca yO2 ,ca                                   (15)
+                                    dt                     4F
+                                         dmN2
+                                              = Wsm,ca yN2 ,sm − Wca yN2 ,ca                                        (16)
+                                          dt
+   dmvap,ca                      I                                                      dmphase           dλ
+             = Wsm,ca yvap,sm + β cell MH2 O − NH2 O,di f f Acell MH2 O − Wca yvap,ca −           − θ mmem (17)
+       dt                          F                                                      dt              dt
+                                   dmliq,ca     I              dmphase
+                                            = cell MH2 O +              − Wliq,ca                                     (18)
+                                       dt        2F                dt
+      The vapor change rate (Equation (17)) in cathode channel equals the algebraic sum of humid gas
+supplement, electro-osmotic drag water from anode to cathode, water diffusion from cathode to anode,
+flowing-out vapor, water condensation and membrane sorption (from left to right). Electrophoretic drag
+from cathode to anode due to concentration difference was neglected in this model because it is very
+small compared to other factors. Equation (18) shows the liquid water dynamics in cathode. The liquid
+water change rate is the algebraic sum of reaction product, water condensation and flowing-out
+liquid water. Actually, the influence of membrane water sorption usually can be neglected due to its
+slow change.
+      In these equations, mO 2 , mN 2 , mvap,ca , and mliq,ca are the respective masses of oxygen, nitrogen,
+water vapor, and liquid water in the cathode volume; yO 2 ,sm , yN 2 ,sm , yvap,sm , yO 2 ,ca , yN 2 ,ca , and yvap,ca are
+the respective mass fractions of oxygen, nitrogen, and water vapor in the supply manifolds and the
+cathode volume; Wca is the mass flow rate of the mixed gas at the output port of the cathode volume;
+Wliq,ca is the liquid water mass flow at the output port of the cathode volume; mphase is the water
+condensation in the cathode volume; MO 2 and MH 2 O are the respective molar masses of oxygen and
+water vapor; NH 2 O,diff is the water diffusion parameter which can be calculated according to ref [14]
+and nd describes the number of water molecules dragged per H+ ion moved by electric field through
+the membrane, according to Ref. [5], nd = 2.5λ/22.
+      The water content in the membrane λ is calculated by Equation (19). a is the water activity
+calculated by the mean value of relative humidity in the anode and cathode channels (Equation (20)) [14].
+The water sorption equilibrium process in membrane usually costs more than 105 s, so a delay module
+(1/(1 + 105 s)) was applied in the model to simulate the slow process of water sorption.
+
+                                       λ = 0.043 + 17.18a − 39.85a2 + 36a3                                          (19)
+
+                                  a = (Pca xvap,ca /Psat,ca + Pan xvap,an /Psat,an )/2                              (20)
+
+     In addition, the water droplet and slug formation process would affect the mass transport across
+GDL and flow channel, which in turn affects the PEMFC performance [12,32]. However, the model built
+in this paper is a lumped parameter model and it is limited to describe the local clogging phenomenon
+during mass transport, so it has to be assumed that the the gases and fluid water transport successfully
+inside the stack.
+Energies 2020, 13, 3596                                                                                                 7 of 17
+
+
+
+      The pressure in the cathode volume, Pca , can be calculated as follows:
+
+                                                   RTcell mO2   mN2   mvap
+                                           Pca =         (    +     +      )                                             (21)
+                                                    vca MO2     MN2   Mvap
+
+      The water condensation rate, mphase , can be described as
+                                    kc vca
+                          .         RTca xvap,ca (Pca xvap,ca − Psat )MH2 O
+                                                                                  Pca xvap,ca ≥ Psat
+                          mphase =                                                                                      (22)
+                                      e liq,ca (Pca xvap,ca − Psat )
+                                    km                                 Pca xvap,ca < Psat
+
+where kc is the steam condensation rate, ke is the evaporation rate of liquid water, xvap,ca is the molar
+fraction of water vapor in the cathode, and Psat is the saturated water vapor pressure. The liquid water
+outflow from the cathode volume, Wliq,ca , can be expressed as follows:
+
+                                                               kliq,ca mliq,ca
+                                            Wliq,ca =                            Wca                                     (23)
+                                                        mO2 + mN2 + mvap,ca
+
+where kliq,ca is a coefficient.
+
+2.2.5. Anode Channel
+      The anode volume is comprised of hydrogen and water. The mass balance equations are as follows:
+
+                                      dmH2                   I
+                                           = Wsm,an yH2 ,sm − cell MH2 − Wan yH2 ,an                                     (24)
+                                       dt                     2F
+           dmvap,an                     I                                                    dmphase
+             dt     = Wsm,an yvap,sm − β cell
+                                          F MH2 O + NH2 O,di f f Acell MH2 O − Wan yvap,an −   dt    − (1− θ) dλ
+                                                                                                              dt mmem    (25)
+                                                dmliq,an       dmphase
+                                                           =
+                                                         − Wliq,an                                                       (26)
+                                       dt           dt
+      The pressure in the cathode volume, Pan , can be calculated as follows:
+
+                                                        RTcell mH2   mvap
+                                               Pan =          (    +      )                                              (27)
+                                                         van MO2     Mvap
+
+2.2.6. Cathode Exhaust Manifolds
+      The gas pressure in the exhaust manifolds of the cathode side, Pem,ca , can be expressed as follows:
+
+                                          dPem,ca      RTcell
+                                                  =               (Wca − Wem,ca )                                        (28)
+                                            dt      vem,ca Mem,ca
+
+where vem,ca is the volume of the cathode exhaust manifolds, Mem,ca is the molar mass of the mixed gas,
+and Wem,ca is the mass flow rate at the output port of the manifolds. Wca can be expressed as follows:
+
+                                                   Wca = kca (Pca − Pem,ca )                                             (29)
+
+where kca is the nozzle orifice coefficient at the interface of the cathode volume and exhaust manifolds.
+
+2.2.7. Anode Exhaust Manifolds
+      The gas pressure in the exhaust manifolds of the cathode side, Pem,an , can be expressed as follows:
+
+                                         dPem,an      RTcell
+                                                 =               (Wan − Wem,an )                                         (30)
+                                           dt      vem,an Mem,an
+Energies 2020, 13, 3596                                                                                                        8 of 17
+
+
+
+      The two mass flows, Wem,an and Wan , can be expressed as follows:
+
+                                                 Wan = kan (Pan − Pem,an )                                                          (31)
+
+                                             Wem,an = kem,an (Pem,an − Patm )                                                       (32)
+
+2.2.8. Back-Pressure Valve
+     The back-pressure valve is used to regulate the stack’s cathode inlet pressure. Laval nozzle flow
+theory is used to describe its mathematical features:
+                                                                 s
+                                                             1                                       k−1
+                                                  Patm       k        2k Pem,ca          Patm k
+                               Wem,ca = sρem,ca (        )                        [1 − (        ) ]                                 (33)
+                                                  Pem,ca             k − 1 ρem,ca        Pem,ca
+
+where s is the opening area of the valve and is tested by experimental platform; ρem,ca is the gas density
+before the valve; and Pem,ca and Patm are the pressures before and after the valve, respectively.
+     All the parameters used in the model are listed in Table 1.
+
+                                                Table 1. Model parameters.
+
+            Parameters                        Values                            Parameters                         Values
+     cathode channel volume,                                            cell internal current due to
+                                      5.088 (stack parameter)                                               3 (stack parameter)
+             vca /cm3                                                       fuel crossover, In /A
+     cathode exhaust volume,                                           cell nozzle orifice coefficient,
+                                       0.15 (stack parameter)                                              3.71 × 10−5 (adjusted)
+            vem,ca /cm3                                                        kca /gPa−1 s−1
+      anode channel volume,                                            cell nozzle orifice coefficient,
+                                      2.387 (stack parameter)                                              2.199 × 10−5 (adjusted)
+             van /cm3                                                         ksm,ca /gPa−1 s−1
+     anode exhaust manifold                                            cell nozzle orifice coefficient,
+                                       0.07 (stack parameter)                                              1.51 × 10−6 (adjusted)
+       volume, vem,an /cm3                                                     kan /gPa−1 s−1
+                                                                       cell nozzle orifice coefficient,
+        drag coefficient, nd                2.5λ/22 [5]                                                    2.28 × 10−6 (adjusted)
+                                                                              ksm,an /gPa−1 s−1
+     steam condensation rate,                                          cell nozzle orifice coefficient,
+                                              100 [33]                                                     5.08 × 10−8 (adjusted)
+              kc /s−1                                                         kem,an /gPa−1 s−1
+     evaporation rate of liquid
+                                               1 [34]                  membrane thickness, lm /µm           25 (stack parameter)
+         water, ke /atms−1
+      liquid water coefficient,                                          effective area of each cell,
+                                           100 (ajusted)                                                   186 (stack parameter)
+              kliq /s−1                                                           Acell /cm2
+                                                                          cell contact resistance,
+    cell exchange current, I0 /A      0.0008 (stack parameter)                                              1 (stack parameter)
+                                                                                  R0 /mΩ
+     reversible cell potential at
+                                      1.229 (stack parameter)            cell limiting current, I1 /A      320 (stack parameter)
+      standard pressure, V 0 /V
+
+
+2.3. Segmented Cell Testing Experiment to Verify the Model
+     A segmented cell testing experiment to test the pressure and humidity distribution on bipolar
+plates was conducted and is shown in Figure 2. In this study, each plate (graphite plate) was divided
+into 36 zones, and in each zone, humidity and pressure sensors were installed to measure the humidity
+and pressure distribution for different current densities. The relative humidity (RH) measurement
+is based on sensitive change of polymer material capacitance under different humidity, while the
+pressure testing is based on the resistance change of pressure sensitive resistor. The test errors of RH
+and pressure are 1.5% and ±4.0 kPa respectively. PCB (print circuit board) is used to collect signals
+from sensors and communicate with the upper computer with Labview. To reduce the influence of so
+many sensors, only one field was tested in each experiment.
+into 36 zones, and in each zone, humidity and pressure sensors were installed to measure the
+humidity and pressure distribution for different current densities. The relative humidity (RH)
+measurement is based on sensitive change of polymer material capacitance under different humidity,
+while the pressure testing is based on the resistance change of pressure sensitive resistor. The test
+errors of RH and pressure are 1.5% and ±4.0 kPa respectively. PCB (print circuit board) is used to
+Energies 2020, 13, 3596                                                                           9 of 17
+collect  signals from sensors and communicate with the upper computer with Labview. To reduce the
+influence of so many sensors, only one field was tested in each experiment.
+
+
+
+
+                                                                                                                                                   10
+                               Inlet                                 Outlet
+                                                                                                 DC=2.8V
+
+
+
+                                                End plate
+
+                                             Insulating plate                      1
+                                                                                   2
+                                                                                   3
+                                                                                   4                          Load bank
+         Segment                                                                   5
+                                                                                   6
+       RH/pressure                                                                 7                                           Gas supply system
+       measurement                                                                 4
+                                                                                   8
+                                                                                   1                         Total voltage
+                                             Insulating plate                      9                          measurement
+
+                                             Floating plate
+                                             Compressed air                                                     Fuel cell testing station
+                                               End plate
+                                                                                   valve                                           H2
+                                       (side view, not to scale)
+       RH/pressure sensors
+                                                                                                                                   Air
+                                                                                                                                   N2
+
+                                         Date acquisition system                                                                   H2 O
+                                         (Developed by Labview)               Explanation :
+                                                                              1. Gold-coating current collector plate
+                                                                              2. Coolant plate
+                                                                              3. Relative humidity and pressure measuring cathode plate
+                                                                              4. Gas diffusion layer (GDL)
+                                                                              5. Cathode catalyst layer
+                                                                              6. Proton exchange membrane
+                                                                              7. Reversal-tolerant anode catalyst layer
+                                                                              8. Relative humidity and pressure-measuring anode plate
+                                                                              9. Seal
+                                                                              10. 3-way valve
+
+
+
+
+                                                                   (a)
+
+
+
+
+                                                                   (b)
+
+    Figure
+    Figure 2. Segmented testing schematic
+                                 schematicon
+                                           ona abipolar
+                                                  bipolar plate.
+                                                        plate. (a)(a) s egmented
+                                                                   segmented      testing
+                                                                             testing        platform.
+                                                                                     platform. (b)     (b)
+                                                                                                   segmented
+    segmented  zones on a bipolar
+    zones on a bipolar plate.     plate.
+
+2.4. Calculations
+2.4. Calculationsand
+                  andExperimental
+                      ExperimentalConditions
+                                   Conditions
+     In the simulation and experimental processes, the inlet pressures were set at 203 kPa and 201 kPa
+at the anode and cathode sides, respectively, with relative humidity (RH) values of 100% and 50%.
+The hydrogen and air were in co-flow mode. The requisite fuel and oxidant flows were calculated
+using stack current and stoichiometric ratios. The stoichiometric ratios were 1.3 and 2.0, respectively,
+consistent with the experimental platform.
+     In the simulation process, a current of 55.8 A was selected as the initial condition for the calculations,
+then the load current was increased with time, as shown in Table 2, and the dynamic process inside the
+stack was calculated.
+50%. The hydrogen and air were in co-flow mode. The requisite fuel and oxidant flows were
+calculated using stack current and stoichiometric ratios. The stoichiometric ratios were 1.3 and 2.0,
+respectively, consistent with the experimental platform.
+      In the simulation process, a current of 55.8 A was selected as the initial condition for the
+calculations, then the load current was increased with time, as shown in Table 2, and the dynamic
+Energies 2020, 13, 3596                                                                       10 of 17
+process inside the stack was calculated.
+
+                                              Table 2.
+                                              Table 2. Current
+                                                       Current density
+                                                               density used
+                                                                       used in
+                                                                            in the
+                                                                               the simulation
+                                                                                   simulation process.
+                                                                                              process.
+
+                                                Time (s)  0–20                20–40               40–60 60–80 80–100
+                                            Time (s)     0–20                 20–40                40–60  60–80   80–100
+                                              Current (A) 55.8                111.6               167.4 223.2   279
+                                           Current (A)   55.8                 111.6                167.4  223.2     279
+
+3. Results and Model Verification
+3. Results and Model Verification
+3.1. Pressure Dynamics
+3.1. Pressure Dynamics
+      The pressure dynamics in the supply manifolds, channel and exhaust manifolds can be
+     The pressure dynamics in the supply manifolds, channel and exhaust manifolds can be obtained,
+obtained, as can be seen in Figure 3. The pressure fluctuated when load current changed with time,
+as can be seen in Figure 3. The pressure fluctuated when load current changed with time, and it shows
+and it shows obvious declines in the pressure from the supply manifolds, to the channel, to the
+obvious declines in the pressure from the supply manifolds, to the channel, to the exhaust manifolds.
+exhaust manifolds. The pressure inside the channel and exhaust manifold declined gradually as the
+The pressure inside the channel and exhaust manifold declined gradually as the load current rose,
+load current rose, because of the increasing oxygen consumption and the action of the back-pressure
+because of the increasing oxygen consumption and the action of the back-pressure valve. On the anode
+valve. On the anode side, the pressure in the channel and exhaust manifolds also decreased with
+side, the pressure in the channel and exhaust manifolds also decreased with time.
+time.
+                                                                                                           210
+                            210
+                            200                                                                            200
+
+
+
+
+                                                                                      anode pressure/kPa
+     cathode pressure/kPa
+                            190                                                                            190
+                            180                                                                            180
+                            170
+                                                                                                           170
+                            160                                                                                                       supply manifolds
+                                                           supply manifolds
+                                                           channel                                         160                        channel
+                            150                                                                                                       exaust manifolds
+                                                           exaust manifolds
+                                                                                                           150
+                            140                                                                                  0   20   40          60      80     100
+                                  0   20      40           60      80     100                                                   t/s
+                                                     t/s
+                                               (a)                                                                        (b)
+                            Figure 3.
+                            Figure 3. Pressure dynamics in
+                                      Pressure dynamics in the
+                                                           the channel,
+                                                               channel, according
+                                                                        according to
+                                                                                  to calculations:
+                                                                                     calculations: (a)
+                                                                                                   (a) cathode,
+                                                                                                       cathode, (b)
+                                                                                                                (b) anode.
+                                                                                                                    anode.
+
+      The pressure
+            pressure distribution from the segmented cell platform is shown in Figure 4 (in the interest
+of space,
+   space, only
+             onlythe  thecathode
+                           cathode  channel
+                                  channel     pressure
+                                           pressure  is is  shown
+                                                        shown    as anas an  example).
+                                                                       example).           It can
+                                                                                   It can be  seen be
+                                                                                                   thatseen
+                                                                                                        the that  the
+                                                                                                            pressure
+pressure
+declined    declined
+            gradually     gradually
+                           from     from
+                                stack
+ Energies 2020, 13, x FOR PEER REVIEW
+                                          stack
+                                      inlet      inlet
+                                            (right) to  (right)
+                                                       stack    to
+                                                             outletstack  outlet
+                                                                     (left) which(left) which
+                                                                                   consistent   consistent
+                                                                                                with  the   with  the
+                                                                                                          simulation
+                                                                                                               11 of 17
+simulation
+results.       results.
+
+
+
+
+                                             (a)                                                                               (b)
+       Figure4.4. Pressure
+      Figure      Pressuredynamics
+                            dynamicsininthe
+                                          thecathode
+                                              cathodechannel,
+                                                       channel, from
+                                                              from thethe experiment:
+                                                                        experiment: (a)(a) under
+                                                                                        under    current
+                                                                                              current    of 111.6
+                                                                                                      of 111.6 A,
+       A, (b) under   current of 167.4
+      (b) under current of 167.4 A.    A.
+
+      Theaverage
+     The   averagepressure
+                    pressurefrom
+                               fromthethe experiment
+                                        experiment    inside
+                                                   inside the the channel
+                                                              channel was was  calculated
+                                                                          calculated and and   compared
+                                                                                          compared with
+ with the
+the       simulation
+    simulation         results
+                results (the    (the was
+                             current current was  increased
+                                           increased         every 3
+                                                     every 3 min      minutes the
+                                                                  considering considering
+                                                                                  operatingthe operating
+                                                                                            condition of
+ condition of the stack), as shown in Figure 5. It can be seen that the experimental pressure and
+ calculated pressure showed the same trend with current. In addition, the average relative error of
+ calculated results is less than 5%, which verifies the simulation model built in this study to some
+ extent.
+                                                                   (a)                                                                            (b)
+                                       Figure 4. Pressure dynamics in the cathode channel, from the experiment: (a) under current of 111.6
+                                       A, (b) under current of 167.4 A.
+
+          The 13,
+Energies 2020, average
+                  3596 pressure from the experiment inside the channel was calculated and compared
+                                                                                              11 of 17
+   with the simulation results (the current was increased every 3 minutes considering the operating
+   condition of the stack), as shown in Figure 5. It can be seen that the experimental pressure and
+thecalculated
+    stack), as pressure
+               shown inshowed
+                          Figure 5.
+                                 theItsame
+                                       can be seenwith
+                                            trend  that current.
+                                                        the experimental   pressure
+                                                                 In addition,        and calculated
+                                                                              the average            pressure
+                                                                                           relative error  of
+showed   the same  trend  with  current. In addition, the average  relative error of calculated  results
+   calculated results is less than 5%, which verifies the simulation model built in this study to ome    is less
+than  5%, which verifies the simulation model built in this study to some extent.
+   extent.
+
+                                                                                                                                                   300
+                                                                  200
+                                                                  190
+
+
+                                                   pressure/kPa
+                                                                                                                                                   200
+                                                                  180
+                                                                  170
+                                                                                                               cathode(experiment)                        current/A
+                                                                  160                                          anode(experiment) 100
+                                                                                                               cathode(simulation)
+                                                                  150                                          anode(simulation)
+                                                                                                               current
+                                                                  140                                                                              0
+                                                                         0           200            400               600                  800
+                                                                                                           t/s
+                                                  Figure 5.5.Comparison
+                                                    Figure    Comparisonof
+                                                                         ofexperimental      simulationresults
+                                                                            experimental and simulation resultsfor
+                                                                                                                forpressure.
+                                                                                                                    pressure.
+
+3.2. Water Dynamics
+   3.2. Water Dynamics
+      Water
+          Water content
+                   contentandanditsitstransition
+                                        transition between
+                                                      between states     in the
+                                                                  states in  the channel
+                                                                                  channel are
+                                                                                           areimportant
+                                                                                                importantindicators
+                                                                                                             indicators forfor
+monitoring
+   monitoring   states
+                   statesand
+                           anddiagnosing
+                               diagnosingfaults  faults in
+                                                        in aa PEMFC.    Valuesfor
+                                                              PEMFC. Values      forvapor,
+                                                                                     vapor,liquid
+                                                                                             liquidwater,
+                                                                                                    water,and
+                                                                                                            and   the
+                                                                                                                the    water
+                                                                                                                    water
+condensation      are  shown   in  Figure     6.  On the  cathode    side, when   the load current
+   condensation are shown in Figure 6. On the cathode side, when the load current increased, the   increased,   the  amount
+of vapor
+   amount  and of liquid
+                   vapor water    increased
+                            and liquid      water gradually
+                                                    increased  with  current.with
+                                                                  gradually    Water   condensation
+                                                                                    current.          rate fluctuatedrate
+                                                                                               Water condensation        only
+slightly.   On the
+   fluctuated      onlyanode   side,On
+                          slightly.     vapor     increased
+                                             the anode         with
+                                                            side,     time slightly
+                                                                    vapor   increasedunder
+                                                                                        with the  multi-process
+                                                                                              time slightly        of the
+                                                                                                               under   water
+diffusion   and
+   multi-process   electro-osmotic
+                      of  water         drag,
+                                  diffusion
+Energies 2020, 13, x FOR PEER REVIEW             while
+                                                 and     water  condensation
+                                                      electro-osmotic     drag,  and
+                                                                                 whileliquid
+                                                                                        waterwater  seldom
+                                                                                               condensation   existed.
+                                                                                                               and  liquid
+                                                                                                                       12 of 17
+   water seldom existed.
+        0.009                                              0.0027           0.006
+
+
+
+
+    condensation rate; liquid water
+                                     vapor/g                                                                                                              vapor/g
+                                                                         condensation rate/gs-1
+                                                                                                                                                          condensation rate/gs-1
+                                      0.006                              liquid water/g           0.0026                                                  liquid water/g
+                                                                                                                               0.004
+
+
+                                                                                                                 anode water
+                                      0.003                                                       0.0025
+                                                                                                       vapor
+                                      0.000                                                       0.0024
+                                                                                                                               0.002
+                              -0.003                                                              0.0023
+                                                                                                                                             condensation rate and liquid water
+                              -0.006                                                           0.0022                          0.000
+                                              0   20              40         60      80      100                                       0    20      40         60      80         100
+                                                                       t/s                                                                               t/s
+                                                                       (a)                                                                         (b)
+                      Figure 6. Calculated values for the water dynamics in the channel: (a) cathode channel water, (b)
+                      Figure 6. Calculated values for the water dynamics in the channel: (a) cathode channel water, (b) anode
+                      anode
+                      channelchannel
+                               water. water.
+
+     The RH distribution under different load currents was obtained by the experimental
+                                                                                 experimental method,
+                                                                                                method,
+the results of which are shown in Figure
+                                      Figure 7.
+                                              7. RH
+                                                 RH clearly
+                                                    clearly increased
+                                                             increased from
+                                                                        from stack
+                                                                             stack inlet
+                                                                                   inlet to
+                                                                                         to stack
+                                                                                            stack outlet,
+                                                                                                  outlet,
+based on the field distribution data.
+     The average RH value was calculated from the experimental data, and Figure 8 compares
+the experimental and simulation results (the RH results from the simulation were calculated using
+Equation (9)). It can be seen that RH in cathode channel and anode channel both increased with current
+under the conditions set in this paper.
+                               (a)                                                           (b)
+     Figure
+          The6. RH
+                Calculated values
+                   distribution    for the
+                                under      waterload
+                                       different dynamics  in the
+                                                     currents waschannel:
+                                                                  obtained(a) cathode
+                                                                           by the     channel water,
+                                                                                   experimental      (b)
+                                                                                                method,
+     the results
+     anode       of which
+            channel water. are shown in Figure 7. RH clearly increased from stack inlet to stack outlet,
+     based on the field distribution data.
+      The
+Energies    RH
+         2020, 13,distribution
+                  3596         under different load currents was obtained by the experimental method,
+                                                                                               12 of 17
+the results of which are shown in Figure 7. RH clearly increased from stack inlet to stack outlet,
+based on the field distribution data.
+
+
+
+
+                                (a)                                                    (b)
+          Figure 7. Experimental results for relative humidity (RH) distribution in the anode channel: (a) under
+          current of 55.8 A, (b) under current of 167.4 A.
+
+          The average RH (a)   value was calculated from the experimental data, and(b)   Figure 8 compares the
+     experimental and simulation results (the RH results from the simulation were calculated using
+     Figure
+     Figure 7.
+            7. Experimental
+     Equation   (9)). It can beresults
+               Experimental      seen   for
+                                        for relative
+                                resultsthat relative
+                                             RH      humidity  (RH) distribution
+                                                               (RH)
+                                                     humiditychannel
+                                                 in cathode         distribution
+                                                                      and        in the
+                                                                           anodein      anode
+                                                                                    the anode
+                                                                                  channel     channel:
+                                                                                              channel:
+                                                                                           both        (a) under
+                                                                                                       (a)
+                                                                                                increased  under
+                                                                                                            with
+     current of
+     current of  55.8 A,
+                 55.8
+             under     A, (b)
+                      the (b) under set
+                              under  current
+                                    current
+                           conditions         of
+                                          in of  167.4
+                                             this167.4 A.
+                                                       A.
+                                                  paper.
+
+     The average RH value was calculated from the experimental data, 300and Figure 8 compares the
+                         90
+experimental and simulation    results  (the RH results from the simulation were calculated using
+Equation (9)). It can be seen that RH in cathode channel and anode channel both increased with
+                         87
+current under the conditions set in this paper.
+                            84                                                          200
+
+                                                                                               current/A
+                       RH/%
+                            81                                                               300
+                          9078
+                          8775                                   cathode(experiment) 100
+                                                                 anode(experiment)
+                          8472                                   cathode(simulation)   200
+
+                                                                                                       current/A
+                   RH/%
+                                                                 anode(simulation)
+                          8169                                   current
+                                                                                        0
+                       78 0          200       400        600       800
+                       75                           t/s  cathode(experiment) 100
+                                                         anode(experiment)
+              Figure 8. Comparison of experimental and simulation results for RH in channel.
+                       72                                cathode(simulation)
+                                                         anode(simulation)
+    With the simulation69 model above, we were able current
+                                                          to obtain the membrane water and pressure
+impact on the MEA (i.e., the difference between the cathode                    0
+                                                                 and anode pressure),    which we could
+                          0 Water200
+not measure experimentally.                   400membrane
+                                    content in the         600 increased
+                                                                      800very slowly with load current
+according to the calculation results shown in Figuret/s  9, because  the  water sorption process in the
+membrane usually cost more than 105 s. With load variation, the pressure difference between the
+cathode and anode channel pressure, and hence the pressure impact on the MEA, also fluctuated.
+The impact was particularly large, in the order of kPa.
+      Based on the above results, it can be concluded that the PEMFC underwent obvious state change
+inside the stack when the load current varied over time, potentially leading to unpredictable faults and
+even adversely influencing the stack’s lifespan. In the aspect of pressure dynamics, the anode and
+cathode pressure decreased with time because more oxygen and hydrogen were consumed when a
+larger current was needed. On the cathode side, the back-pressure valve connected to the atmosphere
+usually had a bigger opening when a larger load occurs, causing the channel pressure to drop again.
+Changes in anode and cathode pressure meant the MEA was subjected to pressure fluctuations,
+and steep pressure increases threatened the MEA’s structure and materials.
+      Water content is also a very important indicator for evaluating a stack’s operating state. The water
+dynamics in the flow channel comprise a complicated balancing process involving reactive synthesis,
+bidirectional diffusion, phase transition, and so on. Under the conditions described in this paper,
+the amount of water vapor and the water condensation rate in the cathode channel changed slightly with
+the load current, while the amount of liquid water gradually increased. On the anode side, water vapor
+increased with load, while there were nearly no liquid water and water condensation existing.
+            With the simulation model above, we were able to obtain the membrane water and pressure
+      impact on the MEA (i.e., the difference between the cathode and anode pressure), which we could
+      not measure experimentally. Water content in the membrane increased very slowly with load
+      current according to the calculation results shown in Figure 9, because the water sorption process in
+      the membrane usually cost more than 105 s. With load variation, the pressure difference between the
+      cathode
+Energies 2020, 13,and
+                   3596anode channel pressure, and hence the pressure impact on the MEA, also fluctuated. 13 of 17
+      The impact was particularly large, in the order of kPa.
+
+                                             20                          membrane water
+                                                                                                15
+                                             15                          impact pressure
+                                             10                                                 14
+
+
+
+
+                            pressure impact/kPa                                                    membrane water
+                                              5
+                                              0                                                 13
+                                             -5
+                                            -10                                                 12
+                                            -15
+                                            -20                                                 11
+                                            -25
+                                            -30                                                10
+                                                   0    20   40                  60     80   100
+                                                                    t/s
+      Figure Figure 9. Water
+             9. Water        content
+                       content in theinmembrane
+                                        the membrane
+                                                and and   pressure
+                                                      pressure     impact
+                                                               impact  on on membrane
+                                                                          membrane    electrodeassembly
+                                                                                    electrode   assembly(MEA),
+      from simulation results.               (MEA), from simulation results.
+
+4. Discussion
+         Based on the above results, it can be concluded that the PEMFC underwent obvious state
+       change inside the stack when the load current varied over time, potentially leading to unpredictable
+     As  described above, we were able to verify the model’s reliability to some extent, and we found
+      faults and even adversely influencing the stack’s lifespan. In the aspect of pressure dynamics, the
+that the  stack’s
+      anode   and steady
+                   cathodestate was disrupted
+                            pressure decreased with
+                                                with load
+                                                      time fluctuation.
+                                                             because moreBased
+                                                                            oxygenon these  findings,were
+                                                                                     and hydrogen      we used
+the model    to study  how  the load change  magnitude     and  the time  interval  of load
+      consumed when a larger current was needed. On the cathode side, the back-pressure valvevariation affected
+the stack.
+      connected to the atmosphere usually had a bigger opening when a larger load occurs, causing the
+      channel
+  Energies       pressure
+           2020, 13,        to drop
+                     x FOR PEER      again. Changes in anode and cathode pressure meant the MEA 14
+                                REVIEW                                                          wasof 17
+4.1. Role of Load
+      subjected toChange
+                  pressureMagnitude
+                           fluctuations, and steep pressure increases threatened the MEA’s structure and
+       materials.
+   4.1.ARole  of Load
+          current     ofChange
+                         55.8 AMagnitude
+                                   was chosen as the initial value. It was then increased to 111.6 A, 167.4 A,
+             Water content is also a very important indicator for evaluating a stack’s operating state. The
+223.2 A,   and    279 A    over a   period of  10 s. the
+                                                      Figure     10 value.
+                                                                    presents   It awas
+                                                                                    curve   showing     the 111.6
+                                                                                                            relationship    between
+       water dynamics in the was
+         A  current    of  55.8   A  flowchosen
+                                           channelascompriseinitial complicated         then
+                                                                                      balancingincreased
+                                                                                                  process to
+                                                                                                           involvingA,reactive
+                                                                                                                         167.4  A,
+state  synthesis, bidirectional diffusion, phase transition, and so on. Under the conditions described in this was
+       change
+   223.2   A,  andand 279current
+                            A   overchange
+                                       a     magnitude.
+                                         period  of  10  s.    It can
+                                                              Figure   be
+                                                                       10  seen
+                                                                            presentsfrom a Figure
+                                                                                            curve    10a that
+                                                                                                    showing    as
+                                                                                                               thethe   current
+                                                                                                                    relationship
+increased
+       paper,from
+   between     state 55.8
+                the  amount A,ofthe
+                       change     and magnitude
+                                   watercurrent     ofthe
+                                                change
+                                          vapor and     thewater
+                                                              pressure
+                                                          magnitude.       impact
+                                                                            It
+                                                                    condensationcan be and   output
+                                                                                          seen
+                                                                                       rate      from
+                                                                                            in the     voltage
+                                                                                                        Figure
+                                                                                                   cathode       increased
+                                                                                                                10a
+                                                                                                             channel  that    almost
+                                                                                                                           as the
+                                                                                                                       changed
+   current
+linearly,     was
+           while
+       slightly      increased
+                    membrane
+                 with the    load from
+                                    water 55.8A,
+                                   current, change
+                                             whilethe   magnitude
+                                                     only
+                                                   the             of of
+                                                             increased
+                                                        amount         liquidthe
+                                                                          slightly.
+                                                                                waterpressure
+                                                                                        Figure   impact
+                                                                                                 10b
+                                                                                         gradually        andthat
+                                                                                                      shows
+                                                                                                     increased. output
+                                                                                                                 On  the RH
+                                                                                                                    the   voltage
+                                                                                                                             change
+                                                                                                                         anode
+   increased
+in the  cathode
+       side,    almost
+              water and   linearly,
+                          anode
+                        vapor         while with
+                                   channels
+                                 increased   membrane
+                                              also        waterwith
+                                                   increased
+                                                   load,   while    change
+                                                                         current
+                                                                     there      onlychange,
+                                                                             were      increased
+                                                                                      nearly    and the
+                                                                                                no            Figure
+                                                                                                   slightly.water
+                                                                                                         increasing
+                                                                                                    liquid         and 10b shows
+                                                                                                                       rate of
+                                                                                                                          wateranode
+   that  the RH
+       condensationchange
+was bigger in this paper.     in the
+                         existing.    cathode  and  anode      channels   also     increased    with  current  change,    and  the
+   increasing rate of anode was bigger in this paper.
+       4. Discussion                                 2            12
+           0.0
+            As described above, we were able to verify the model’s            cathode
+                                                                  10reliability to some extent, and we found
+                                                     0                        anode
+       that the stack’s steady state was disrupted with load fluctuation. Based    on these findings, we used
+
+
+
+      Δλ ΔVcell/v                                                 ΔPimpact/kPa
+          -0.1                                                     8
+       the model to study how the load change magnitude and the time interval of load variation affected
+
+                                                                                 RH/%
+       the stack.                                    -2            6
+          -0.2
+                      Δλ                             -4            4
+          -0.3       ΔVcell
+                      ΔPimpact
+                                                                   2
+                                                     -6
+          -0.4                                                     0
+               0       50      100     150     200                   0        50      100      150     200
+                                  ΔI/A                                                    ΔI/A
+                                                  (a)                                           (b)
+        Figure
+      Figure 10.10.Changes
+                    ChangesininPEMFC
+                                PEMFCstate
+                                      state with
+                                            with current
+                                                 current changes. (a)pressure
+                                                         changes. (a) pressureimpact, membrane
+                                                                                impact,        water
+                                                                                        membrane     andand
+                                                                                                 water
+        output voltage (b) RH.
+      output voltage (b) RH.
+
+4.2. Role
+  4.2. RoleofofTime
+                TimeInterval
+                     IntervalofofLoad
+                                  LoadChange
+                                      Change
+    InIn
+       actual operation,
+         actual          a PEMFC’s
+                 operation, a PEMFC’soperational  mode
+                                          operational   changes
+                                                      mode      over over
+                                                            changes  time,time,
+                                                                           usually at veryatshort
+                                                                                usually      veryintervals,
+                                                                                                   short
+which leads to
+ intervals,     sharp
+            which     state
+                  leads     changes
+                        to sharp statein the PEMFC.
+                                        changes       According to
+                                                in the PEMFC.       our to
+                                                               Accordingcalculated  results, the
+                                                                            our calculated        trends
+                                                                                             results, the in
+ trends in pressure, RH in cathode and anode at different time intervals were similar when the time
+ was greater than 5 s. However, when the interval was reduced to 1 s, the PEMFC struggled to
+ maintain a steady state (Figure 11b). It can also be concluded from Figure 11 that a shorter time
+ interval altered the normal trend of the state parameters, resulting in even greater stress on the
+ MEA.
+Energies 2020, 13, 3596                                                                                                              14 of 17
+
+
+
+pressure, RH in cathode and anode at different time intervals were similar when the time was greater
+than 5 s. However, when the interval was reduced to 1 s, the PEMFC struggled to maintain a steady
+state (Figure 11b). It can also be concluded from Figure 11 that a shorter time interval altered the
+normal Energies
+        trend2020,
+                of the   state parameters, resulting in even greater stress on the MEA.
+                    13, x FOR PEER REVIEW                                               15 of 18
+
+
+                                     95              cathode RH                  Pimpact
+                                                     anode RH                                      20
+                                     90
+                                     85                                                            0
+
+                              RH/%                                                                         Pimpact/kPa
+                                     80
+                                                                                                   -20
+                                     75
+                                                                                                   -40
+                                     70
+                                     65                                                           -60
+                                          0       10          20           30        40         50
+                                                                    t/s
+                                                                    (a)
+                                    100
+                                                          cathode RH                 Pimpact
+                                     95                   anode RH                                    20
+
+                                     90
+                                                                                                      0
+
+                                                                                                             Pimpact/kPa
+                                     85
+                             RH/%    80                                                               -20
+                                     75
+                                                                                                      -40
+                                     70
+                                     65                                                               -60
+                                          0         1           2          3           4          5
+                                                                    t/s
+                                                                    (b)
+                                    110               cathode RH                 Pimpact
+                                    105               anode RH                                        20
+                                    100
+
+
+                                                                                                             Pimpact/kPa
+                                     95                                                               0
+
+                             RH/%
+                                     90
+                                     85                                                               -20
+                                     80
+                                     75                                                               -40
+                                     70
+                                     65                                                            -60
+                                       0.0         0.2        0.4          0.6       0.8         1.0
+                                                                     t/s
+                                                                    (c)
+              Figure
+      Figure 11.  RH11.  RHpressure
+                       and     and pressure   impact
+                                          impact    onon   theMEA
+                                                         the   MEA at
+                                                                   at different
+                                                                      differenttime intervals:
+                                                                                 time          (a) at(a)
+                                                                                       intervals:     interval of 10 s,of
+                                                                                                         at interval   (b)10
+                                                                                                                           at s, (b) at
+              interval of 1 s, (c) at interval of 0.2 s.
+      interval of 1 s, (c) at interval of 0.2 s.
+Energies 2020, 13, 3596                                                                                       15 of 17
+
+
+
+5. Conclusions
+      The following conclusions can be drawn:
+1.    A complete model involving a PEMFC stack and its accessories was built in this paper, and it was
+      verified to some extent by a segmented testing experiment. This model can be used to simulate
+      the dynamic state inside the stack.
+2.    The pressure in the channels, and exhaust manifolds declined with increasing current.
+      The transient pressure difference between the cathode and anode sides had a huge impact
+      on the MEA.
+3.    On the cathode side, the vapor and liquid water increased when the load current increased.
+      On the anode side, water vapor increased with time while there was hardly any liquid water and
+      water condensation existing in the channel.
+4.    Changes in the outside load definitely influenced the stack’s stability in terms of pressure, water,
+      and voltage. When the magnitude of the current change increased, the stack state underwent
+      greater fluctuation. If the load varied in a short enough time, the stack components and physical
+      processes could not reach equilibrium.
+
+Author Contributions: Conceptualization, J.Y.; methodology, H.W., H.L. and X.H.; software, Z.R. and J.Y.;
+validation, J.Y.; formal analysis, J.Y. and C.Z.; investigation, J.Y.; data curation, C.Z.; writing—original draft
+preparation, J.Y.; writing—review and editing, J.Y. and Z.R.; supervision, H.W. and H.L.; project administration,
+H.W. and H.L.; funding acquisition, H.W. and H.L. All authors have read and agreed to the published version of
+the manuscript.
+Funding: This work has been funded by the National Key Research and Development Program of
+China (2017YFB0102701), the Guangdong Provincial Key Laboratory of Energy Materials for Electric Power
+(2018B030322001), the Guangdong Innovative and Entrepreneurial Research Team Program (2016ZT06N500), the
+Shenzhen Peacock Plan (KQTD2016022620054656), the Shenzhen Key Laboratory Project (ZDSYS201603311013489),
+the Development and Reform Commission of Shenzhen Municipality 2017 (No. 1106), and the Shenzhen Clean
+Energy Research Institute (No. CERI-KY-2019-003).
+Acknowledgments: This work was supported by Southern University of Science and Technology,
+Wuhan University and China Resources Power.
+Conflicts of Interest: The authors declare no conflict of interest.
+
+References
+1.    Aaldering, L.J.; Song, C.H. Tracing the technological development trajectory in post-lithium-ion battery
+      technologies: A patent-based approach. J. Clean. Prod. 2019, 241, 1–18. [CrossRef]
+2.    U.S. Department of Energy. Available online: https://www.energy.gov/eere/fuelcells/hydrogen-and-fuel-
+      cells-annual-progress-reports (accessed on 1 April 2019).
+3.    China Nengyuan.com. Available online: http://www.china-nengyuan.com/news/141562.html (accessed on
+      2 July 2019).
+4.    Bao, C.; Ouyang, M.; Yi, B. Modeling and control of air stream and hydrogen flow with recirculation in a
+      PEM fuel cell system—I. control-oriented modeling. Int. J. Hydrog. Energy 2006, 31, 1879–1896. [CrossRef]
+5.    Springe, T.E.; Zawodzinski, T.; Gottesfeld, A.S. Polymer electrolyte fuel cell model. J. Electrochem. Soc. 1991,
+      138, 2334–2342. [CrossRef]
+6.    Xu, L.; Fang, C.; Hu, J. Parameter extraction and uncertainty analysis of a proton exchange membrane fuel
+      cell system based on Monte Carlo simulation. Int. J. Hydrog. Energy 2017, 42, 2309–2326. [CrossRef]
+7.    Peron, J.; Mani, A.; Zhao, X. Properties of Nafion® NR-211 membranes for PEMFCs. J. Membr. Sci. 2010, 356,
+      44–51. [CrossRef]
+8.    Deevanhxay, P.; Sasabe, T.; Tsushima, S.; Hirai, S. In situ diagnostic of liquid water distribution in cathode
+      catalyst layer in an operating PEMFC by high-resolution soft X-ray radiography. Electrochem. Commun. 2012,
+      22, 33–36. [CrossRef]
+9.    Deevanhxay, P.; Tsushima, S.; Hirai, S. Investigation on the effect of microstructure of proton exchange
+      membrane fuel cell porous layers on liquid water behavior by soft X-ray radiography. J. Power Sources 2011,
+      196, 8197–8206.
+Energies 2020, 13, 3596                                                                                            16 of 17
+
+
+
+10.   Suzuki, T.; Tabuchi, Y.; Tsushima, S. Measurement of water content distribution in catalyst coated membranes
+      under water permeation conditions by magnetic resonance imaging. Int. J. Hydrog. Energy 2011, 36,
+      5479–5486. [CrossRef]
+11.   Jay, B. Fan the flame with water: Current ignition, front propagation and multiple steady states in polymer
+      electrolyte membrane fuel cells. AICHE J. 2009, 55, 3034–3040.
+12.   Erin, K.; Tamara, W.; Yannis, K.; Jay, B. Drops, slugs, and flooding in polymer electrolyte membrane fuel cells.
+      AICHE J. 2008, 54, 1313–1320.
+13.   Luna, J.; Jemei, S.; Yousfifi-Steiner, N.; Husar, A.; Serra, M. Nonlinear predictive control for durability
+      enhancement and efficiency improvement in a fuel cell power system. J. Power Sources 2016, 328, 250–261.
+      [CrossRef]
+14.   Barbir, F. PEM Fuel Cell: Theory and Practice, 2nd ed.; Elsevier Press: Amsterdam, The Netherlands, 2012;
+      p. 25.
+15.   Fang, C. Fuel Cell Engine Control Based on Reduced Dimension Model. Ph.D. Thesis, Tsinghua University,
+      Beijing, China, 2017.
+16.   Hua, J.; Li, J.; Ouyang, M. Proton exchange membrane fuel cell system diagnosis based on the multivariate
+      statistical method. Int. J. Hydrog. Energy 2011, 36, 9896–9905. [CrossRef]
+17.   Hong, P.; Xu, L.; Li, J. Modeling and analysis of internal water transfer behavior of PEM fuel cell of large
+      surface area. Int. J. Hydrog. Energy 2017, 42, 18540–18550. [CrossRef]
+18.   Sui, P.; Zhu, X.; Djilali, N. Modeling of PEM fuel cell catalyst layers: Status and outlook. Electrochem. Energy Rev.
+      2019, 2, 428–466. [CrossRef]
+19.   Tian, N.; Lu, B.; Yang, X. Rational design and synthesis of low-temperature fuel cell electrocatalysts.
+      Electrochem. Energy Rev. 2018, 1, 54–83. [CrossRef]
+20.   Xu, L.; Fang, C.; Hu, J. Self-humidification of a polymer electrolyte membrane fuel cell system with cathodic
+      exhaust gas recirculation. J. Electrochem. Energy Convers. Storage 2018, 15, 1–18. [CrossRef]
+21.   Hong, P.; Xu, L.; Li, J. Modeling of membrane electrode assembly of PEM fuel cell to analyze voltage losses
+      inside. Energy 2017, 139, 277–288. [CrossRef]
+22.   Xu, L.; Fang, C.; Li, J. Nonlinear dynamic mechanism modeling of a polymer electrolyte membrane fuel cell
+      with dead-ended anode considering mass transport and actuator properties. Appl. Energy 2018, 230, 106–121.
+      [CrossRef]
+23.   Zhang, Q.; Xu, L.; Li, J. Performance prediction of proton exchange membrane fuel cell engine thermal
+      management system using 1D and 3D integrating numerical simulation. Int. J. Hydrog. Energy 2018, 43,
+      1736–1748. [CrossRef]
+24.   Pasaogullari, U.; Mukherjee, P.; Wang, C.; Chen, K. Anisotropie heat and water transport in a PEFC cathode
+      gas diffusion layer. J. Electrochem. Soc. 2007, 154, B823. [CrossRef]
+25.   Vladimir, G.; Adin, M. A critical overview of computational fluid dynamics multiphase models for proton
+      exchange membrane fuel cells. SIAM J. Appl. Math 2009, 70, 410–454.
+26.   Lin, R.; Lin, X.; Weng, Y. Evolution of thermal drifting during and after cold start of proton exchange
+      membrane fuel cell by segmented cell technology. Int. J. Hydrog. Energy 2015, 40, 7370–7381. [CrossRef]
+27.   Lin, R.; Weng, Y.; Li, Y. Internal behavior of segmented fuel cell during cold start. Int. J. Hydrog. Energy 2014,
+      39, 16025–16035. [CrossRef]
+28.   Pei, H.; Liu, Z.; Zhang, H. In situ measurement of temperature distribution in proton exchange membrane
+      fuel cell I a hydrogeneair stack. J. Power Sources 2013, 227, 72–79. [CrossRef]
+29.   Lin, R.; Cui, X.; Shan, J. Investigating the effect of start-up and shut-down cycles on the performance of
+      the proton exchange membrane fuel cell by segmented cell technology. Int. J. Hydrog. Energy 2015, 40,
+      14952–14962. [CrossRef]
+30.   Lin, R.; Xiong, F.; Tang, W. Investigation of dynamic driving cycle effect on the degradation of roton exchange
+      membrane fuel cell by segmented cell technology. J. Power Sources 2014, 260, 150–158. [CrossRef]
+31.   Dutta, S.; Shimpalee, S.; Zee, J. Numerical prediction of mass-exchange between cathode and anode channels
+      in a PEM fuel cell. Int. J. Heat Mass Transf. 2001, 44, 2029–2042. [CrossRef]
+32.   May, C.; Ioannis, K.; Jay, B. Water slug formation and motion in gas flow channels: The effects of geometry,
+      surface wettability, and gravity. Langmuir 2013, 29, 9918–9934.
+Energies 2020, 13, 3596                                                                                    17 of 17
+
+
+
+33.   Wensheng, H.; Jung, S.; Trung, N. Two-phase flow model of the cathode of PEM fuel cells using interdigitated
+      flow fields. AIChE J. 2000, 46, 2053–2060.
+34.   Dilip, N.; Trung, N. A two-dimensional, two-phase, multicomponent, transient model for the cathode of
+      a proton exchange membrane fuel cell using conventional gas distributors. J. Electrochem. Soc. 2001, 48,
+      1324–1335.
+
+                          © 2020 by the authors. Licensee MDPI, Basel, Switzerland. This article is an open access
+                          article distributed under the terms and conditions of the Creative Commons Attribution
+                          (CC BY) license (http://creativecommons.org/licenses/by/4.0/).
+

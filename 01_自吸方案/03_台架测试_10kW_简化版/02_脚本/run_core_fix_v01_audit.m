@@ -1,5 +1,5 @@
 function audit = run_core_fix_v01_audit(stopTime_s)
-%RUN_CORE_FIX_V01_AUDIT Replay all unified cases after core-fix v01 changes.
+%RUN_CORE_FIX_V01_AUDIT Replay all unified cases after core-fix v02 membrane changes.
 
 if nargin < 1 || isempty(stopTime_s)
     stopTime_s = 120;
@@ -72,6 +72,19 @@ for k = 1:height(cases)
         audit.mDiff_kg_s(k) = s(63);
         audit.mMem_raw_kg_s(k) = s(64);
         audit.mMem_limit_delta_kg_s(k) = s(65);
+        audit.aCa_raw(k) = s(66);
+        audit.aAn_raw(k) = s(67);
+        audit.aCa_limited(k) = s(68);
+        audit.aAn_limited(k) = s(69);
+        audit.a_memb(k) = s(70);
+        audit.a_memb_target_raw(k) = s(71);
+        audit.a_memb_target(k) = s(72);
+        audit.J_diff_ca_to_mem_mol_m2_s(k) = s(73);
+        audit.J_diff_mem_to_an_mol_m2_s(k) = s(74);
+        audit.dm_lambda_equiv_kg(k) = s(75);
+        audit.k_mem_eff(k) = s(76);
+        audit.tau_memb_s(k) = s(77);
+        audit.membrane_dynamic_mode(k) = s(78);
         audit.mCaOut_kg_s(k) = s(16);
         audit.mIn_kg_s(k) = s(41);
         audit.lambdaO2(k) = s(40);
@@ -105,8 +118,8 @@ for k = 1:height(cases)
     end
 end
 
-auditFile = fullfile(resultDir, 'core_fix_v01_audit.csv');
-summaryFile = fullfile(resultDir, 'core_fix_v01_summary.md');
+auditFile = fullfile(resultDir, 'core_fix_v02_audit.csv');
+summaryFile = fullfile(resultDir, 'core_fix_v02_summary.md');
 writetable(audit, auditFile);
 writeSummary(summaryFile, audit, stopTime_s);
 fprintf('Wrote %s\n', auditFile);
@@ -142,6 +155,10 @@ names = ["case_id", "source_dataset", "status", "message", ...
     "lambda_ca", "lambda_an", "mMem_kg_s", "N_drag_mol_s", "N_diff_mol_s", ...
     "J_drag_mol_m2_s", "J_diff_mol_m2_s", "J_net_mol_m2_s", ...
     "mDrag_kg_s", "mDiff_kg_s", "mMem_raw_kg_s", "mMem_limit_delta_kg_s", ...
+    "aCa_raw", "aAn_raw", "aCa_limited", "aAn_limited", ...
+    "a_memb", "a_memb_target_raw", "a_memb_target", ...
+    "J_diff_ca_to_mem_mol_m2_s", "J_diff_mem_to_an_mol_m2_s", ...
+    "dm_lambda_equiv_kg", "k_mem_eff", "tau_memb_s", "membrane_dynamic_mode", ...
     "mCaOut_kg_s", "mIn_kg_s", "lambdaO2", "phaseCa_kg_s", "phaseAn_kg_s", ...
     "condensedCa_kg", "condensedAn_kg", "psatCa_next_kPa", "psatAn_next_kPa", ...
     "mV_ca_preclip_kg", "mV_an_preclip_kg", "resO2_kg_s", "resN2_kg_s", ...
@@ -154,7 +171,7 @@ function writeSummary(path, audit, stopTime_s)
 ok = audit(audit.status == "ok", :);
 fid = fopen(path, 'w', 'n', 'UTF-8');
 cleanup = onCleanup(@() fclose(fid));
-fprintf(fid, '# Core Fix v01 Audit Summary\n\n');
+fprintf(fid, '# Core Fix v02 Audit Summary\n\n');
 fprintf(fid, '- Stop time: %.3g s\n', stopTime_s);
 fprintf(fid, '- Total cases: %d\n', height(audit));
 fprintf(fid, '- Successful cases: %d\n', height(ok));
@@ -168,6 +185,10 @@ if ~isempty(ok)
         max(ok.cathode_dp_kPa(ok.source_dataset == "initial_noegr_steady_xlsx")));
     fprintf(fid, '- Max gas residual: %.6g kg/s\n', max(ok.maxGasRes_kg_s));
     fprintf(fid, '- Max cathode condensation diagnostic: %.6g kg\n', max(ok.condensedCa_kg));
+    fprintf(fid, '- Default tau_memb_s: %.6g s\n', median(ok.tau_memb_s, 'omitnan'));
+    fprintf(fid, '- Default k_mem_eff: %.6g\n', median(ok.k_mem_eff, 'omitnan'));
+    fprintf(fid, '- Max raw cathode water activity: %.6g\n', max(ok.aCa_raw));
+    fprintf(fid, '- Max raw anode water activity: %.6g\n', max(ok.aAn_raw));
     fprintf(fid, '- EGR voltage penalty terms are frozen outside the core equation in this pass.\n\n');
 end
 if any(audit.status == "error")

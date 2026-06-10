@@ -1,0 +1,15 @@
+parameter,saved_model_value,script_runtime_value,notes
+StartTime,0.0,0,model file setting
+StopTime,120,120,overridden by SimulationInput in audit
+SolverType,Fixed-step,Fixed-step,overridden by SimulationInput
+Solver,ode4,ode4,overridden by SimulationInput
+FixedStep,0.02,0.02,overridden by SimulationInput
+StackStateDelay.SampleTime,dt_s_simplified,dt_s_simplified = 0.02,block setting uses runtime dt_s
+EGRFeedbackDelay.SampleTime,dt_s_simplified,dt_s_simplified = 0.02,block setting uses runtime dt_s
+StackStateDelay.InitialCondition,StackInitialState_simplified,StackInitialState_simplified,block setting
+EGRFeedbackDelay.InitialCondition,EGRInitialNode_simplified,EGRInitialNode_simplified,block setting
+PhysicalParam.Value,PhysicalParam_simplified,PhysicalParam_simplified,constant block value expression
+StackModelParam.Value,StackModelParam_simplified,StackModelParam_simplified,constant block value expression
+CaseBoundaryParam.Value,CaseBoundaryParam_simplified,CaseBoundaryParam_simplified,constant block value expression
+CoolingCurveParam.Value,CoolingCurveParam_simplified,CoolingCurveParam_simplified,constant block value expression
+dt_s.Value,dt_s_simplified,dt_s_simplified,constant block value expression
